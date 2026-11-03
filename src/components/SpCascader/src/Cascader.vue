@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { SelectProps } from './props'
+import { TablePickerProps } from './props'
 
 const props = defineProps({
-  ...SelectProps,
+  ...TablePickerProps,
 })
 
 const emit = defineEmits(['update:value'])

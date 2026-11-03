@@ -4,9 +4,9 @@
  */
 import type { App } from 'vue'
 import { Icon } from '@iconify/vue'
-import { NaAuthority } from '@/components/Authority'
-import { NaIcon } from '@/components/Icon'
-import { NaPage } from '@/components/Page'
+import { NaAuthority } from '@/components/NaAuthority'
+import { NaIcon } from '@/components/NaIcon'
+import { NaPage } from '@/components/NaPage'
 import { SpModal } from '@/components/SpModal'
 import { SpSearch } from '@/components/SpSearch'
 import { SpSliderCaptcha } from '@/components/SpSliderCaptcha'

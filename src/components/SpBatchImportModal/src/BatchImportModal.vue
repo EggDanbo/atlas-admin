@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { OpenModal } from '@/components/SpModal'
-import { UploadBtn } from '@/components/File/UploadBtn'
-import { LogBiz } from '@/components/Logs/Biz'
+import { UploadBtn } from '@/components/BizFile/UploadBtn'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpBatchImportCheckModal } from '@/components/SpBatchImportModal'
 
 import { getApiBaseUrl } from '@/hooks/setting'

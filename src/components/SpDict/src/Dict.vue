@@ -2,10 +2,10 @@
 import { computed, ref, useAttrs, watch } from 'vue'
 import { dictionary } from '@/service/api/system'
 import { forEach } from '@/utils/helper/treeHelper'
-import { SelectProps } from './props'
+import { TablePickerProps } from './props'
 
 const props = defineProps({
-  ...SelectProps,
+  ...TablePickerProps,
 })
 const attrs = useAttrs()
 const options = ref<Recordable[]>([])

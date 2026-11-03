@@ -1,6 +1,6 @@
 import type { TreeSelectOption } from 'naive-ui'
 
-export const SelectProps = {
+export const TablePickerProps = {
   value: {
     type: [String, Number, Array] as PropType<string | number | (string | number)[] | null>,
     default: null,

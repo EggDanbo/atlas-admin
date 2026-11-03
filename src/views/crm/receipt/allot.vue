@@ -2,7 +2,7 @@
 import type { TableProps } from '@/components/SpTable'
 import { SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpCascader } from '@/components/SpCascader'
-import { OuterSelect } from '@/components/TableSelect'
+import { PartnerPicker } from '@/components/SpTablePicker'
 import { unit as teamApi } from '@/service/api/access'
 import { receipt as api } from '@/service/api/crm'
 import toast from '@/utils/toast'
@@ -261,7 +261,7 @@ defineExpose({ open, close })
           {{ row.outer_name }}
         </template>
         <template #outer_edit="{ row }">
-          <OuterSelect v-model:value="row.outer_id" types="0" @change="(options) => handleOuterSelected(row, options)" />
+          <PartnerPicker v-model:value="row.outer_id" types="0" @change="(options) => handleOuterSelected(row, options)" />
         </template>
         <template #team_default="{ row }">
           {{ row.team_name }}

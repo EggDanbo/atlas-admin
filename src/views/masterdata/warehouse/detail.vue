@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
-import { UserSelect } from '@/components/TableSelect'
+import { MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { unit as teamApi } from '@/service/api/access'
 import { warehouse as api } from '@/service/api/masterdata'
@@ -128,7 +128,7 @@ export default { name: 'BasicStoreDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="管理人" path="user_list">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_list"
             v-model:options="formModel.user_name"
             :team_id="formModel.team_id"
@@ -176,7 +176,7 @@ export default { name: 'BasicStoreDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="masterdata/warehouse"
           :save="() => ({ ...formModel })"

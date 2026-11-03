@@ -3,12 +3,12 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { WorkSelect } from '@/components/TableSelect'
+import { StaffPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -390,7 +390,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffGradeDetail' }
+export default { name: 'HrMovementPromotionDetail' }
 </script>
 
 <template>
@@ -496,7 +496,7 @@ export default { name: 'StaffGradeDetail' }
       </SpTable>
 
       <div class="w-full flex">
-        <WorkSelect
+        <StaffPicker
           ref="workSelectRef"
           :team_id="formModel.team_id"
           :disabled="!formModel.team_id"
@@ -607,7 +607,7 @@ export default { name: 'StaffGradeDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/movement/promotion"
           :save="() => ({ ...formModel })"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { useDetail } from '@/hooks/detail'
 import { unit as api } from '@/service/api/access'
 
@@ -70,7 +70,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'OrganTeamDetail' }
+export default { name: 'AccessUnitDetail' }
 </script>
 
 <template>
@@ -157,7 +157,7 @@ export default { name: 'OrganTeamDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="access/unit"
           :save="() => ({ ...formModel })"

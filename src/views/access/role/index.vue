@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { QueryGrid } from '@/components/QueryGrid'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { role as api } from '@/service/api/identity'
 import toast from '@/utils/toast'
@@ -115,14 +115,14 @@ async function handleSort() {
 </script>
 
 <script lang="ts">
-export default { name: 'PermitRole' }
+export default { name: 'AccessRole' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.kind"
@@ -140,7 +140,7 @@ export default { name: 'PermitRole' }
               clearable
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('edit', row)">

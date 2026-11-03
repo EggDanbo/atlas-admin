@@ -3,11 +3,11 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import printJS from 'print-js'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
-import { UserSelect } from '@/components/TableSelect'
+import { MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -316,7 +316,7 @@ export default { name: 'AssetInfoDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="责任人" path="lead_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.lead_id"
             v-model:options="formModel.lead_name"
             :team_id="formModel.team_id"
@@ -452,7 +452,7 @@ export default { name: 'AssetInfoDetail' }
             打印标签
           </n-button>
         </n-button-group>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="asset/info"
           :save="() => ({ ...formModel })"

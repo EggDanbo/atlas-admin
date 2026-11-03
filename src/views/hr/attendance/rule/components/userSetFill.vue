@@ -2,8 +2,8 @@
 import type { ModalInst } from '@/components/SpModal'
 import type { TableProps } from '@/components/SpTable'
 import printJS from 'print-js'
+import { StaffPicker, TeamPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
-import { BranchSelect, WorkSelect } from '@/components/TableSelect'
 import { unit } from '@/service/api/access'
 import { rule as api } from '@/service/api/hr/attendance'
 import toast from '@/utils/toast'
@@ -193,7 +193,7 @@ defineExpose({ open, close })
             style="width: 220px"
             :multiple="false"
           />
-          <BranchSelect
+          <TeamPicker
             v-model:value="filterModel.branch_id"
             types="0"
             style="width: 220px"
@@ -265,13 +265,13 @@ defineExpose({ open, close })
           <dl>
             <dd>人员</dd>
             <dd>
-              <WorkSelect v-model:value="addUserGroupInfo.user_id" />
+              <StaffPicker v-model:value="addUserGroupInfo.user_id" />
             </dd>
           </dl>
           <dl>
             <dd>派驻分队</dd>
             <dd>
-              <BranchSelect
+              <TeamPicker
                 v-model:value="addUserGroupInfo.branch_id"
                 types="0"
                 :team_id="filterModel.team_id"

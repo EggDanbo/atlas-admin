@@ -2,7 +2,7 @@
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import { add } from 'xe-utils'
-import { LogBiz } from '@/components/Logs/Biz'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { receipt as api } from '@/service/api/crm'
 import { gridOptions } from './columns'
@@ -85,7 +85,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'TradeReceiveDetail' }
+export default { name: 'CrmReceiptDetail' }
 </script>
 
 <template>

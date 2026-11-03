@@ -12,7 +12,7 @@ export const CascaderProps = {
   text: [String, Array] as PropType<[string, string] | null | string>,
 }
 
-export const SelectProps = {
+export const TablePickerProps = {
   ...selectProps,
   name: propTypes.string.def(''),
   filterable: propTypes.bool.def(true),

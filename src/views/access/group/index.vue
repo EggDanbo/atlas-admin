@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { QueryGrid } from '@/components/QueryGrid'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
 import { useListPage } from '@/hooks/list'
 import { usePermission } from '@/hooks/permission/usePermission'
@@ -264,14 +264,14 @@ const moreOptions = [
 </script>
 
 <script lang="ts">
-export default { name: 'PermitGroup' }
+export default { name: 'AccessGroup' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex vertical>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-input
               v-model:value="queryModel.filter"
@@ -312,7 +312,7 @@ export default { name: 'PermitGroup' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="flex-1">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => openGroupModal(row)">

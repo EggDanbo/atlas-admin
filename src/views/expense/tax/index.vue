@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import common from '@/service/api/common'
 import { tax as api } from '@/service/api/expense'
@@ -190,14 +190,14 @@ async function handleAlert(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'PensePayer' }
+export default { name: 'ExpenseClaimTax' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="2">
             <SpDateRange v-model="queryModel.date" type="date" />
           </n-gi>
@@ -230,7 +230,7 @@ export default { name: 'PensePayer' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">

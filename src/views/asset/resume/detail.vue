@@ -3,12 +3,12 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { AssetLeaseSelect, UserSelect } from '@/components/TableSelect'
+import { AssetLeasePicker, MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -336,7 +336,7 @@ export default { name: 'AssetResumeDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="7" label="接收人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             permission="AST_ALLOT"
@@ -388,7 +388,7 @@ export default { name: 'AssetResumeDetail' }
       </SpTable>
 
       <div class="w-full flex">
-        <AssetLeaseSelect
+        <AssetLeasePicker
           ref="AssetInfoSelectRef"
           :team_id="formModel.team_id"
           :disabled="!formModel.team_id"
@@ -492,7 +492,7 @@ export default { name: 'AssetResumeDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="asset/resume"
           :save="() => ({ ...formModel })"

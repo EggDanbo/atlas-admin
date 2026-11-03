@@ -2,9 +2,9 @@
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { createTransformer, useDetail } from '@/hooks/detail'
@@ -123,7 +123,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PaperInfoDetail' }
+export default { name: 'ArchiveDocumentDetail' }
 </script>
 
 <template>
@@ -229,7 +229,7 @@ export default { name: 'PaperInfoDetail' }
         <n-button v-if="formModel.id !== '0'" :loading="btnLoading" @click="updateStatus">
           {{ formModel.status === 0 ? '归档' : '取消归档' }}
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="archive/document"
           :save="() => ({ ...formModel })"

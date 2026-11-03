@@ -11,7 +11,7 @@
 │   页面只做三件事：声明查询模型、声明列插槽、调用 useListPage   │
 ├───────────────────────────────────────────────────────────┤
 │ components（40+ 业务组件）                                  │
-│   SpTable / QueryGrid / SpModal / SpDateRange …             │
+│   SpTable / SpQueryGrid / SpModal / SpDateRange …             │
 ├───────────────────────────────────────────────────────────┤
 │ hooks（组合式函数：useListPage、usePermission、useTabbar …） │
 ├───────────────────────────────────────────────────────────┤

@@ -138,7 +138,7 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinFestival' }
+export default { name: 'HrAttendanceHoliday' }
 </script>
 
 <template>

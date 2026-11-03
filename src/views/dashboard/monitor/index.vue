@@ -354,7 +354,7 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'BoardMonitor' }
+export default { name: 'DashboardMonitor' }
 </script>
 
 <template>

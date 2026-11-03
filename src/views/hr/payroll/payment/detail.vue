@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import { LogBiz } from '@/components/Logs/Biz'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { payment as api } from '@/service/api/hr/payroll'
 import { useEnumStore } from '@/store/modules/enums'
@@ -62,7 +62,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryPaymentDetail' }
+export default { name: 'HrPayrollPaymentDetail' }
 </script>
 
 <template>

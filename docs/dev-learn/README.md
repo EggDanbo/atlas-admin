@@ -26,7 +26,7 @@
 | [SpTable 默认按钮](vue/sptable.md#2) | `table`, `sptable` | 🟢 low | 2025-03-31 |
 | [模板必须单根节点](vue/template.md) | `vue`, `template` | 🔴 high | 2025-03-31 |
 | [隐藏路由设置 activePath](vue/router.md) | `vue`, `router` | 🟡 medium | 2025-03-31 |
-| [QueryGrid 使用规范](vue/querygrid.md) | `vue`, `querygrid`, `layout` | 🟡 medium | 2025-03-31 |
+| [SpQueryGrid 使用规范](vue/sp-querygrid.md) | `vue`, `querygrid`, `layout` | 🟡 medium | 2025-03-31 |
 | [模板组件命名与 import 的关系](vue/component-naming.md) | `vue`, `naive-ui`, `eslint` | 🟢 low | 2026-04-01 |
 
 ### API 相关

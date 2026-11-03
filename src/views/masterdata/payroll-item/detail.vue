@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { payrollItem as api } from '@/service/api/masterdata'
 import { useEnumStore } from '@/store/modules/enums'
@@ -70,7 +70,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'BasicSalaryDetail' }
+export default { name: 'MdmPayrollItemDetail' }
 </script>
 
 <template>
@@ -139,7 +139,7 @@ export default { name: 'BasicSalaryDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="masterdata/payroll-item"
           :save="() => ({ ...formModel })"

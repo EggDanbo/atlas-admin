@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
@@ -184,14 +184,14 @@ async function handleImportSuccess(fileId: string) {
 </script>
 
 <script lang="ts">
-export default { name: 'TradeCustom' }
+export default { name: 'CrmCustomer' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-input v-model:value="queryModel.filter" placeholder="编码、名称等" type="text" clearable />
           </n-gi>
@@ -206,7 +206,7 @@ export default { name: 'TradeCustom' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">

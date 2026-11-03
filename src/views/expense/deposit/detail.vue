@@ -2,13 +2,13 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { OuterSelect, PenseContractSelect, UserSelect } from '@/components/TableSelect'
+import { ExpenseContractPicker, MemberPicker, PartnerPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -350,7 +350,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PenseAnsureDetail' }
+export default { name: 'ExpenseClaimDepositDetail' }
 </script>
 
 <template>
@@ -376,7 +376,7 @@ export default { name: 'PenseAnsureDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="申请人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             :stoped="false"
@@ -388,7 +388,7 @@ export default { name: 'PenseAnsureDetail' }
           <n-date-picker v-model:value="formModel.date" type="date" fast-month-select clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="付款合同" path="contract_id">
-          <PenseContractSelect v-model:value="formModel.contract_id" :team_id="formModel.team_id" />
+          <ExpenseContractPicker v-model:value="formModel.contract_id" :team_id="formModel.team_id" />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="申请标题" path="title">
           <n-input v-model:value="formModel.title" clearable />
@@ -410,7 +410,7 @@ export default { name: 'PenseAnsureDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="收款人" path="payee_id">
-          <OuterSelect v-model:value="formModel.outer_id" types="1" @change="handleOuterSelected" />
+          <PartnerPicker v-model:value="formModel.outer_id" types="1" @change="handleOuterSelected" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="收款账号" path="payee_bank">
           <n-input v-model:value="formModel.payee_bank" clearable />
@@ -541,7 +541,7 @@ export default { name: 'PenseAnsureDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="expense/deposit"
           :save="() => ({ ...formModel })"

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { holiday as api } from '@/service/api/masterdata'
 
@@ -65,7 +65,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'BasicHolidayDetail' }
+export default { name: 'MdmHolidayDetail' }
 </script>
 
 <template>
@@ -141,7 +141,7 @@ export default { name: 'BasicHolidayDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="masterdata/holiday"
           :save="() => ({ ...formModel })"

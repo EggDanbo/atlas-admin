@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
-import type { FileManagerInst } from '@/components/File'
+import type { FileManagerInst } from '@/components/BizFile'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import { add, multiply, round } from 'xe-utils'
-import DraftBox from '@/components/DraftBox'
-import { FileManager, Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { FileManager, Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { BranchSelect, CustomSelect, UserSelect } from '@/components/TableSelect'
+import { CustomerPicker, MemberPicker, TeamPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -890,7 +890,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'TradeProjectDetail' }
+export default { name: 'CrmProjectDetail' }
 </script>
 
 <template>
@@ -991,7 +991,7 @@ export default { name: 'TradeProjectDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="负责人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             :team_id="formModel.team_id"
@@ -1130,7 +1130,7 @@ export default { name: 'TradeProjectDetail' }
               {{ row.outer_name }}
             </template>
             <template #outer_edit="{ row }">
-              <CustomSelect
+              <CustomerPicker
                 v-model:value="row.outer_id"
                 :options="row.outer_name"
                 :team_id="row.team_id"
@@ -1443,7 +1443,7 @@ export default { name: 'TradeProjectDetail' }
               {{ row.branch_name }}
             </template>
             <template #branch_edit="{ row, index }">
-              <BranchSelect
+              <TeamPicker
                 v-model:value="row.branch_id"
                 :options="row.branch_name"
                 :team_id="row.team_id"
@@ -1753,7 +1753,7 @@ export default { name: 'TradeProjectDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="crm/project"
           :save="() => ({ ...formModel })"

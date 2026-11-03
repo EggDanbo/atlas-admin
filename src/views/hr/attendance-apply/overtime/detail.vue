@@ -3,11 +3,11 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import { add } from 'xe-utils'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
-import { BranchSelect } from '@/components/TableSelect'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
+import { TeamPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { overtime as api } from '@/service/api/hr/attendance-apply'
 import { approve } from '@/service/api/workflow'
@@ -244,7 +244,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffApplyOvertimeDetail' }
+export default { name: 'HrApplyOvertimeDetail' }
 </script>
 
 <template>
@@ -294,7 +294,7 @@ export default { name: 'StaffApplyOvertimeDetail' }
           <n-select v-model:value="formModel.types" :options="enumStore.getEnumOptions('checkin_overtime_types')" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="派驻分队" path="outer_id">
-          <BranchSelect
+          <TeamPicker
             v-model:value="formModel.outer_id"
             :options="formModel.outer_name"
             types="0"
@@ -493,7 +493,7 @@ export default { name: 'StaffApplyOvertimeDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/attendance-apply/overtime"
           :save="() => ({ ...formModel })"

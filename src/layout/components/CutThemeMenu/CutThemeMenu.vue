@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIconButton } from '@/components/NaIconButton'
 import { useThemeStore } from '@/store/modules/theme'
 
 import { Menu } from './components/index'
@@ -57,7 +57,7 @@ function colorWeaknessChange() {
 <template>
   <n-popover trigger="hover" style="padding: 0; width: 350px;" scrollable @update:show="handlePopoverShow">
     <template #trigger>
-      <NaIconBtn :class="{ 'rotate-180': rotating }" :icon="iconsValue()" class="theme-toggle" />
+      <NaIconButton :class="{ 'rotate-180': rotating }" :icon="iconsValue()" class="theme-toggle" />
     </template>
 
     <n-card

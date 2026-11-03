@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { format } from 'date-fns'
-import { QueryGrid } from '@/components/QueryGrid'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { period as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
@@ -158,14 +158,14 @@ async function bookCancel(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'VouchPeriod' }
+export default { name: 'FinancePeriod' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="1">
             <n-date-picker
               v-model:value="queryModel.year"
@@ -174,7 +174,7 @@ export default { name: 'VouchPeriod' }
               :year-range="[2008, new Date().getFullYear() + 1]"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">

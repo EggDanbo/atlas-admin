@@ -148,7 +148,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'ExternalRoleDetail' }
+export default { name: 'AccessPartnerRoleDetail' }
 </script>
 
 <template>

@@ -3,12 +3,12 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { AssetInfoSelect, OuterSelect } from '@/components/TableSelect'
+import { AssetLedgerPicker, PartnerPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -371,7 +371,7 @@ export default { name: 'AssetRepairDetail' }
           {{ row.outer_name }}
         </template>
         <template #outer_edit="{ row }">
-          <OuterSelect v-model:value="row.outer_id" :options="row.outer_name" types="1" />
+          <PartnerPicker v-model:value="row.outer_id" :options="row.outer_name" types="1" />
         </template>
         <template #contact_edit="{ row }">
           <n-input v-model:value="row.contact" clearable />
@@ -388,7 +388,7 @@ export default { name: 'AssetRepairDetail' }
       </SpTable>
 
       <div class="w-full flex">
-        <AssetInfoSelect
+        <AssetLedgerPicker
           ref="AssetInfoSelectRef"
           :team_id="formModel.team_id"
           :disabled="!formModel.team_id"
@@ -493,7 +493,7 @@ export default { name: 'AssetRepairDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="asset/repair"
           :save="() => ({ ...formModel })"

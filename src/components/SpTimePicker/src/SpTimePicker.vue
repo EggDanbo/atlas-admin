@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectOption } from 'naive-ui'
+import type { TablePickerOption } from 'naive-ui'
 
 const props = withDefaults(defineProps<{
   modelValue: number | null | undefined
@@ -28,8 +28,8 @@ function formatHourLabel(h: number): string {
   return `${h >= 24 ? '次日' : ''}${displayH.toString().padStart(2, '0')}`
 }
 
-function buildMinuteRange(minM: number, maxM: number): SelectOption[] {
-  const opts: SelectOption[] = []
+function buildMinuteRange(minM: number, maxM: number): TablePickerOption[] {
+  const opts: TablePickerOption[] = []
   for (let m = minM; m <= maxM; m++) {
     opts.push({ label: m.toString().padStart(2, '0'), value: m })
   }
@@ -39,7 +39,7 @@ function buildMinuteRange(minM: number, maxM: number): SelectOption[] {
 const hourOptions = computed(() => {
   const minH = Math.floor(props.min / 3600)
   const maxH = Math.floor(effectiveMax.value / 3600)
-  const opts: SelectOption[] = []
+  const opts: TablePickerOption[] = []
   for (let h = minH; h <= maxH; h++) {
     opts.push({ label: formatHourLabel(h), value: h })
   }

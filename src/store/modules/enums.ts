@@ -7,7 +7,7 @@ import { store } from '@/store'
 /**
  * Naive UI Select 选项类型
  */
-export type SelectOption = Required<DropDownItem>
+export type TablePickerOption = Required<DropDownItem>
 
 /**
  * 枚举查找模式
@@ -60,7 +60,7 @@ export const useEnumStore = defineStore(
     /** 加载 Promise 缓存（防止并发请求） */
     const loadPromise = ref<Promise<Map<string, SystemEnums>> | null>(null)
     /** 选项缓存 */
-    const optionsCache = ref<Map<string, SelectOption[]>>(new Map())
+    const optionsCache = ref<Map<string, TablePickerOption[]>>(new Map())
 
     /** 是否正在加载 */
     const isLoading = computed(() => loadPromise.value !== null)
@@ -198,7 +198,7 @@ export const useEnumStore = defineStore(
      * </template>
      * ```
      */
-    function getEnumOptions(key: string, valueField: EnumValueField = 'value'): SelectOption[] {
+    function getEnumOptions(key: string, valueField: EnumValueField = 'value'): TablePickerOption[] {
       if (!enumsMap.value && !loadPromise.value) {
         void asyncEnums()
       }

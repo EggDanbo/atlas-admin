@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIconButton } from '@/components/NaIconButton'
 import Preferences from '../Preferences/Preferences.vue'
 
 const preferencesRef = ref<InstanceType<typeof Preferences> | null>(null)
@@ -7,7 +7,7 @@ const preferencesRef = ref<InstanceType<typeof Preferences> | null>(null)
 
 <template>
   <div @click="preferencesRef?.open()">
-    <NaIconBtn icon="ant-design:setting-outlined" tooltip="偏好配置" />
+    <NaIconButton icon="ant-design:setting-outlined" tooltip="偏好配置" />
   </div>
   <Preferences ref="preferencesRef" />
 </template>

@@ -768,7 +768,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryGroupFormulaEditor' }
+export default { name: 'HrPayrollGroupFormulaEditor' }
 </script>
 
 <template>

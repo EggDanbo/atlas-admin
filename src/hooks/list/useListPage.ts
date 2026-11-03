@@ -1,5 +1,5 @@
 import type { UseListPageOptions, UseListPageReturn } from './types'
-import type { PrintInst } from '@/components/Print'
+import type { PrintInst } from '@/components/BizPrint'
 import type { TableColumn, TableInstance, TableProps } from '@/components/SpTable'
 import { getNestedValue } from '@/hooks/detail/utils'
 import { usePermission } from '@/hooks/permission/usePermission'

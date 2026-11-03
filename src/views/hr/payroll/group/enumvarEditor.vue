@@ -284,7 +284,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryGroupEnumvarEditor' }
+export default { name: 'HrPayrollGroupEnumvarEditor' }
 </script>
 
 <template>

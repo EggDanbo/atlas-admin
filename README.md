@@ -90,7 +90,7 @@ atlas-admin/
 │       ├── extract-schema.mjs  # 从视图代码提取字段结构
 │       └── verify.ts           # mock 引擎自检
 ├── src/
-│   ├── components/           # 业务组件（40+）
+│   ├── components/           # 组件库：Na*（Naive 封装）/ Sp*（设计系统）/ Biz*（业务）
 │   ├── config/               # 应用配置
 │   ├── hooks/                # 组合式函数
 │   ├── layout/               # 布局
@@ -305,6 +305,7 @@ mock 引擎的价值在于「像真的」，而像不像真的取决于规则是
 | 文档 | 内容 |
 | ---- | ---- |
 | [docs/architecture.md](./docs/architecture.md) | 分层、请求链路、列来源、权限模型、设计系统、质量闸门 |
+| [docs/naming.md](./docs/naming.md) | 组件命名规范：Na/Sp/Biz 三层前缀、角色后缀、15 个选择器改名对照 |
 | [ADR-0001](./docs/adr/0001-local-mock-engine.md) | 为什么用自研本地 mock 引擎而不是 msw / json-server |
 | [ADR-0002](./docs/adr/0002-dataformat-driven-columns.md) | 为什么表格列由「服务端下发 + 代码提取」而不是写死在页面 |
 | [ADR-0003](./docs/adr/0003-design-tokens.md) | 为什么用设计令牌 + 主题派生，以及皮肤层的边界 |

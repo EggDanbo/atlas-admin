@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { itemCategory as api } from '@/service/api/masterdata'
 import { useEnumStore } from '@/store/modules/enums'
@@ -147,7 +147,7 @@ export default { name: 'BasicArticleDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="masterdata/item-category"
           :save="() => ({ ...formModel })"

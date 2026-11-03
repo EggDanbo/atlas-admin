@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui'
 
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIconButton } from '@/components/NaIconButton'
 import { useThemeStore } from '@/store/modules/theme'
 
 const rotateDuration = 300
@@ -61,5 +61,5 @@ async function toggleTheme({ clientX: x, clientY: y }: MouseEvent) {
 </script>
 
 <template>
-  <NaIconBtn :class="{ 'rotate-180': rotating }" :icon="themeStore.isDark ? 'ant-design:sun-outlined' : 'ant-design:moon-outlined'" class="theme-toggle" @click="toggleTheme" />
+  <NaIconButton :class="{ 'rotate-180': rotating }" :icon="themeStore.isDark ? 'ant-design:sun-outlined' : 'ant-design:moon-outlined'" class="theme-toggle" @click="toggleTheme" />
 </template>

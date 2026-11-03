@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { NaIcon } from '@/components/Icon'
+import { NaIcon } from '@/components/NaIcon'
 
 const SearchMenu = defineAsyncComponent(() => import('./SearchMenu.vue'))
 

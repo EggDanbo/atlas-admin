@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
@@ -87,7 +87,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryGroupDetail' }
+export default { name: 'HrPayrollGroupDetail' }
 </script>
 
 <template>
@@ -141,7 +141,7 @@ export default { name: 'StaffSalaryGroupDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/payroll/group"
           :save="() => ({ ...formModel })"

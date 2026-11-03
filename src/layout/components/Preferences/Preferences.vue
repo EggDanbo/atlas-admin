@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useClipboard } from '@vueuse/core'
-import { NaIcon } from '@/components/Icon'
+import { NaIcon } from '@/components/NaIcon'
 import { useGlobSetting } from '@/hooks/setting'
 import { resetStore } from '@/store'
 import { useConfigStore } from '@/store/modules/config'

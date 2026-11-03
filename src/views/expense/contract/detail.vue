@@ -2,12 +2,12 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { OuterSelect, TradeProjectSelect } from '@/components/TableSelect'
+import { PartnerPicker, ProjectPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -303,7 +303,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PenseContractDetail' }
+export default { name: 'ExpenseContractDetail' }
 </script>
 
 <template>
@@ -344,7 +344,7 @@ export default { name: 'PenseContractDetail' }
           <n-input v-model:value="formModel.no" maxlength="30" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="供应商" path="outer_id">
-          <OuterSelect
+          <PartnerPicker
             v-model:value="formModel.outer_id"
             :options="formModel.outer_name"
             types="1"
@@ -357,7 +357,7 @@ export default { name: 'PenseContractDetail' }
           <n-date-picker v-model:value="formModel.indate" type="date" fast-month-select clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="所属项目" path="project_id">
-          <TradeProjectSelect v-model:value="formModel.project_id" />
+          <ProjectPicker v-model:value="formModel.project_id" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="结束日期" path="expire">
           <n-date-picker v-model:value="formModel.expire" type="date" fast-month-select clearable />
@@ -532,7 +532,7 @@ export default { name: 'PenseContractDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="expense/contract"
           :save="() => ({ ...formModel })"

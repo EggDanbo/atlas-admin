@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { NButton } from 'naive-ui'
 import { useRouter } from 'vue-router'
-import { NaIconBtn } from '@/components/IconBtn'
-import { SendMessageModal } from '@/components/SendMessageModal'
+import { BizSendMessageModal } from '@/components/BizSendMessageModal'
+import { NaIconButton } from '@/components/NaIconButton'
 import { messageTypeOptions, useMessageNotification } from '@/hooks/message'
 import { useMessageStore } from '@/store/modules/message'
 import bus from '@/utils/bus'
@@ -125,7 +125,7 @@ function handleFilterSelect(key: string) {
 }
 
 // 打开发送消息弹窗
-const sendModalRef = ref<InstanceType<typeof SendMessageModal> | null>(null)
+const sendModalRef = ref<InstanceType<typeof BizSendMessageModal> | null>(null)
 function handleSend() {
   sendModalRef.value?.open()
 }
@@ -149,7 +149,7 @@ onUnmounted(() => {
   <n-popover trigger="hover" style="padding: 0; width: 480px;" scrollable>
     <template #trigger>
       <n-badge :value="messageStore.unreadCount" :offset="[-7, 5]" :show="messageStore.unreadCount > 0">
-        <NaIconBtn icon="ant-design:bell-outlined" />
+        <NaIconButton icon="ant-design:bell-outlined" />
       </n-badge>
     </template>
     <n-card
@@ -254,7 +254,7 @@ onUnmounted(() => {
   </n-popover>
 
   <!-- 发送消息弹窗 -->
-  <SendMessageModal ref="sendModalRef" @success="messageStore.fetchUnread()" />
+  <BizSendMessageModal ref="sendModalRef" @success="messageStore.fetchUnread()" />
 </template>
 
 <style lang="less" scoped>

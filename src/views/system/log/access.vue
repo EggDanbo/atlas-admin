@@ -107,7 +107,7 @@ async function handleExport() {
 </script>
 
 <script lang="ts">
-export default { name: 'LogAccess' }
+export default { name: 'SystemLogAccess' }
 </script>
 
 <template>

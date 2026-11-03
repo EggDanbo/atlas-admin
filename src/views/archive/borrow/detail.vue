@@ -2,12 +2,12 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { UserSelect } from '@/components/TableSelect'
+import { MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -308,7 +308,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PaperBorrowDetail' }
+export default { name: 'ArchiveBorrowDetail' }
 </script>
 
 <template>
@@ -333,7 +333,7 @@ export default { name: 'PaperBorrowDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="申请人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             permission="DOC_BORROW"
@@ -464,7 +464,7 @@ export default { name: 'PaperBorrowDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="archive/borrow"
           :save="() => ({ ...formModel })"
@@ -602,7 +602,7 @@ export default { name: 'PaperBorrowDetail' }
     <template #default>
       <div class="w-full flex flex-col gap-[12px] pb-3 pt-3">
         <div class="w-full">
-          <UserSelect
+          <MemberPicker
             v-model:value="confirmUser"
             :team_id="formModel.team_id"
             placeholder="接收人"
@@ -633,7 +633,7 @@ export default { name: 'PaperBorrowDetail' }
     <template #default>
       <div class="w-full flex flex-col gap-[12px] pb-3 pt-3">
         <div class="w-full">
-          <UserSelect
+          <MemberPicker
             v-model:value="confirmUser"
             :team_id="formModel.team_id"
             placeholder="归还人"

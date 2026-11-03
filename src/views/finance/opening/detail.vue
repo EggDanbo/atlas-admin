@@ -2,10 +2,10 @@
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
-import { AssistSelect } from '@/components/TableSelect'
+import { AuxDimensionPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { opening as api } from '@/service/api/finance'
 import { subject } from '@/service/api/masterdata'
@@ -231,7 +231,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'VouchBalanceDetail' }
+export default { name: 'FinanceOpeningDetail' }
 </script>
 
 <template>
@@ -289,7 +289,7 @@ export default { name: 'VouchBalanceDetail' }
       </n-divider>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="12" label="部门" path="room_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.room_id"
             v-model:options="formModel.room_name"
             types="部门"
@@ -298,7 +298,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="员工" path="work_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.work_id"
             v-model:options="formModel.work_name"
             types="员工"
@@ -307,7 +307,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="银行" path="bank_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.bank_id"
             v-model:options="formModel.bank_name"
             types="银行"
@@ -316,7 +316,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="银行账号" path="account_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.account_id"
             v-model:options="formModel.account_name"
             types="银行账号"
@@ -325,7 +325,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="项目" path="project_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.project_id"
             v-model:options="formModel.project_name"
             types="项目"
@@ -334,7 +334,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="客户" path="customer_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.customer_id"
             v-model:options="formModel.customer_name"
             types="客户"
@@ -343,7 +343,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="供应商" path="supplier_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.supplier_id"
             v-model:options="formModel.supplier_name"
             types="供应商"
@@ -352,7 +352,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="往来单位" path="transact_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.transact_id"
             v-model:options="formModel.transact_name"
             types="往来单位"
@@ -361,7 +361,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="资产类别" path="article_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.article_id"
             v-model:options="formModel.article_name"
             types="资产类别"
@@ -370,7 +370,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="业态类型" path="pattern_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.pattern_id"
             v-model:options="formModel.pattern_name"
             types="业态类型"
@@ -379,7 +379,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="投资品种" path="product_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.product_id"
             v-model:options="formModel.product_name"
             types="投资品种"
@@ -388,7 +388,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="投资项目" path="invests_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.invests_id"
             v-model:options="formModel.invests_name"
             types="投资项目"
@@ -397,7 +397,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="期间费用" path="expense_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.expense_id"
             v-model:options="formModel.expense_name"
             types="期间费用"
@@ -406,7 +406,7 @@ export default { name: 'VouchBalanceDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="营业外收支来源" path="unusual_id">
-          <AssistSelect
+          <AuxDimensionPicker
             v-model:value="formModel.unusual_id"
             v-model:options="formModel.unusual_name"
             types="营业外收支来源"
@@ -494,7 +494,7 @@ export default { name: 'VouchBalanceDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="finance/opening"
           :save="() => ({ ...formModel })"

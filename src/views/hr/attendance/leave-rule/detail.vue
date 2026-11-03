@@ -2,8 +2,8 @@
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { leaveRule as api } from '@/service/api/hr/attendance'
 import { holiday as holidayApi } from '@/service/api/masterdata'
@@ -92,7 +92,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinLeaveDetail' }
+export default { name: 'HrAttendanceLeaveDetail' }
 </script>
 
 <template>

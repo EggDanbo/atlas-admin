@@ -95,7 +95,7 @@ async function handleDelete(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'ExternalAccount' }
+export default { name: 'AccessPartnerAccount' }
 </script>
 
 <template>

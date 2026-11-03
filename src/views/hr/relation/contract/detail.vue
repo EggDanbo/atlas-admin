@@ -2,10 +2,10 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { addYears, format, subDays } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { UserSelect } from '@/components/TableSelect'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -184,7 +184,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffDailyLaborDetail' }
+export default { name: 'HrRelationContractDetail' }
 </script>
 
 <template>
@@ -201,7 +201,7 @@ export default { name: 'StaffDailyLaborDetail' }
     >
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="签订人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             :stoped="false"
@@ -391,7 +391,7 @@ export default { name: 'StaffDailyLaborDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/relation/contract"
           :save="() => ({ ...formModel })"

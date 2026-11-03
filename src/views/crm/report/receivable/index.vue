@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { format } from 'date-fns'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { PdfSetting } from '@/components/BizPrint'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { PartnerPicker } from '@/components/SpTablePicker/index.ts'
 import { SpTree } from '@/components/SpTree'
-import { OuterSelect } from '@/components/TableSelect/index.ts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { receivable as api } from '@/service/api/crm/report'
@@ -78,14 +78,14 @@ async function handleMore(key: string) {
 </script>
 
 <script lang="ts">
-export default { name: 'TradeReportXmtjb' }
+export default { name: 'CrmReportReceivable' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-date-picker
               v-model:value="queryModel.year"
@@ -103,14 +103,14 @@ export default { name: 'TradeReportXmtjb' }
             />
           </n-gi>
           <n-gi span="5">
-            <OuterSelect
+            <PartnerPicker
               v-model:value="queryModel.outer_id"
               placeholder="客户"
               types="0"
               :multiple="true"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">

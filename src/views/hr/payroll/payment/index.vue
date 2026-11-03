@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpBatchImportModal } from '@/components/SpBatchImportModal'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { SalaryGroupPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
-import { SalaryGroupSelect } from '@/components/TableSelect'
 import { useListPage } from '@/hooks/list'
 import { getApiBaseUrl } from '@/hooks/setting'
 import { unit as teamApi } from '@/service/api/access'
@@ -294,14 +294,14 @@ async function loadGridColumns() {
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryPayment' }
+export default { name: 'HrPayrollPayment' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-date-picker
               v-model:value="queryModel.month"
@@ -312,7 +312,7 @@ export default { name: 'StaffSalaryPayment' }
             />
           </n-gi>
           <n-gi span="2">
-            <SalaryGroupSelect
+            <SalaryGroupPicker
               v-model:value="queryModel.group_id"
               :month="queryModel.month"
               :multiple="false"
@@ -350,7 +350,7 @@ export default { name: 'StaffSalaryPayment' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">

@@ -73,7 +73,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PermitGroupCodeModal' }
+export default { name: 'AccessGroupCodeModal' }
 </script>
 
 <template>

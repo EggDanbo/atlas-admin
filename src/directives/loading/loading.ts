@@ -1,6 +1,6 @@
 import type { Directive } from 'vue'
 import type { LoadingOptions } from './types'
-import { createLoading } from '@/components/Loading'
+import { createLoading } from '@/components/NaLoading'
 
 interface LoadingHTMLElement extends HTMLElement {
   instance?: ReturnType<typeof createLoading>

@@ -3,12 +3,12 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import printJS from 'print-js'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { BranchSelect } from '@/components/TableSelect'
+import { TeamPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -417,7 +417,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffInfoDetail' }
+export default { name: 'HrRosterDetail' }
 </script>
 
 <template>
@@ -583,7 +583,7 @@ export default { name: 'StaffInfoDetail' }
       </n-divider>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="16" label="派驻分队" path="branch_id">
-          <BranchSelect
+          <TeamPicker
             v-model:value="formModel.branch_id"
             :options="formModel.branch_name"
             :team_id="formModel.team_id"
@@ -1639,7 +1639,7 @@ export default { name: 'StaffInfoDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="print">
           打印卡片
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/roster"
           :save="() => ({ ...formModel })"

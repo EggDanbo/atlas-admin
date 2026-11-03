@@ -65,7 +65,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'StaffSalaryGroupItemDict' }
+export default { name: 'HrPayrollGroupItemDict' }
 </script>
 
 <template>

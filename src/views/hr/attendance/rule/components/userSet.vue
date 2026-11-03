@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { TableProps } from '@/components/SpTable'
 import printJS from 'print-js'
+import { TeamPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
-import { BranchSelect } from '@/components/TableSelect'
 import { unit } from '@/service/api/access'
 import { rule as api } from '@/service/api/hr/attendance'
 import toast from '@/utils/toast'
@@ -175,7 +175,7 @@ defineExpose({ open, close })
             style="width: 220px"
             :multiple="false"
           />
-          <BranchSelect
+          <TeamPicker
             v-model:value="filterModel.branch_id"
             types="0"
             style="width: 220px"

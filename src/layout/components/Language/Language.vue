@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { LocaleType } from '../../../../typings/config'
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIconButton } from '@/components/NaIconButton'
 import { localeList } from '@/config/locale'
 import { useLocale } from '@/locales/useLocale'
 import { useTitle } from '@/router/helper/useTitle.ts'
@@ -17,6 +17,6 @@ async function languageSelect(key: LocaleType) {
 
 <template>
   <n-dropdown v-model:value="getLocale" :options="localeList" class="locale-dropdown" trigger="click" @select="languageSelect">
-    <NaIconBtn icon="ant-design:global-outlined" />
+    <NaIconButton icon="ant-design:global-outlined" />
   </n-dropdown>
 </template>

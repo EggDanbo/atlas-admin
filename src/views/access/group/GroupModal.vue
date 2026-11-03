@@ -204,7 +204,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PermitGroupGroupModal' }
+export default { name: 'AccessGroupGroupModal' }
 </script>
 
 <template>

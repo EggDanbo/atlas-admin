@@ -4,8 +4,8 @@ import type { OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import { add, round } from 'xe-utils'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { cashflow as api } from '@/service/api/finance'
@@ -162,7 +162,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'VouchCashflowDetail' }
+export default { name: 'FinanceCashflowDetail' }
 </script>
 
 <template>
@@ -258,7 +258,7 @@ export default { name: 'VouchCashflowDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="finance/cashflow"
           :save="() => ({ ...formModel })"

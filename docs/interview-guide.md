@@ -32,7 +32,7 @@
 | --- | --- | --- |
 | 业务路由 | 110 | 11 个一级菜单，全部可访问 |
 | 页面组件 | 113 个 `index.vue` | 列表页 / 详情页 / 弹窗 |
-| 通用业务组件 | 34 个目录 | `SpTable`、`QueryGrid`、`SpModal`、`SpCascader`… |
+| 通用业务组件 | 34 个目录 | 三层命名：`Na*` Naive 封装 / `Sp*` 设计系统 / `Biz*` 业务组件 |
 | 组合式函数 | 16 个目录 + 独立 Hook | `useListPage`、`usePermission`、`useTabbar`、`useDetail` |
 | mock schema | 118 个视图目录 / 97 个数据格式 / 1322 个字段 | 脚本从视图代码静态提取 |
 | 单测用例 | 44 | 4 个 spec，覆盖伪随机 / 字段推断 / 列生成 / 权限 |

@@ -5,8 +5,8 @@ import { useClipboard, useStorage } from '@vueuse/core'
 import { cloneDeep } from 'lodash-es'
 import { NButton, NTooltip, useMessage } from 'naive-ui'
 import { pinyin } from 'pinyin-pro'
-import NaIcon from '@/components/Icon/src/NaIcon.vue'
-import { getRender, Render } from '@/components/Render'
+import NaIcon from '@/components/NaIcon/src/NaIcon.vue'
+import { getRender, SpRender } from '@/components/SpRender'
 import { useGo } from '@/hooks/help/usePage'
 import { useGlobSetting } from '@/hooks/setting'
 import { useAsyncRouteStore } from '@/store/modules/async-route'
@@ -330,7 +330,7 @@ defineExpose({ open })
           >
             <div>
               <div class="flex items-center">
-                <Render v-if="item.icon" :value="getRender(item.icon)" style="font-size: 18px;" />
+                <SpRender v-if="item.icon" :value="getRender(item.icon)" style="font-size: 18px;" />
                 <NaIcon v-else icon="ant-design:menu-outlined" />
                 <n-text class="ml-1 text-base leading-none">
                   {{ item.label }}
@@ -363,7 +363,7 @@ defineExpose({ open })
             >
               <div>
                 <div class="flex items-center">
-                  <Render v-if="item.icon" :value="getRender(item.icon)" style="font-size: 18px;" />
+                  <SpRender v-if="item.icon" :value="getRender(item.icon)" style="font-size: 18px;" />
                   <NaIcon v-else icon="ant-design:menu-outlined" />
                   <n-text class="ml-1 text-base leading-none">
                     {{ item.label }}

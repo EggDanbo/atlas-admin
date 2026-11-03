@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Upload } from '@/components/File'
+import { Upload } from '@/components/BizFile'
 import { useDetail } from '@/hooks/detail'
 import { punch as api } from '@/service/api/hr/attendance'
 
@@ -28,7 +28,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinRecordDetail' }
+export default { name: 'HrRecordPunchDetail' }
 </script>
 
 <template>

@@ -4,7 +4,7 @@ import type { CheckinGroup } from './types'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format, hoursToSeconds, minutesToSeconds } from 'date-fns'
 import printJS from 'print-js'
-import { LogBiz } from '@/components/Logs/Biz'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { unit as teamApi } from '@/service/api/access'
@@ -304,7 +304,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinRulesSchedule' }
+export default { name: 'HrAttendanceRuleSchedule' }
 </script>
 
 <template>

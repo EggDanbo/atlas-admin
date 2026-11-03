@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { QueryGrid } from '@/components/QueryGrid'
 import { SpCascader } from '@/components/SpCascader'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
 import { useListPage } from '@/hooks/list'
 import { usePermission } from '@/hooks/permission/usePermission'
@@ -230,14 +230,14 @@ function handleRefresh() {
 </script>
 
 <script lang="ts">
-export default { name: 'PermitUser' }
+export default { name: 'AccessGrant' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-input
               v-model:value="queryModel.filter"
@@ -276,7 +276,7 @@ export default { name: 'PermitUser' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleSetRole(row)">

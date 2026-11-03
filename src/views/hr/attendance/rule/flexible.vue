@@ -4,7 +4,7 @@ import type { CheckinGroup, CheckinLocation, CheckinSpeWorkDay, CheckinWifiMac }
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format, hoursToSeconds, minutesToSeconds } from 'date-fns'
 import printJS from 'print-js'
-import { LogBiz } from '@/components/Logs/Biz'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpTimePicker } from '@/components/SpTimePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
@@ -362,7 +362,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinRulesFlexible' }
+export default { name: 'HrAttendanceRuleFlexible' }
 </script>
 
 <template>

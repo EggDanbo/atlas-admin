@@ -79,7 +79,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'PermitUserPassModal' }
+export default { name: 'AccessGrantPassModal' }
 </script>
 
 <template>

@@ -2,12 +2,12 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { PenseContractSelect, UserSelect } from '@/components/TableSelect'
+import { ExpenseContractPicker, MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -298,7 +298,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PenseServeDetail' }
+export default { name: 'ExpenseRequestEntertainDetail' }
 </script>
 
 <template>
@@ -329,7 +329,7 @@ export default { name: 'PenseServeDetail' }
           <n-input v-model:value="formModel.title" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="申请人" path="user_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
             :stoped="false"
@@ -337,7 +337,7 @@ export default { name: 'PenseServeDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="付款合同" path="contract_id">
-          <PenseContractSelect v-model:value="formModel.contract_id" :team_id="formModel.team_id" />
+          <ExpenseContractPicker v-model:value="formModel.contract_id" :team_id="formModel.team_id" />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="采购事由" path="digest">
           <n-input v-model:value="formModel.digest" type="textarea" :rows="3" clearable />
@@ -574,7 +574,7 @@ export default { name: 'PenseServeDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="expense/entertain"
           :save="() => ({ ...formModel })"

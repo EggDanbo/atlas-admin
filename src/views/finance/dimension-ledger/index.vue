@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
 import { useWindowSizeFn } from '@/hooks/help/useWindowSizeFn'
 import { useListPage } from '@/hooks/list'
@@ -245,14 +245,14 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'VouchBookWdmxz' }
+export default { name: 'FinanceLedgerDimension' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="2">
             <SpDateRange
               v-model="queryModel.date"
@@ -269,7 +269,7 @@ export default { name: 'VouchBookWdmxz' }
               value-field="id"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-split
         direction="horizontal"

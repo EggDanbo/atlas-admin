@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import common from '@/service/api/common'
 import { makeup as api } from '@/service/api/hr/attendance-apply'
@@ -146,14 +146,14 @@ async function handleAlert(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'StaffApplyReissue' }
+export default { name: 'HrApplyMakeup' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="true">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="true">
           <n-gi span="2">
             <SpDateRange v-model="queryModel.date" type="date" />
           </n-gi>
@@ -177,7 +177,7 @@ export default { name: 'StaffApplyReissue' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">

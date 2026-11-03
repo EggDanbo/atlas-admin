@@ -7,6 +7,8 @@ import { useUserStore } from '@/store/modules/user'
 import bus from '@/utils/bus'
 import toast from '@/utils/toast'
 
+defineOptions({ name: 'DashboardOverview' })
+
 const enumStore = useEnumStore()
 
 const router = useRouter()

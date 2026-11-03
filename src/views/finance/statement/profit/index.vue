@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { PdfSetting } from '@/components/BizPrint'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { profit as api } from '@/service/api/finance/statement'
 import { subject as contentApi } from '@/service/api/masterdata'
@@ -202,14 +202,14 @@ function handleQuery(key: string, row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'VouchFinanceLrfpb' }
+export default { name: 'FinanceStatementProfit' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="1">
             <n-radio-group
               v-model:value="queryModel.types"
@@ -228,7 +228,7 @@ export default { name: 'VouchFinanceLrfpb' }
               :year-range="[2008, new Date().getFullYear() + 1]"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">

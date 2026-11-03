@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ProLayoutMode } from 'pro-naive-ui'
 import type { LayoutMenuReturn } from '@/layout/Injection'
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIconButton } from '@/components/NaIconButton'
 import Breadcrumb from '@/layout/components/Breadcrumb/Breadcrumb.vue'
 import { useConfigStore } from '@/store/modules/config'
 import CollectPage from '../CollectPage/CollectPage.vue'
@@ -32,7 +32,7 @@ const showSidebarHiddenButton = computed(() => {
     />
     <!-- 隐藏菜单按钮 -->
     <div v-if="showSidebarHiddenButton" class="ml-2" @click="showSidebar = !showSidebar">
-      <NaIconBtn :size="21" icon="ant-design:align-left-outlined" :tooltip="showSidebar ? '隐藏菜单' : '显示菜单'" />
+      <NaIconButton :size="21" icon="ant-design:align-left-outlined" :tooltip="showSidebar ? '隐藏菜单' : '显示菜单'" />
     </div>
     <!-- 收藏夹 -->
     <div class="hidden lg:block">

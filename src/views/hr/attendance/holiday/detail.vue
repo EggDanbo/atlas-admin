@@ -200,7 +200,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'StaffCheckinFestivalDetail' }
+export default { name: 'HrAttendanceHolidayDetail' }
 </script>
 
 <template>

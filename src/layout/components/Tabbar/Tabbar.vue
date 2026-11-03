@@ -2,9 +2,9 @@
 import { useThemeVars } from 'naive-ui'
 import tinyColor from 'tinycolor2'
 import { VueDraggable } from 'vue-draggable-plus'
-import { NaIcon } from '@/components/Icon'
-import { NaIconBtn } from '@/components/IconBtn'
-import { getRender, Render } from '@/components/Render'
+import { NaIcon } from '@/components/NaIcon'
+import { NaIconButton } from '@/components/NaIconButton'
+import { getRender, SpRender } from '@/components/SpRender'
 import { projectConfig } from '@/config'
 import { ERROR_ROUTE_NAME, HOME_ROUTE_PATH, LOGIN_ROUTE_NAME } from '@/config/page'
 import { useGo } from '@/hooks/help/usePage'
@@ -371,12 +371,12 @@ function goPage(e) {
         <template #suffix>
           <n-flex :size="[0, 0]" align="center" style="padding-top: 1px;">
             <Flushed v-if="showFlushed" class="-mt-1" />
-            <NaIconBtn
+            <NaIconButton
               :icon=" isFullscreen ? 'ant-design:fullscreen-exit-outlined' : 'ant-design:fullscreen-outlined'"
               class="-mt-1" :tooltip="isFullscreen ? '退出全屏' : '内容全屏'"
               :tooltip-props="{ placement: 'bottom' }" @click="handleFullscreen"
             />
-            <NaIconBtn
+            <NaIconButton
               icon="ant-design:close-outlined" class="mr-2 -mt-1" tooltip="关闭全部"
               :tooltip-props="{ placement: 'bottom' }"
               @click="closeAll"
@@ -402,7 +402,7 @@ function goPage(e) {
             <span v-if="showTabbarIcon && item.meta.icon" class="tag-icon flex items-center">
               <NaIcon :icon="item.meta.icon" />
             </span>
-            <Render :ref="`tabbarRender_${item.name}`" :value="getRender(item.meta.title)" />
+            <SpRender :ref="`tabbarRender_${item.name}`" :value="getRender(item.meta.title)" />
             <!-- 徽章 状态 标记 -->
             <n-badge v-if="item.meta.state === 'undone'" class="ml-1" dot type="warning" />
             <!-- 关闭按钮 -->

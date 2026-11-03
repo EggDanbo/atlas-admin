@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import { QueryGrid } from '@/components/QueryGrid'
-import { SendMessageModal } from '@/components/SendMessageModal'
+import { BizSendMessageModal } from '@/components/BizSendMessageModal'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { messageTypeOptions, useMessageApi } from '@/hooks/message'
 import api from '@/service/api/message'
 import { useMessageStore } from '@/store/modules/message'
@@ -70,7 +70,7 @@ function updatePage(page: number) {
 const dateShortcuts = getDateShortcuts()
 
 // 发送消息弹窗
-const sendModalRef = ref<InstanceType<typeof SendMessageModal> | null>(null)
+const sendModalRef = ref<InstanceType<typeof BizSendMessageModal> | null>(null)
 
 function openSendModal() {
   sendModalRef.value?.open()
@@ -146,14 +146,14 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'MessageCenter' }
+export default { name: 'ProfileMessage' }
 </script>
 
 <template>
   <NaPage>
     <n-flex>
       <n-card :bordered="false" class="flex-shrink-0">
-        <QueryGrid :cols="24" :show-fold="false">
+        <SpQueryGrid :cols="24" :show-fold="false">
           <n-gi span="6">
             <n-date-picker
               v-model:value="filterModel.date"
@@ -194,7 +194,7 @@ export default { name: 'MessageCenter' }
               clearable
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
 
       <n-card :bordered="false" class="flex-1">
@@ -320,7 +320,7 @@ export default { name: 'MessageCenter' }
       </n-card>
 
       <!-- 发送消息弹窗 -->
-      <SendMessageModal ref="sendModalRef" @success="fetch" />
+      <BizSendMessageModal ref="sendModalRef" @success="fetch" />
     </n-flex>
   </NaPage>
 </template>

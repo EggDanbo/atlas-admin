@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AppProvider from '@/components/Provider/Provider.vue'
+import AppProvider from '@/components/AppProvider/AppProvider.vue'
 </script>
 
 <template>

@@ -2,8 +2,8 @@
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
 import { format } from 'date-fns'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { invoice as api } from '@/service/api/crm'
 
@@ -195,7 +195,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'TradeInvoiceDetail' }
+export default { name: 'CrmInvoiceDetail' }
 </script>
 
 <template>

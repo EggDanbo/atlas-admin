@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { scope as MapScope } from '@/components/map'
+import { SpMapScope } from '@/components/SpScope'
 import toast from '@/utils/toast'
 
 const props = defineProps({
@@ -245,7 +245,7 @@ defineExpose({ open, close })
     </template>
   </SpModal>
 
-  <MapScope ref="mapScopeRef" @confirm="mapScopeConfirm" />
+  <SpMapScope ref="mapScopeRef" @confirm="mapScopeConfirm" />
 </template>
 
 <style lang="less" scoped>

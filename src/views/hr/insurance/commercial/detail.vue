@@ -2,10 +2,10 @@
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { addYears, format, subDays } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { OuterSelect } from '@/components/TableSelect'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PartnerPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { commercial as api } from '@/service/api/hr/insurance'
 
@@ -99,7 +99,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffProtectInsureDetail' }
+export default { name: 'HrInsuranceCommercialDetail' }
 </script>
 
 <template>
@@ -148,7 +148,7 @@ export default { name: 'StaffProtectInsureDetail' }
           <n-date-picker v-model:value="formModel.expire" type="date" fast-month-select clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="保险公司" path="outer_id">
-          <OuterSelect
+          <PartnerPicker
             v-model:value="formModel.outer_id"
             :options="formModel.outer_name"
             types="1"
@@ -240,7 +240,7 @@ export default { name: 'StaffProtectInsureDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/insurance/commercial"
           :save="() => ({ ...formModel })"

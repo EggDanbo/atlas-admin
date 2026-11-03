@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { FormRules } from 'naive-ui'
-import { Upload } from '@/components/File/Upload'
-import { NaIcon } from '@/components/Icon'
-import { NaPage } from '@/components/Page'
+import { Upload } from '@/components/BizFile/Upload'
+import { NaIcon } from '@/components/NaIcon'
+import { NaPage } from '@/components/NaPage'
 import { SpCascader } from '@/components/SpCascader'
 import { useFormValid } from '@/hooks/help/useFormValid'
 import team from '@/service/api/access/unit'
@@ -170,7 +170,7 @@ onMounted(() => {
 </script>
 
 <script lang="ts">
-export default { name: 'UserCenter' }
+export default { name: 'ProfileCenter' }
 </script>
 
 <template>

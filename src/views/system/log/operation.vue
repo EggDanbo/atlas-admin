@@ -3,7 +3,7 @@ import type { OpenModal } from '@/components/SpModal'
 import type { TableColumn, TableProps } from '@/components/SpTable'
 import { addDays, format } from 'date-fns'
 import { reactive, ref, unref } from 'vue'
-import { BizlogView } from '@/components/Logs/Biz'
+import { BizlogView } from '@/components/BizLogs/Biz'
 import { SpDateRange } from '@/components/SpDateRange'
 import { logBizLog as api } from '@/service/api/system'
 import { logColumns } from './columns'
@@ -73,7 +73,7 @@ function handleView(row) {
 </script>
 
 <script lang="ts">
-export default { name: 'LogBizlog' }
+export default { name: 'SystemLogOperation' }
 </script>
 
 <template>

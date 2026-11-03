@@ -3,8 +3,8 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import { add } from 'xe-utils'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { receivable as api } from '@/service/api/crm'
@@ -268,7 +268,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'TradePromiseDetail' }
+export default { name: 'CrmReceivableDetail' }
 </script>
 
 <template>
@@ -560,7 +560,7 @@ export default { name: 'TradePromiseDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="crm/receivable"
           :save="() => ({ ...formModel })"

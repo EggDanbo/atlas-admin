@@ -83,7 +83,7 @@ function handleView(row) {
 </script>
 
 <script lang="ts">
-export default { name: 'LogApp' }
+export default { name: 'SystemLogApp' }
 </script>
 
 <template>

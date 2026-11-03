@@ -101,7 +101,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'PermitUserRoleModal' }
+export default { name: 'AccessGrantRoleModal' }
 </script>
 
 <template>

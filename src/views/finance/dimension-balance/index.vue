@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { AuxDimensionPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
-import { AssistSelect } from '@/components/TableSelect'
 import { useListPage } from '@/hooks/list'
 import { dimensionBalance as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
@@ -115,14 +115,14 @@ function handleQuery(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'VouchReportWdyeb' }
+export default { name: 'FinanceBalanceDimension' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :cols="12">
+        <SpQueryGrid :table-ref="tableRef" :cols="12">
           <n-gi span="3">
             <SpDateRange
               v-model="queryModel.date"
@@ -140,7 +140,7 @@ export default { name: 'VouchReportWdyeb' }
                 :style="{ width: '210px' }"
                 @update:value="tableRef.clear()"
               />
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="queryModel.assist_id"
                 placeholder="核算维度"
                 :multiple="true"
@@ -157,7 +157,7 @@ export default { name: 'VouchReportWdyeb' }
               value-field="id"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">

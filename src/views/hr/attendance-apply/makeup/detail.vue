@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { makeup as api } from '@/service/api/hr/attendance-apply'
 import { approve } from '@/service/api/workflow'
@@ -179,7 +179,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffApplyReissueDetail' }
+export default { name: 'HrApplyMakeupDetail' }
 </script>
 
 <template>
@@ -323,7 +323,7 @@ export default { name: 'StaffApplyReissueDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/attendance-apply/makeup"
           :save="() => ({ ...formModel })"

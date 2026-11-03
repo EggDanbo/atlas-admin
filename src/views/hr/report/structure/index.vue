@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
@@ -102,14 +102,14 @@ function handleQuery(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'StaffReportRyjgb' }
+export default { name: 'HrReportStructure' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="2">
             <SpDateRange
               v-model="queryModel.date"
@@ -125,7 +125,7 @@ export default { name: 'StaffReportRyjgb' }
               value-field="id"
             />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">

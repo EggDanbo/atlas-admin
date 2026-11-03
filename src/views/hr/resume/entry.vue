@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { BranchSelect } from '@/components/TableSelect'
+import { TeamPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -348,7 +348,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffResumeEntry' }
+export default { name: 'HrResumeEntry' }
 </script>
 
 <template>
@@ -504,7 +504,7 @@ export default { name: 'StaffResumeEntry' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="派驻分队" path="branch_id">
-          <BranchSelect
+          <TeamPicker
             v-model:value="formModel.branch_id"
             :options="formModel.branch_name"
             :multiple="false"
@@ -1498,7 +1498,7 @@ export default { name: 'StaffResumeEntry' }
         <n-button @click="modalRef?.close">
           关闭
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/resume/entry"
           :save="() => ({ ...formModel })"

@@ -57,7 +57,7 @@ defineExpose({ open })
 </script>
 
 <script lang="ts">
-export default { name: 'SystemUserGridView' }
+export default { name: 'SystemGridView' }
 </script>
 
 <template>

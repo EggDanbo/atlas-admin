@@ -2,11 +2,11 @@
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
-import { UserSelect } from '@/components/TableSelect'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
+import { MemberPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { shift as api } from '@/service/api/hr/attendance-apply'
 import { approve } from '@/service/api/workflow'
@@ -211,7 +211,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffApplyTranslateDetail' }
+export default { name: 'HrApplyShiftDetail' }
 </script>
 
 <template>
@@ -228,7 +228,7 @@ export default { name: 'StaffApplyTranslateDetail' }
     >
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="调班对象" path="swap_id">
-          <UserSelect
+          <MemberPicker
             v-model:value="formModel.swap_id"
             v-model:options="formModel.swap_name"
             :stoped="false"
@@ -342,7 +342,7 @@ export default { name: 'StaffApplyTranslateDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/attendance-apply/shift"
           :save="() => ({ ...formModel })"

@@ -5,10 +5,10 @@ import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import printJS from 'print-js'
 import { add, multiply, round, subtract } from 'xe-utils'
-import DraftBox from '@/components/DraftBox'
-import { BizLogChanges, LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { BizLogChanges, LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
-import { AssistSelect } from '@/components/TableSelect'
+import { AuxDimensionPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { voucher as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
@@ -459,7 +459,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'VouchEntryDetail' }
+export default { name: 'FinanceVoucherCreateDetail' }
 </script>
 
 <template>
@@ -610,7 +610,7 @@ export default { name: 'VouchEntryDetail' }
         >
           <n-grid :cols="24" :x-gap="24" :y-gap="24">
             <n-form-item-gi :span="12" label="部门" :path="`list[${keys}].room_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.room_id"
                 v-model:options="items.room_name"
                 types="部门"
@@ -619,7 +619,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="6" label="员工" :path="`list[${keys}].work_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.work_id"
                 v-model:options="items.work_name"
                 types="员工"
@@ -636,7 +636,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="银行" :path="`list[${keys}].bank_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.bank_id"
                 v-model:options="items.bank_name"
                 types="银行"
@@ -645,7 +645,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="银行账号" :path="`list[${keys}].account_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.account_id"
                 v-model:options="items.account_name"
                 types="银行账号"
@@ -654,7 +654,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="项目" :path="`list[${keys}].project_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.project_id"
                 v-model:options="items.project_name"
                 types="项目"
@@ -663,7 +663,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="客户" :path="`list[${keys}].customer_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.customer_id"
                 v-model:options="items.customer_name"
                 types="客户"
@@ -672,7 +672,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="供应商" :path="`list[${keys}].supplier_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.supplier_id"
                 v-model:options="items.supplier_name"
                 types="供应商"
@@ -681,7 +681,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="往来单位" :path="`list[${keys}].transact_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.transact_id"
                 v-model:options="items.transact_name"
                 types="往来单位"
@@ -690,7 +690,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="资产类别" :path="`list[${keys}].article_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.article_id"
                 v-model:options="items.article_name"
                 types="资产类别"
@@ -699,7 +699,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="业态类型" :path="`list[${keys}].pattern_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.pattern_id"
                 v-model:options="items.pattern_name"
                 types="业态类型"
@@ -708,7 +708,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="投资品种" :path="`list[${keys}].product_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.product_id"
                 v-model:options="items.product_name"
                 types="投资品种"
@@ -717,7 +717,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="投资项目" :path="`list[${keys}].invests_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.invests_id"
                 v-model:options="items.invests_name"
                 types="投资项目"
@@ -726,7 +726,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="期间费用" :path="`list[${keys}].expense_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.expense_id"
                 v-model:options="items.expense_name"
                 types="期间费用"
@@ -735,7 +735,7 @@ export default { name: 'VouchEntryDetail' }
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="营业外收支来源" :path="`list[${keys}].unusual_id`" :show-feedback="false">
-              <AssistSelect
+              <AuxDimensionPicker
                 v-model:value="items.unusual_id"
                 v-model:options="items.unusual_name"
                 types="营业外收支来源"
@@ -811,7 +811,7 @@ export default { name: 'VouchEntryDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="finance/voucher"
           :save="() => ({ ...formModel })"

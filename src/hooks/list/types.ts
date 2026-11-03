@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { PrintInst } from '@/components/Print'
+import type { PrintInst } from '@/components/BizPrint'
 import type { OpenModal } from '@/components/SpModal'
 import type { TableColumn, TableInstance, TableProps } from '@/components/SpTable'
 

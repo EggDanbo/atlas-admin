@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { usePrevious } from '@vueuse/core'
-import { NaIcon } from '@/components/Icon'
+import { NaIcon } from '@/components/NaIcon'
 import { useConfigStore } from '@/store/modules/config'
 
 const configStore = useConfigStore()

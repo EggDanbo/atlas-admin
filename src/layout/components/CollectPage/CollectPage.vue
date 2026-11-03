@@ -5,8 +5,8 @@ import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 import { vDraggable } from 'vue-draggable-plus'
 import { useRoute } from 'vue-router'
-import { NaIcon } from '@/components/Icon'
-import { NaIconBtn } from '@/components/IconBtn'
+import { NaIcon } from '@/components/NaIcon'
+import { NaIconButton } from '@/components/NaIconButton'
 import { useGo } from '@/hooks/help/usePage'
 import { useI18n } from '@/hooks/i18n/useI18n'
 import { clapMultipleRoute } from '@/router/helper'
@@ -137,7 +137,7 @@ onMounted(() => {
   <n-popover v-model:show="popoverShow" trigger="click" placement="bottom-start" style="padding: 0" :show-arrow="false">
     <template #trigger>
       <div @click="popoverShow = !popoverShow">
-        <NaIconBtn :size="20" icon="ant-design:star-outlined" tooltip="收藏夹" class="mr-2" />
+        <NaIconButton :size="20" icon="ant-design:star-outlined" tooltip="收藏夹" class="mr-2" />
       </div>
     </template>
     <div class="stock-nav">
@@ -178,7 +178,7 @@ onMounted(() => {
                 清空
               </n-button>
               <div v-if="false" @click="toggleShowMenus">
-                <NaIconBtn :width="24" :height="24" :size="17" icon="ant-design:vertical-left-outlined" :tooltip="isShowMenus ? '收起全部页面' : '展开全部页面'" class="mr-1" />
+                <NaIconButton :width="24" :height="24" :size="17" icon="ant-design:vertical-left-outlined" :tooltip="isShowMenus ? '收起全部页面' : '展开全部页面'" class="mr-1" />
               </div>
             </n-flex>
           </template>

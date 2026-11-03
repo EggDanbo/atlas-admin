@@ -78,7 +78,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'PermitGroupPassModal' }
+export default { name: 'AccessGroupPassModal' }
 </script>
 
 <template>

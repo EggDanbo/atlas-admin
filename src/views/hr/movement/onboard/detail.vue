@@ -3,12 +3,12 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { LogBiz } from '@/components/Logs/Biz'
-import { LogProcess } from '@/components/Logs/process'
+import BizDraftBox from '@/components/BizDraftBox'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
-import { BranchSelect, ResumeSelect } from '@/components/TableSelect'
+import { ResumePicker, TeamPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
@@ -361,7 +361,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffEntryDetail' }
+export default { name: 'HrMovementOnboardDetail' }
 </script>
 
 <template>
@@ -457,7 +457,7 @@ export default { name: 'StaffEntryDetail' }
           {{ row.branch_name }}
         </template>
         <template #branch_edit="{ row }">
-          <BranchSelect
+          <TeamPicker
             v-model:value="row.branch_id"
             :options="row.branch_name"
             :team_id="formModel.team_id"
@@ -479,7 +479,7 @@ export default { name: 'StaffEntryDetail' }
       </SpTable>
 
       <div class="w-full flex">
-        <ResumeSelect
+        <ResumePicker
           ref="resumeSelectRef"
           :team_id="formModel.team_id"
           :disabled="!formModel.team_id"
@@ -595,7 +595,7 @@ export default { name: 'StaffEntryDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/movement/onboard"
           :save="() => ({ ...formModel })"

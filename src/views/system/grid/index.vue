@@ -106,7 +106,7 @@ function handleSelectDelete() {
 </script>
 
 <script lang="ts">
-export default { name: 'SystemUserGrid' }
+export default { name: 'SystemGrid' }
 </script>
 
 <template>

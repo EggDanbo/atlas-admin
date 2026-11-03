@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { RouteLocationMatched, RouteRecordNameGeneric } from 'vue-router'
 import type { AppRouteMeta } from '../../../../typings/vue-router'
-import { NaIcon } from '@/components/Icon'
-import { getRender, Render } from '@/components/Render'
+import { NaIcon } from '@/components/NaIcon'
+import { getRender, SpRender } from '@/components/SpRender'
 import { useGo } from '@/hooks/help/usePage'
 import { RedirectName } from '@/router/base'
 import { useConfigStore } from '@/store/modules/config'
@@ -89,7 +89,7 @@ const breadcrumbList = computed(() => {
               v-if="showBreadcrumbIcon && routeItem.meta.icon" :icon="routeItem.meta.icon"
               class="mr-1"
             />
-            <Render :ref="`renderDom_${routeItem.name}`" :value="getRender(routeItem.meta.title)" />
+            <SpRender :ref="`renderDom_${routeItem.name}`" :value="getRender(routeItem.meta.title)" />
           </span>
         </n-dropdown>
         <span v-else class="link-text">
@@ -97,7 +97,7 @@ const breadcrumbList = computed(() => {
             v-if="showBreadcrumbIcon && routeItem.meta.icon" :icon="routeItem.meta.icon"
             class="mr-1"
           />
-          <Render :ref="`renderDom_${routeItem.name}`" :value="getRender(routeItem.meta.title)" />
+          <SpRender :ref="`renderDom_${routeItem.name}`" :value="getRender(routeItem.meta.title)" />
         </span>
       </n-breadcrumb-item>
     </template>

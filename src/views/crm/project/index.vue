@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { PartnerPicker } from '@/components/SpTablePicker/index.ts'
 import { SpTree } from '@/components/SpTree'
-import { OuterSelect } from '@/components/TableSelect/index.ts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { project as api } from '@/service/api/crm'
@@ -203,14 +203,14 @@ async function handleImportSuccess(fileId: string) {
 </script>
 
 <script lang="ts">
-export default { name: 'TradeProject' }
+export default { name: 'CrmProject' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef">
+        <SpQueryGrid :table-ref="tableRef">
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.states"
@@ -229,7 +229,7 @@ export default { name: 'TradeProject' }
             />
           </n-gi>
           <n-gi span="3">
-            <OuterSelect
+            <PartnerPicker
               v-model:value="queryModel.outer_id"
               placeholder="客户"
               types="0"
@@ -247,7 +247,7 @@ export default { name: 'TradeProject' }
           <n-gi span="5">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">

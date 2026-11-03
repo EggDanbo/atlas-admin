@@ -158,7 +158,7 @@
 | `gridicons:help-outline` | `ant-design:question-circle-outlined` | 多个组件 |
 | `streamline:interface-edit-paint-color-*` | `ant-design:bg-colors-outlined` | CutThemeMenu.vue |
 | `solar:alt-arrow-down-outline` | `ant-design:down-outlined` | 多个 views |
-| `solar:alt-arrow-up-outline` | `ant-design:up-outlined` | QueryGrid.vue |
+| `solar:alt-arrow-up-outline` | `ant-design:up-outlined` | SpQueryGrid.vue |
 | `solar:layers-outline` | `ant-design:appstore-outlined` | SpTable/Table.vue |
 | `solar:settings-outline` | `ant-design:setting-outlined` | SpTable/Settings.vue |
 | `fa6-solid:moon` | `ant-design:moon-outlined` | CutDark.vue, CutThemeMenu.vue |

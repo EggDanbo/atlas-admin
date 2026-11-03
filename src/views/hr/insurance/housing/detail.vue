@@ -2,9 +2,9 @@
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
-import DraftBox from '@/components/DraftBox'
-import { Upload } from '@/components/File'
-import { LogBiz } from '@/components/Logs/Biz'
+import BizDraftBox from '@/components/BizDraftBox'
+import { Upload } from '@/components/BizFile'
+import { LogBiz } from '@/components/BizLogs/Biz'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { housing as api } from '@/service/api/hr/insurance'
 import { useEnumStore } from '@/store/modules/enums'
@@ -101,7 +101,7 @@ defineExpose(exposed)
 </script>
 
 <script lang="ts">
-export default { name: 'StaffProtectHouseDetail' }
+export default { name: 'HrInsuranceHousingDetail' }
 </script>
 
 <template>
@@ -236,7 +236,7 @@ export default { name: 'StaffProtectHouseDetail' }
         <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
           操作日志
         </n-button>
-        <DraftBox
+        <BizDraftBox
           v-if="isEdit && Number(formModel.id) === 0"
           types="hr/insurance/housing"
           :save="() => ({ ...formModel })"

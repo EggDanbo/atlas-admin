@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { LogBiz } from '@/components/Logs/Biz'
-import { PdfSetting } from '@/components/Print'
-import { QueryGrid } from '@/components/QueryGrid'
+import { LogBiz } from '@/components/BizLogs/Biz'
+import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpDateRange } from '@/components/SpDateRange'
+import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { voucher as api } from '@/service/api/finance'
 import { getMonthFirstAndLastDayTimestamp } from '@/utils/dateUtil'
@@ -179,14 +179,14 @@ async function handleImportSuccess(fileId: string) {
 </script>
 
 <script lang="ts">
-export default { name: 'VouchEntry' }
+export default { name: 'FinanceVoucherCreate' }
 </script>
 
 <template>
   <NaPage :loading="pageLoading">
     <n-flex>
       <n-card :bordered="false">
-        <QueryGrid :table-ref="tableRef" :show-fold="false">
+        <SpQueryGrid :table-ref="tableRef" :show-fold="false">
           <n-gi span="2">
             <SpDateRange
               v-model="queryModel.date"
@@ -206,7 +206,7 @@ export default { name: 'VouchEntry' }
           <n-gi span="3">
             <SpSearch :table-ref="tableRef" />
           </n-gi>
-        </QueryGrid>
+        </SpQueryGrid>
       </n-card>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">
