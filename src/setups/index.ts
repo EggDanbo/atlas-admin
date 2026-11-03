@@ -1,0 +1,7 @@
+export { setupNaiveDiscreteApi } from '@/setups/naiveDiscreteApi'
+export { setupGlobalComponent } from '@/setups/globalComponent'
+export { setupProNaiveui } from '@/setups/proNaiveui'
+export { createAppLoading } from '@/setups/appLoading'
+export { setupPreloadData } from '@/setups/preloadData'
+export { setupVideoPlayer } from '@/setups/videoplayer'
+export { setupVxeTable } from '@/setups/vxeTable'

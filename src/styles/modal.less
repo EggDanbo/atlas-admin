@@ -1,0 +1,33 @@
+.modal-padding {
+  padding: 15px 35px 5px;
+}
+
+.vxe-modal--wrapper {
+  .vxe-modal--box {
+    .vxe-modal--body {
+      padding: 0 2px 0 0;
+
+      &-default,
+      .vxe-modal--content {
+        &::-webkit-scrollbar {
+          background: transparent;
+          width: 8px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+  &:not(.full-modal) {
+    .vxe-modal--box {
+      max-height: 90vh;
+    }
+  }
+}

@@ -1,0 +1,116 @@
+import type { TableProps } from '@/components/SpTable'
+
+export const gridOptions = reactive<TableProps>({
+  canResize: true,
+  fitContainer: true,
+  keepSource: true,
+  rowConfig: { isCurrent: true, isHover: false },
+  cellConfig: {
+    height: 56,
+  },
+  editConfig: {
+    trigger: 'click',
+    mode: 'row',
+    showStatus: true,
+    icon: 'fa fa-file-text-o',
+    autoClear: false,
+  },
+  editRules: {
+    types: [{ required: true, message: '' }],
+    content: [{ required: true, message: '' }],
+  },
+  validConfig: {
+    msgMode: 'full',
+  },
+  showToolbar: false,
+  columns: [
+    { type: 'seq', title: '行号', width: 60, align: 'right' },
+    {
+      field: 'name',
+      title: '姓名',
+      width: 120,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'types',
+      title: '奖惩类型',
+      width: 120,
+      align: 'left',
+      headerAlign: 'center',
+      editRender: {},
+      slots: { edit: 'types_edit', default: 'types_default' },
+    },
+    {
+      field: 'amount',
+      title: '金额',
+      width: 160,
+      align: 'right',
+      headerAlign: 'center',
+      editRender: {},
+      slots: { edit: 'amount_edit' },
+    },
+    {
+      field: 'content',
+      title: '奖惩内容',
+      minWidth: 300,
+      align: 'left',
+      headerAlign: 'center',
+      editRender: {},
+      slots: { edit: 'content_edit' },
+    },
+    {
+      isOperate: true,
+      title: '操作',
+      width: 122,
+      align: 'center',
+      headerAlign: 'center',
+      slots: { default: 'operate' },
+      fixed: 'right',
+    },
+  ],
+  pagination: false,
+  showFooter: true,
+})
+
+export const viewGridOptions = reactive<TableProps>({
+  canResize: true,
+  fitContainer: true,
+  keepSource: true,
+  rowConfig: { isCurrent: true, isHover: false },
+  showToolbar: false,
+  columns: [
+    { type: 'seq', title: '行号', width: 60, align: 'right' },
+    {
+      field: 'name',
+      title: '姓名',
+      width: 120,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'types',
+      title: '奖惩类型',
+      width: 120,
+      align: 'left',
+      headerAlign: 'center',
+      slots: { default: 'types_default' },
+    },
+    {
+      field: 'amount',
+      title: '金额',
+      width: 150,
+      align: 'right',
+      headerAlign: 'center',
+    },
+    {
+      field: 'content',
+      title: '奖惩内容',
+      minWidth: 300,
+      align: 'left',
+      headerAlign: 'center',
+    },
+  ],
+  pagination: false,
+  showFooter: true,
+})

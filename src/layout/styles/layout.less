@@ -1,0 +1,327 @@
+.naive-layout {
+  width: 100%;
+  height: 100%;
+
+  /* 主题皮肤 */
+  &-skin {
+    pointer-events: none;
+    position: fixed;
+    overflow: hidden;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+  }
+
+  :deep(.naive-layout-tabbar-card) {
+    background: #f0f2f5;
+  }
+
+  .@{cp}-pro-layout--vertical {
+    // Logo
+    :deep(.naive-layout-logo-large) {
+      height: calc(var(--pro-layout-nav-height) + 60px);
+      .logo-item a {
+        flex-direction: column;
+        img {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  // 顶栏
+  :deep(.naive-layout-header) {
+    z-index: 1;
+    // 顶栏 主题色
+    .nav-primary {
+      background-color: var(--primary-color);
+      .@{cp}-icon {
+        color: rgba(255, 255, 255, 0.75);
+        &:hover {
+          color: #fff;
+        }
+      }
+      .username {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .search-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        .@{cp}-text,
+        .@{cp}-icon {
+          color: rgba(255, 255, 255, 0.5);
+          opacity: 1;
+        }
+        .ctrl-text {
+          background-color: rgba(255, 255, 255, 0.2);
+          span {
+            color: rgba(255, 255, 255, 0.5);
+            opacity: 1;
+          }
+        }
+      }
+      // 面包屑
+      .@{cp}-breadcrumb .@{cp}-breadcrumb-item .@{cp}-breadcrumb-item__link {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .@{cp}-breadcrumb .@{cp}-breadcrumb-item .@{cp}-breadcrumb-item__separator {
+        color: rgba(255, 255, 255, 0.75);
+      }
+    }
+  }
+  // 内容
+  :deep(.naive-layout-main) {
+    //padding: 14px;
+    background: none;
+  }
+  // 底部
+  :deep(.naive-layout-footer) {
+    background: none;
+  }
+}
+/* 深色模式 */
+.dark-layout .@{cp}-pro-layout {
+  background: #101014;
+}
+
+/* 主题皮肤 样式定制 */
+.theme-skin {
+  .@{cp}-pro-layout {
+    background-color: transparent !important;
+  }
+  :deep(.naive-layout-footer) {
+    background-color: transparent;
+    .footer-box {
+      background-color: transparent;
+    }
+  }
+  :deep(.search-button) {
+    opacity: 0.6;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+// 顶部透明
+.header-lucency {
+  :deep(.naive-layout-header) {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+  }
+  :deep(.naive-layout-header .naive-layout-nav) {
+    background: none;
+  }
+  :deep(.naive-layout-tabbar) {
+    background: none;
+  }
+}
+
+.dark-layout.header-lucency {
+  :deep(.naive-layout-header) {
+    background: rgba(24, 24, 28, 0.6);
+    backdrop-filter: blur(8px);
+  }
+  // :deep(.naive-layout-header .naive-layout-nav){
+  //    background: none;;
+  // }
+  // :deep(.naive-layout-tabbar){
+  //   background: none;
+  // }
+}
+
+// 侧边栏透明
+.sidebar-lucency {
+  :deep(.naive-layout-sidebar) {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.dark-layout.sidebar-lucency {
+  :deep(.naive-layout-sidebar) {
+    background: rgba(24, 24, 28, 0.6);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* ======= end ======= */
+
+.light-layout {
+  .@{cp}-pro-layout {
+    background: #f0f2f5;
+  }
+}
+
+.dark-layout {
+  .@{cp}-pro-layout {
+    background: none;
+  }
+}
+
+// 侧边栏 深色
+.sidebar-dark .@{cp}-pro-layout {
+  :deep(.naive-layout-sidebar) {
+    background-color: rgb(24, 24, 28);
+    --pro-layout-border-color: rgba(255, 255, 255, 0.09);
+  }
+}
+// 侧边栏 主题色
+.sidebar-dark :deep(.n-pro-layout .sidebar-primary) {
+  background-color: var(--primary-color);
+  .sidebar-extra-logo span {
+    color: #fff;
+  }
+  .@{cp}-pro-layout__logo .logo-item a > span {
+    color: #fff;
+  }
+  .@{cp}-pro-layout__sidebar .sidebar-footer i {
+    color: rgba(255, 255, 255, 0.75);
+    &:hover {
+      color: #fff;
+    }
+  }
+  .@{cp}-pro-layout__sidebar-extra .sidebar-footer i {
+    color: rgba(255, 255, 255, 0.75);
+    &:hover {
+      color: #fff;
+    }
+  }
+  .@{cp}-menu .@{cp}-menu-item-content {
+    .@{cp}-menu-item-content-header {
+      color: rgba(255, 255, 255, 0.75);
+      &:hover {
+        color: #fff;
+      }
+    }
+    .@{cp}-menu-item-content__icon {
+      color: rgba(255, 255, 255, 0.75);
+    }
+    .@{cp}-menu-item-content__arrow {
+      color: rgba(255, 255, 255, 0.75);
+    }
+    &:hover {
+      .@{cp}-menu-item-content__icon,
+      .@{cp}-menu-item-content__arrow,
+      .@{cp}-menu-item-content-header {
+        color: #fff;
+      }
+    }
+  }
+  // 选中
+  .@{cp}-menu .@{cp}-menu-item-content--selected {
+    background: rgba(0, 0, 0, 0.1);
+    .@{cp}-menu-item-content__icon {
+      color: rgba(255, 255, 255, 0.75);
+    }
+    .@{cp}-menu-item-content-header {
+      color: #fff;
+    }
+  }
+
+  // sidebar-footer 已在 :deep() 穿透范围内，无需再嵌套 :deep()
+  .sidebar-footer .n-icon {
+    color: rgba(255, 255, 255, 0.75);
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+// 顶栏 深色
+.nav-dark {
+  :deep(.naive-layout-nav) {
+    background-color: rgb(24, 24, 28);
+    .@{cp}-icon {
+      color: rgba(255, 255, 255, 0.75);
+      &:hover {
+        color: #fff;
+      }
+    }
+    .username {
+      color: rgba(255, 255, 255, 0.75);
+    }
+    .search-button {
+      background-color: #212121;
+      .ctrl-text {
+        background-color: #212121;
+      }
+    }
+  }
+}
+
+// 间隙布局
+.interval-style {
+  :deep(.naive-layout-sidebar) {
+    margin-right: 10px;
+  }
+  :deep(.@{cp}-pro-layout__scrollbar) {
+    margin-right: 10px;
+  }
+  :deep(.naive-layout-footer) {
+    border-radius: var(--border-radius);
+  }
+  :deep(.naive-layout-header) {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
+  :deep(.naive-layout-tabbar) {
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
+}
+
+// 深色布局
+.dark-layout {
+  // 侧边栏
+  :deep(.naive-layout-sidebar) {
+    --pro-layout-border-color: rgba(66, 66, 66, 0.4);
+  }
+  :deep(.@{cp}-pro-layout.@{cp}-pro-layout--mixed-two-column .@{cp}-pro-layout__sidebar) {
+    --pro-layout-border-color: rgba(66, 66, 66, 0.4);
+  }
+  :deep(.@{cp}-pro-layout.@{cp}-pro-layout--mixed-two-column .@{cp}-pro-layout__sidebar-extra) {
+    --pro-layout-border-color: rgba(66, 66, 66, 0.4);
+  }
+  // 顶栏
+  :deep(.naive-layout-nav) {
+    --pro-layout-border-color: rgba(66, 66, 66, 0.4);
+  }
+  // 多页签
+  :deep(.naive-layout-tabbar) {
+    --pro-layout-border-color: rgba(66, 66, 66, 0.4);
+    background: none;
+  }
+  .sidebar-extra-logo {
+    border-color: rgba(66, 66, 66, 0.4);
+  }
+}
+/** 菜单 icon hover **/
+:deep(.pro-menu .n-menu-item-content:hover .n-icon) {
+  transform: scale(1.2);
+  transition: all 0.25s;
+}
+
+:deep(.n-menu--horizontal .n-menu-item-content:hover .n-icon) {
+  transform: scale(1.2);
+  transition: all 0.25s;
+}
+
+// 隐藏多页签 处理圆角
+.hide-tabbar :deep(.naive-layout-nav) {
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+// 修复 safari 中 height:100% 无效问题
+:deep(.naive-layout__scrollbar--safari) {
+  & > .n-scrollbar-container {
+    display: flex;
+    flex-direction: column;
+
+    & > .n-scrollbar-content {
+      flex-grow: 1;
+      flex-basis: 0;
+      min-height: auto;
+    }
+  }
+}

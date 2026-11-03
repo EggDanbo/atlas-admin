@@ -1,0 +1,10 @@
+allowBuilds:
+  '@parcel/watcher': false
+  es5-ext: false
+  esbuild: true
+  simple-git-hooks: false
+  vue-demi: false
+# pnpm v11 默认启用 minimumReleaseAge（24h 供应链策略），以下为窗口期内新发布包的豁免
+# 包发布满 24 小时后条目即失效，可在下次升级依赖时顺手清理
+minimumReleaseAge: 0
+minimumReleaseAgeExclude: []

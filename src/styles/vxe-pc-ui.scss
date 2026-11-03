@@ -1,0 +1,340 @@
+// 默认主题
+html[data-vxe-ui-theme='light'] {
+  // 字体颜色
+  --vxe-ui-font-color: #606266;
+  // 主题颜色
+  --vxe-ui-font-primary-color: #f97316;
+
+  // 活动颜色
+  --vxe-ui-font-primary-tinge-color: #d4d5d7;
+  // 松开颜色
+  --vxe-ui-font-primary-lighten-color: #797b80;
+  // 按下颜色
+  --vxe-ui-font-primary-darken-color: #47494c;
+  // 禁用颜色
+  --vxe-ui-font-primary-disabled-color: #bfbfbf;
+}
+// 暗黑主题
+html[data-vxe-ui-theme='dark'] {
+  --vxe-ui-font-color: #fff;
+  --vxe-ui-font-primary-color: #f97316;
+  --vxe-ui-font-primary-tinge-color: #33353b;
+  --vxe-ui-font-primary-lighten-color: #797b80;
+  --vxe-ui-font-primary-darken-color: #47494c;
+  --vxe-ui-font-primary-disabled-color: #464646;
+  --vxe-ui-layout-background-color: rgb(45, 44, 50);
+}
+
+.vxe-modal--wrapper {
+  .vxe-modal--box {
+    .vxe-modal--header {
+      &.is--ellipsis {
+        background-color: var(--vxe-ui-layout-background-color);
+        border-bottom-color: var(--vxe-ui-layout-background-color);
+      }
+      &-title {
+        background-color: var(--vxe-ui-layout-background-color);
+        border-bottom-color: var(--vxe-ui-layout-background-color);
+        padding-left: 20px;
+      }
+    }
+  }
+}
+
+// vxe-table 4.21.x 回归：浮动筛选行（floatingFilterConfig.enabled）的表头单元格
+// 仍输出旧类名 is--padding，而新版 CSS 已改为 is--pg-* 按边控制 padding，
+// 导致浮动筛选行的筛选控件左右间距丢失，这里按密度变量手动补齐。
+// 省略模式下 .vxe-cell 有固定高（内联 height），内容+padding 超高会把底部
+// padding 挤掉（上大下小），放开高度让上下 padding 对称、由控件撑开行高
+.vxe-table .vxe-header--column.is--floating-filters {
+  .vxe-cell {
+    padding: var(--vxe-ui-table-current-cell-padding);
+    height: auto !important;
+  }
+}
+
+// 表格行样式
+// 成功（绿色）
+.row-success {
+  background-color: #f0fdfa !important;
+  .vxe-body--column {
+    background-color: #f0fdfa !important;
+  }
+
+  &-100 {
+    background-color: #d1fae5 !important;
+    .vxe-body--column {
+      background-color: #d1fae5 !important;
+    }
+  }
+  &-200 {
+    background-color: #a7f3d0 !important;
+    .vxe-body--column {
+      background-color: #a7f3d0 !important;
+    }
+  }
+  &-300 {
+    background-color: #6ee7b7 !important;
+    .vxe-body--column {
+      background-color: #6ee7b7 !important;
+    }
+  }
+  &-400 {
+    background-color: #34d399 !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #34d399 !important;
+      color: #fff;
+    }
+  }
+  &-500 {
+    background-color: #10b981 !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #10b981 !important;
+      color: #fff;
+    }
+  }
+}
+
+// 警告（黄色）
+.row-warning {
+  background-color: #fffbeb !important;
+  .vxe-body--column {
+    background-color: #fffbeb !important;
+  }
+
+  &-100 {
+    background-color: #fef3c7 !important;
+    .vxe-body--column {
+      background-color: #fef3c7 !important;
+    }
+  }
+  &-200 {
+    background-color: #fde68a !important;
+    .vxe-body--column {
+      background-color: #fde68a !important;
+    }
+  }
+  &-300 {
+    background-color: #fcd34d !important;
+    .vxe-body--column {
+      background-color: #fcd34d !important;
+    }
+  }
+  &-400 {
+    background-color: #fbbf24 !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #fbbf24 !important;
+      color: #fff;
+    }
+  }
+  &-500 {
+    background-color: #f59e0b !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #f59e0b !important;
+      color: #fff;
+    }
+  }
+}
+
+// 错误（红色）
+.row-error {
+  background-color: #fff7ed !important;
+  .vxe-body--column {
+    background-color: #fff7ed !important;
+  }
+
+  &-100 {
+    background-color: #fee2e2 !important;
+    .vxe-body--column {
+      background-color: #fee2e2 !important;
+    }
+  }
+  &-200 {
+    background-color: #fecaca !important;
+    .vxe-body--column {
+      background-color: #fecaca !important;
+    }
+  }
+  &-300 {
+    background-color: #fca5a5 !important;
+    .vxe-body--column {
+      background-color: #fca5a5 !important;
+    }
+  }
+  &-400 {
+    background-color: #f87171 !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #f87171 !important;
+      color: #fff;
+    }
+  }
+  &-500 {
+    background-color: #ef4444 !important;
+    color: #fff;
+    .vxe-body--column {
+      background-color: #ef4444 !important;
+      color: #fff;
+    }
+  }
+}
+
+// 深色主题
+html[data-vxe-ui-theme='dark'] {
+  // 成功（绿色）深色
+  .row-success {
+    background-color: #26262a !important;
+    color: #6ee7b7;
+    .vxe-body--column {
+      background-color: #26262a !important;
+      color: #6ee7b7;
+    }
+
+    &-100 {
+      background-color: #26262a !important;
+      color: #a7f3d0;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #a7f3d0;
+      }
+    }
+    &-200 {
+      background-color: #26262a !important;
+      color: #6ee7b7;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #6ee7b7;
+      }
+    }
+    &-300 {
+      background-color: #26262a !important;
+      color: #34d399;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #34d399;
+      }
+    }
+    &-400 {
+      background-color: #26262a !important;
+      color: #10b981;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #10b981;
+      }
+    }
+    &-500 {
+      background-color: #26262a !important;
+      color: #059669;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #059669;
+      }
+    }
+  }
+
+  // 警告（黄色）深色
+  .row-warning {
+    background-color: #26262a !important;
+    color: #eab308;
+    .vxe-body--column {
+      background-color: #26262a !important;
+      color: #eab308;
+    }
+
+    &-100 {
+      background-color: #26262a !important;
+      color: #fde68a;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #fde68a;
+      }
+    }
+    &-200 {
+      background-color: #26262a !important;
+      color: #fcd34d;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #fcd34d;
+      }
+    }
+    &-300 {
+      background-color: #26262a !important;
+      color: #fbbf24;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #fbbf24;
+      }
+    }
+    &-400 {
+      background-color: #26262a !important;
+      color: #f59e0b;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #f59e0b;
+      }
+    }
+    &-500 {
+      background-color: #26262a !important;
+      color: #d97706;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #d97706;
+      }
+    }
+  }
+
+  // 错误（红色）深色
+  .row-error {
+    background-color: #26262a !important;
+    color: #fb923c;
+    .vxe-body--column {
+      background-color: #26262a !important;
+      color: #fb923c;
+    }
+
+    &-100 {
+      background-color: #26262a !important;
+      color: #fecaca;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #fecaca;
+      }
+    }
+    &-200 {
+      background-color: #26262a !important;
+      color: #fca5a5;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #fca5a5;
+      }
+    }
+    &-300 {
+      background-color: #26262a !important;
+      color: #f87171;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #f87171;
+      }
+    }
+    &-400 {
+      background-color: #26262a !important;
+      color: #ef4444;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #ef4444;
+      }
+    }
+    &-500 {
+      background-color: #26262a !important;
+      color: #dc2626;
+      .vxe-body--column {
+        background-color: #26262a !important;
+        color: #dc2626;
+      }
+    }
+  }
+}

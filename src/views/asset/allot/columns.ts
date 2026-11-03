@@ -1,0 +1,123 @@
+import type { TableProps } from '@/components/SpTable'
+
+export const gridOptions = reactive<TableProps>({
+  canResize: true,
+  resizeMinHeight: 300,
+  fitContainer: true,
+  keepSource: true,
+  rowConfig: { isCurrent: true, isHover: false },
+  cellConfig: {
+    height: 56,
+  },
+  editConfig: {
+    trigger: 'click',
+    mode: 'row',
+    showStatus: true,
+    icon: 'fa fa-file-text-o',
+    autoClear: false,
+  },
+  editRules: {},
+  validConfig: {
+    msgMode: 'full',
+  },
+  showToolbar: false,
+  columns: [
+    { type: 'seq', title: '行号', width: 60, align: 'right' },
+    {
+      field: 'code',
+      title: '资产编码',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'name',
+      title: '资产名称',
+      width: 220,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'brand',
+      title: '品牌',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'model',
+      title: '规格型号',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'remark',
+      title: '备注',
+      minWidth: 250,
+      align: 'left',
+      headerAlign: 'center',
+      editRender: {},
+      slots: { edit: 'remark_edit' },
+    },
+    {
+      isOperate: true,
+      title: '操作',
+      width: 122,
+      align: 'center',
+      headerAlign: 'center',
+      slots: { default: 'operate' },
+      fixed: 'right',
+    },
+  ],
+  pagination: false,
+  showFooter: true,
+})
+
+export const viewGridOptions = reactive<TableProps>({
+  canResize: true,
+  fitContainer: true,
+  keepSource: true,
+  rowConfig: { isCurrent: true, isHover: false },
+  showToolbar: false,
+  columns: [
+    { type: 'seq', title: '行号', width: 60, align: 'right' },
+    {
+      field: 'code',
+      title: '资产编码',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'name',
+      title: '资产名称',
+      width: 220,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'brand',
+      title: '品牌',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'model',
+      title: '规格型号',
+      width: 160,
+      align: 'left',
+      headerAlign: 'center',
+    },
+    {
+      field: 'remark',
+      title: '备注',
+      minWidth: 250,
+      align: 'left',
+      headerAlign: 'center',
+    },
+  ],
+  pagination: false,
+  showFooter: true,
+})

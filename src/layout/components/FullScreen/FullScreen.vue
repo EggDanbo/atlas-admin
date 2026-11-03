@@ -1,0 +1,13 @@
+<script lang="ts" setup>
+import { NaIconBtn } from '@/components/IconBtn'
+
+const { isFullscreen, toggle } = useFullscreen()
+// 全屏切换
+function toggleFullScreen() {
+  toggle()
+}
+</script>
+
+<template>
+  <NaIconBtn :icon="isFullscreen ? 'ant-design:compress-outlined' : 'ant-design:expand-outlined'" @click="toggleFullScreen" />
+</template>
