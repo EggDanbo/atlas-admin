@@ -183,6 +183,11 @@ function buildRow(module: string, index: number): Record<string, any> {
       row[key] = String(intBetween(ctx.rng, 1, STATE_LABELS.length))
   }
 
+  // 停用标记只落到极少数行：列表面板会把停用行整行高亮，
+  // 按 25% 概率生成会让整张表泛黄，失去「异常标记」的意义
+  if ('stoped' in row)
+    row.stoped = index % 13 === 7
+
   // id 最后赋值，避免被同名业务字段覆盖
   row.id = id
 

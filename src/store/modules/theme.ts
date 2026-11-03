@@ -52,6 +52,7 @@ export const useThemeStore = defineStore('theme-store', () => {
       theme: isDark.value ? 'dark' : 'default',
     })
     const radiusStr = formatSizeValue(borderRadius.value, 'rem')
+    const soft = (alpha: number) => tinyColor(colors[5]).setAlpha(alpha).toRgbString()
     return {
       theme: isDark.value ? darkTheme : undefined,
       themeOverrides: {
@@ -68,14 +69,52 @@ export const useThemeStore = defineStore('theme-store', () => {
         },
         Card: {
           borderRadius: radiusStr,
+          borderColor: isDark.value ? '#2a2a31' : '#e8eaee',
         },
         Menu: {
           // 跟随主色派生，避免换主题色后菜单悬停底色仍是蓝色
-          itemColorHover: tinyColor(colors[5]).setAlpha(0.1).toRgbString(),
+          itemColorHover: soft(0.1),
+          itemColorActive: soft(0.1),
+          itemColorActiveHover: soft(0.16),
+          itemTextColorActive: colors[5],
+          itemTextColorActiveHover: colors[5],
+          itemTextColorChildActive: colors[5],
+          itemIconColorActive: colors[5],
+          itemIconColorActiveHover: colors[5],
+          itemIconColorChildActive: colors[5],
+          borderRadius: radiusStr,
+        },
+        Button: {
+          borderRadiusMedium: radiusStr,
+          borderRadiusSmall: radiusStr,
+        },
+        Input: {
+          borderRadius: radiusStr,
+        },
+        Tabs: {
+          tabBorderRadius: radiusStr,
         },
       },
     }
   })
+
+  /**
+   * 主色派生设计令牌
+   *
+   * 皮肤层（styles/skin.less）只读取 --atlas-brand-* 系列变量，
+   * 这里把用户选择的品牌色同步成变量，换色时整站色调一起变化，无需改样式文件。
+   */
+  watchEffect(() => {
+    const colors = generate(theme.primaryColor, {
+      theme: isDark.value ? 'dark' : 'default',
+    })
+    const root = document.documentElement
+    root.style.setProperty('--atlas-brand', colors[5]!)
+    root.style.setProperty('--atlas-brand-soft', tinyColor(colors[5]).setAlpha(0.1).toRgbString())
+    root.style.setProperty('--atlas-brand-soft-hover', tinyColor(colors[5]).setAlpha(0.16).toRgbString())
+    root.style.setProperty('--atlas-brand-ring', tinyColor(colors[5]).setAlpha(0.22).toRgbString())
+  })
+
 
   function toggleThemeMode(value?: string) {
     if (value) {

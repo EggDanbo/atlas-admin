@@ -1,0 +1,85 @@
+/**
+ * 设计令牌层
+ *
+ * 全站视觉只依赖这一层变量：色板、圆角、阴影、动效、层级。
+ * 主色不在这里写死，由 theme store 从用户选择的品牌色派生后注入 --primary-color，
+ * 这里的 --atlas-brand-* 只在主题尚未就绪时兜底。
+ */
+
+:root {
+  /* ---------- 品牌色（兜底值，运行时被主题派生色覆盖） ---------- */
+  --atlas-brand: var(--primary-color, #f97316);
+  --atlas-brand-soft: rgba(249, 115, 22, 0.1);
+  --atlas-brand-soft-hover: rgba(249, 115, 22, 0.16);
+  --atlas-brand-ring: rgba(249, 115, 22, 0.22);
+
+  /* ---------- 画布与容器 ---------- */
+  --atlas-canvas: #f4f6f9;
+  --atlas-surface: #ffffff;
+  --atlas-surface-sunken: #f8f9fb;
+  --atlas-surface-hover: #f5f6f8;
+
+  /* ---------- 描边 ---------- */
+  --atlas-border: #e8eaee;
+  --atlas-border-strong: #dcdfe5;
+  --atlas-divider: #f0f2f5;
+
+  /* ---------- 文本 ---------- */
+  --atlas-text: #1f2329;
+  --atlas-text-secondary: #5b6472;
+  --atlas-text-tertiary: #8c95a1;
+  --atlas-text-inverse: #ffffff;
+
+  /* ---------- 圆角 ---------- */
+  --atlas-radius-xs: 4px;
+  --atlas-radius-sm: 6px;
+  --atlas-radius-md: 10px;
+  --atlas-radius-lg: 14px;
+  --atlas-radius-pill: 999px;
+
+  /* ---------- 阴影 ---------- */
+  --atlas-shadow-xs: 0 1px 2px rgba(31, 35, 41, 0.05);
+  --atlas-shadow-sm: 0 1px 3px rgba(31, 35, 41, 0.06), 0 8px 20px -14px rgba(31, 35, 41, 0.18);
+  --atlas-shadow-md: 0 12px 32px -14px rgba(31, 35, 41, 0.22);
+  --atlas-shadow-pop: 0 8px 28px -10px rgba(31, 35, 41, 0.24);
+
+  /* ---------- 间距 ---------- */
+  --atlas-gap-xs: 6px;
+  --atlas-gap-sm: 10px;
+  --atlas-gap-md: 16px;
+  --atlas-gap-lg: 24px;
+
+  /* ---------- 骨架尺寸 ---------- */
+  --atlas-nav-height: 56px;
+  --atlas-tabbar-height: 44px;
+  --atlas-sidebar-width: 232px;
+
+  /* ---------- 动效 ---------- */
+  --atlas-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --atlas-duration: 0.22s;
+}
+
+/**
+ * 暗色令牌
+ * 两套选择器同时覆盖：html.dark 来自 vueuse colorMode，data-vxe-ui-theme 来自 vxe 主题
+ */
+html.dark,
+html[data-vxe-ui-theme='dark'] {
+  --atlas-canvas: #101014;
+  --atlas-surface: #18181c;
+  --atlas-surface-sunken: #1c1c21;
+  --atlas-surface-hover: #232329;
+
+  --atlas-border: #2a2a31;
+  --atlas-border-strong: #35353d;
+  --atlas-divider: #232329;
+
+  --atlas-text: #e8e9ec;
+  --atlas-text-secondary: #a8adb8;
+  --atlas-text-tertiary: #787f8b;
+
+  --atlas-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --atlas-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 20px -14px rgba(0, 0, 0, 0.6);
+  --atlas-shadow-md: 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+  --atlas-shadow-pop: 0 8px 28px -10px rgba(0, 0, 0, 0.75);
+}

@@ -1,0 +1,259 @@
+/**
+ * 布局骨架皮肤
+ *
+ * 只做「外观」：不改动 pro-naive-ui 的结构与交互，只覆盖需要统一的设计表达
+ * （侧栏品牌区 / 菜单选中态 / 顶栏 / 页签 / 页面卡片 / 表格头部）。
+ * 所有色值与圆角来自 tokens.less，避免散落的硬编码。
+ */
+
+/* ============================================================
+   1. 整页画布
+   ============================================================ */
+.naive-layout .n-pro-layout {
+  background-color: var(--atlas-canvas);
+}
+
+.naive-layout-main {
+  background: transparent;
+}
+
+/* ============================================================
+   2. 侧边栏
+   ============================================================ */
+.naive-layout-sidebar {
+  background-color: var(--atlas-surface);
+  border-right: 1px solid var(--atlas-border);
+}
+
+/* 品牌区：logo 与标题之间留出呼吸，避免贴边 */
+.naive-layout-header .n-pro-layout__logo,
+.n-pro-layout__logo {
+  border-bottom: none;
+  padding-inline: 12px;
+}
+
+/* 菜单：胶囊化条目 + 选中态主色浅底与竖条 */
+.pro-menu.n-menu {
+  padding: 6px 8px 12px;
+
+  .n-menu-item-content {
+    border-radius: var(--atlas-radius-sm);
+    margin-block: 1px;
+    transition: background-color var(--atlas-duration) var(--atlas-ease),
+      color var(--atlas-duration) var(--atlas-ease);
+
+    &::before {
+      border-radius: var(--atlas-radius-sm);
+      left: 0;
+      right: 0;
+    }
+
+    /* 选中态左侧指示条 */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 3px;
+      height: 0;
+      border-radius: 0 3px 3px 0;
+      background-color: var(--atlas-brand);
+      transform: translateY(-50%);
+      transition: height var(--atlas-duration) var(--atlas-ease);
+    }
+
+    &--selected::after {
+      height: 16px;
+    }
+  }
+
+  .n-menu-item-content-header {
+    font-size: 13.5px;
+    letter-spacing: 0.01em;
+  }
+
+  /* 一级菜单（可折叠父项）文字略重，形成层级 */
+  > .n-submenu > .n-submenu-title .n-menu-item-content-header {
+    font-weight: 600;
+  }
+
+  .n-menu-item-content--selected .n-menu-item-content-header {
+    font-weight: 600;
+  }
+
+  /* 去掉旧版用线条画层级的方式，改用缩进表达 */
+  .n-submenu-children::before,
+  .n-submenu-children .n-menu-item-content-header::before {
+    display: none !important;
+  }
+
+  .n-submenu-children .n-menu-item-content {
+    padding-left: 34px !important;
+  }
+
+  .n-menu-item-group-title {
+    padding-top: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--atlas-text-tertiary);
+  }
+}
+
+/* 侧栏底部工具区 */
+.sidebar-footer {
+  border-top: 1px solid var(--atlas-divider);
+}
+
+/* ============================================================
+   3. 顶栏
+   ============================================================ */
+.naive-layout-nav {
+  background-color: var(--atlas-surface);
+  border-bottom: 1px solid var(--atlas-border);
+}
+
+.naive-layout-header {
+  box-shadow: none;
+}
+
+/* 顶栏图标按钮统一尺寸与悬停反馈 */
+.naive-layout-nav .n-button.n-button--text-type {
+  border-radius: var(--atlas-radius-sm);
+
+  &:hover {
+    background-color: var(--atlas-surface-hover);
+  }
+}
+
+.naive-layout-nav .username {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--atlas-text);
+}
+
+/* ============================================================
+   4. 页签栏
+   ============================================================ */
+.naive-layout-tabbar {
+  background-color: var(--atlas-surface);
+  border-bottom: 1px solid var(--atlas-border);
+}
+
+.tabbar .tag-item {
+  border-radius: var(--atlas-radius-pill);
+  border: 1px solid transparent;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--atlas-text-secondary);
+  transition: background-color var(--atlas-duration) var(--atlas-ease),
+    border-color var(--atlas-duration) var(--atlas-ease),
+    color var(--atlas-duration) var(--atlas-ease);
+
+  &:hover {
+    background-color: var(--atlas-surface-hover);
+    border-color: var(--atlas-border);
+  }
+}
+
+.tabbar .tag-item.tag-selected {
+  background-color: var(--atlas-brand-soft);
+  border-color: transparent;
+  color: var(--atlas-brand);
+  font-weight: 600;
+}
+
+/* ============================================================
+   5. 页面容器与卡片
+   ============================================================ */
+.page-container {
+  .n-flex {
+    gap: var(--atlas-gap-sm) !important;
+  }
+}
+
+.page-container .n-card {
+  border-radius: var(--atlas-radius-lg);
+  border: 1px solid var(--atlas-border);
+  box-shadow: var(--atlas-shadow-xs);
+  background-color: var(--atlas-surface);
+  transition: box-shadow var(--atlas-duration) var(--atlas-ease);
+
+  & > .n-card-header {
+    padding: 14px 18px 0;
+  }
+
+  & > .n-card__content {
+    padding: 14px 18px;
+  }
+}
+
+/* 查询条件卡片：内容更紧凑，与表格卡片拉开主次 */
+.page-container > .n-flex > .n-card:first-child > .n-card__content {
+  padding: 12px 16px;
+}
+
+/* ============================================================
+   6. 表格
+   ============================================================ */
+/* 表格容器底色跟随卡片，避免暗色下表格比卡片更亮 */
+html[data-vxe-ui-theme='light'] {
+  --vxe-ui-layout-background-color: var(--atlas-surface);
+}
+
+html[data-vxe-ui-theme='dark'] {
+  --vxe-ui-layout-background-color: var(--atlas-surface);
+}
+
+.vxe-table--header-wrapper {
+  font-weight: 600;
+}
+
+.vxe-table--header .vxe-header--column {
+  background-color: var(--atlas-surface-sunken);
+  color: var(--atlas-text-secondary);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+}
+
+.vxe-table--body .vxe-body--row:hover > td {
+  background-color: var(--atlas-surface-hover) !important;
+}
+
+/* 工具栏与查询区间距 */
+.vxe-toolbar {
+  padding-bottom: 10px;
+}
+
+/* ============================================================
+   7. 滚动条
+   ============================================================ */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(31, 35, 41, 0.16);
+  border-radius: var(--atlas-radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+
+  &:hover {
+    background-color: rgba(31, 35, 41, 0.28);
+  }
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+html.dark *::-webkit-scrollbar-thumb,
+html[data-vxe-ui-theme='dark'] *::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.18);
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}

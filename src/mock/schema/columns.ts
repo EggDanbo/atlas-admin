@@ -156,10 +156,57 @@ const ROLE_FIELDS: MockFieldSchema[] = [
   { field: 'perms', title: '权限项' },
 ]
 
+/** 发票台账字段 */
+const INVOICE_FIELDS: MockFieldSchema[] = [
+  { field: 'no', title: '发票号码' },
+  { field: 'date', title: '开票日期' },
+  { field: 'partner_name', title: '客户单位' },
+  { field: 'amount', title: '价税合计' },
+  { field: 'tax', title: '税额' },
+  { field: 'status', title: '状态' },
+  { field: 'user_name', title: '经办人' },
+]
+
+/** 资产台账字段 */
+const ASSET_LEDGER_FIELDS: MockFieldSchema[] = [
+  { field: 'no', title: '资产编号' },
+  { field: 'name', title: '资产名称' },
+  { field: 'category_name', title: '资产分类' },
+  { field: 'team_name', title: '使用部门' },
+  { field: 'amount', title: '资产原值' },
+  { field: 'status', title: '资产状态' },
+]
+
+/** 基础资料分类字段 */
+const CLASSIFY_FIELDS: MockFieldSchema[] = [
+  { field: 'code', title: '编码' },
+  { field: 'name', title: '名称' },
+  { field: 'parent_name', title: '上级分类' },
+  { field: 'remark', title: '备注' },
+]
+
+/** 物料档案字段 */
+const ITEM_FIELDS: MockFieldSchema[] = [
+  { field: 'code', title: '物料编码' },
+  { field: 'name', title: '物料名称' },
+  { field: 'model', title: '规格型号' },
+  { field: 'unit_name', title: '计量单位' },
+  { field: 'category_name', title: '所属分类' },
+]
+
 /** 需要覆盖自动结构的格式 */
 const FIELD_OVERRIDES: Record<string, MockFieldSchema[]> = {
+  // 角色页：自动结构来自「角色授权」表单
   'access/role': ROLE_FIELDS,
   'access/partner-role': ROLE_FIELDS,
+  // 单据页：自动结构来自「明细行」
+  'crm/invoice': INVOICE_FIELDS,
+  'asset/info': ASSET_LEDGER_FIELDS,
+  // 基础资料：自动结构来自新建表单的编码/规格字段
+  'masterdata/asset-category': CLASSIFY_FIELDS,
+  'masterdata/item-category': CLASSIFY_FIELDS,
+  'masterdata/biz-type': CLASSIFY_FIELDS,
+  'masterdata/item-code': ITEM_FIELDS,
 }
 
 /**
@@ -167,13 +214,14 @@ const FIELD_OVERRIDES: Record<string, MockFieldSchema[]> = {
  * @param name 数据格式名（如 atlas/asset/bill）或模块目录（如 asset/allot）
  */
 export function buildColumns(name?: string | null): DataFormatColumn[] {
-  const override = name ? FIELD_OVERRIDES[name] : undefined
+  // 业务域目录：用于修正「名称」这类通用字段的标题
+  const moduleDir = resolveModuleDir(name) ?? name ?? ''
+
+  // 覆盖表按模块目录登记，页面传的是 atlas/xxx 格式名时也能命中
+  const override = FIELD_OVERRIDES[moduleDir]
   let fields = override
     ? [...override]
     : (name === 'workflow' ? [...WORKFLOW_FIELDS] : resolveFields(name))
-
-  // 业务域目录：用于修正「名称」这类通用字段的标题
-  const moduleDir = resolveModuleDir(name) ?? name ?? ''
 
   if (!fields.length) {
     // 无结构信息时给出通用列，保证表格不为空

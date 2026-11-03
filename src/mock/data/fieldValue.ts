@@ -15,6 +15,7 @@ import {
   BANK_BRANCHES,
   BANKS,
   BRANCHES,
+  CATEGORY_NAMES,
   CITIES,
   CURRENCIES,
   DEPARTMENTS,
@@ -22,7 +23,9 @@ import {
   EDUCATIONS,
   GIVEN_NAMES,
   MARRIAGES,
+  MEASURE_UNITS,
   NATIONS,
+  PARENT_CATEGORIES,
   PARTNERS,
   PAY_TYPES,
   POLITICS,
@@ -744,6 +747,24 @@ export function generateValue(field: string, ctx: RowContext, type?: ColumnType,
     return `${pick(rng, ['合同扫描件', '发票影像', '审批附件', '验收单'])}.pdf`
   if (lower === 'name')
     return pickNameValue(ctx, classifyModule(ctx.module))
+
+  // ---------- 分类与计量 ----------
+  // 「分类」类字段按业务域取值，否则会掉进摘要兜底，出现「设备折旧计提」这种资产分类
+  if (
+    lower === 'category_name'
+    || lower === 'class_name'
+    || lower === 'type_name'
+    || lower === 'kind_name'
+    || lower === 'types_name'
+  ) {
+    const list = CATEGORY_NAMES[classifyModule(ctx.module)] ?? CATEGORY_NAMES.generic!
+    return pick(rng, list)
+  }
+  if (lower === 'parent_name' || lower === 'parent' || lower === 'pid_name')
+    return pick(rng, PARENT_CATEGORIES)
+  // 「计量单位」不能走「单位」关键字兜底，否则会填成往来单位名称
+  if (lower === 'unit_name' || lower === 'measure_unit' || lower === 'unit')
+    return pick(rng, MEASURE_UNITS)
 
   // ---------- 按类型兜底 ----------
   switch (t) {

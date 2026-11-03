@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useThemeVars } from 'naive-ui'
 import logo from '@/assets/logo.png'
 import { projectConfig } from '@/config'
 import { useConfigStore } from '@/store/modules/config'
@@ -12,7 +11,6 @@ const props = defineProps({
 
 const { app: AppConfig } = projectConfig
 const configStore = useConfigStore()
-const themeVars = useThemeVars()
 
 const showTitle = computed(() => {
   if (props.source === 'mobile') {
@@ -27,95 +25,102 @@ const showTitle = computed(() => {
     || layoutMode === 'mixed-sidebar'
     || (layoutMode === 'vertical' && !configStore.collapsed)
 })
-
-const primaryColors = computed(() => {
-  return themeVars.value.primaryColor
-})
 </script>
 
 <template>
   <div class="logo-item">
-    <n-button text type="primary" tag="a">
-      <div v-if="showTitle" class="tagBox">
-        <img class="tagBox__logo" :src="logo" alt="">
-        <h2 class="text mt-0">
-          {{ AppConfig.title }}
-        </h2>
-      </div>
-      <n-image v-else width="32" height="32" :src="logo" preview-disabled />
-    </n-button>
+    <a class="brand" href="/">
+      <span class="brand__mark">
+        <img :src="logo" :alt="AppConfig.title">
+      </span>
+      <span v-if="showTitle" class="brand__text">
+        <strong class="brand__name">{{ AppConfig.title }}</strong>
+        <em class="brand__tagline">{{ AppConfig.tagline }}</em>
+      </span>
+    </a>
   </div>
 </template>
 
 <style lang="less" scoped>
 .logo-item {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  padding-inline: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  a {
-    text-decoration: none;
-  }
-  img {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-  }
-}
-
-.tagBox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid transparent;
-  border-radius: 18px;
-  height: 38px;
-  padding: 0 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 15px;
-  margin-top: 4px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
-  // 展开态同时显示图标与名称，避免只有一行描边文字
-  &__logo {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    border-radius: 6px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 4px;
+  text-decoration: none;
+  cursor: pointer;
+
+  &__mark {
+    display: grid;
+    place-items: center;
     flex: 0 0 auto;
-  }
+    width: 32px;
+    height: 32px;
+    border-radius: var(--atlas-radius-md);
+    background: linear-gradient(140deg, var(--atlas-brand) 0%, #fb923c 100%);
+    box-shadow: 0 4px 10px -4px var(--atlas-brand-ring);
+    transition: transform var(--atlas-duration) var(--atlas-ease);
 
-  &:hover {
-    background-color: v-bind(primaryColors) !important;
-    border-color: v-bind(primaryColors) !important;
-    color: #fff !important;
-  }
-}
-
-html[data-vxe-ui-theme='light'] {
-  .tagBox {
-    color: v-bind(primaryColors);
-    border-color: transparent;
-  }
-}
-
-html[data-vxe-ui-theme='light'] {
-  .sidebar-dark {
-    .tagBox {
-      color: #fff;
-      border-color: transparent;
+    img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      /* 图标本身是彩色的，放在渐变块上做反白处理 */
+      filter: brightness(0) invert(1);
     }
   }
+
+  &:hover &__mark {
+    transform: translateY(-1px) scale(1.03);
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    line-height: 1.2;
+  }
+
+  &__name {
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    color: var(--atlas-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__tagline {
+    margin-top: 2px;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--atlas-text-tertiary);
+    white-space: nowrap;
+  }
 }
 
-html[data-vxe-ui-theme='dark'] {
-  .tagBox {
-    color: #fff;
-    border-color: transparent;
-  }
+/* 侧栏为深色/主题色时反白 */
+html[data-vxe-ui-theme='dark'] .brand__name,
+.sidebar-dark .brand__name {
+  color: #fff;
+}
+
+html[data-vxe-ui-theme='dark'] .brand__tagline,
+.sidebar-dark .brand__tagline {
+  color: rgba(255, 255, 255, 0.55);
 }
 </style>

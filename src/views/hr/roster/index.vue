@@ -87,7 +87,7 @@ const {
   detailRef,
   idField: 'id',
   createQueryModel,
-  rowClassName: ({ row }) => row.stoped !== '0' ? 'row-warning' : null,
+  rowClassName: ({ row }) => row.stoped ? 'row-warning' : null,
   columns: [
     {
       field: 'code',

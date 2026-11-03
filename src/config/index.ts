@@ -18,7 +18,7 @@ export const projectConfig = {
     /**
      * 宣传语
      */
-    tagline: '',
+    tagline: 'ATLAS ADMIN',
     /**
      * token 名称
      */
@@ -47,7 +47,7 @@ export const projectConfig = {
     /**
      * 侧边栏宽度
      */
-    sidebarWidth: 224,
+    sidebarWidth: 232,
     /**
      * 导航栏高度
      */
@@ -55,7 +55,7 @@ export const projectConfig = {
     /**
      * 标签栏高度
      */
-    tabbarHeight: 47,
+    tabbarHeight: 44,
     /**
      * 布局模式
      * vertical 垂直布局 horizontal 水平布局 two-column 双栏布局
@@ -170,7 +170,7 @@ export const projectConfig = {
      * 圆角
      * --border-radius 默认 0.5rem
      */
-    borderRadius: 0.25,
+    borderRadius: 0.625,
     /**
      * 动态标题
      * 显示格式为：当前路由标题 - 网站名称，关闭：显示网站名称

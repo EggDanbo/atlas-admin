@@ -73,7 +73,7 @@ const {
   api,
   detailRef,
   idField: 'user_id',
-  rowClassName: ({ row }) => row.stoped !== '0' ? 'row-warning' : null,
+  rowClassName: ({ row }) => row.stoped ? 'row-warning' : null,
   createQueryModel,
   columns: [
     {
@@ -157,12 +157,12 @@ async function handleMore(key: string) {
 }
 
 function handleStoped(row: Recordable) {
-  toast.infoModal(`确定${row.stoped === '0' ? '停用' : '启用'}吗？`, {
+  toast.infoModal(`确定${row.stoped ? '启用' : '停用'}吗？`, {
     positiveText: '确定',
     negativeText: '取消',
     onPositiveClick: async () => {
       pageLoading.value = true
-      const { isSuccess } = await api.updateStoped({ user_id: row.user_id, stoped: row.stoped === '0' ? 1 : 0 })
+      const { isSuccess } = await api.updateStoped({ user_id: row.user_id, stoped: row.stoped ? 0 : 1 })
         .finally(() => pageLoading.value = false)
       if (!isSuccess)
         return
@@ -325,7 +325,7 @@ export default { name: 'OrganUser' }
               </n-button>
               <n-divider vertical />
               <n-button text type="primary" :disabled="!hasPermEdit" @click="handleStoped(row)">
-                {{ row.stoped === '0' ? '停用' : '启用' }}
+                {{ row.stoped ? '启用' : '停用' }}
               </n-button>
               <n-divider vertical />
               <n-button text type="primary" :disabled="!hasPermDele" @click="handleRemove([row])">
