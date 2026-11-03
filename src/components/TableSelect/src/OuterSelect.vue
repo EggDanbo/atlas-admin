@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { TableSelectItem } from './useTableSelect'
 import type { TableProps } from '@/components/SpTable'
-import { outer as api } from '@/service/api/organ'
+import { partner as api } from '@/service/api/access'
 import { isArray } from '@/utils/is'
 import { SelectProps } from './props'
 import { useTableSelect } from './useTableSelect'

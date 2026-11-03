@@ -10,13 +10,13 @@ import { findNodeAll, forEach } from './helper/treeHelper'
  *
  * @example
  * // 前缀匹配：配置 ORGAN，用户有 ORGAN_ADD → true
- * matchPermit(['ORGAN'], ['ORGAN_ADD'], allPermissions)
+ * matchPermit(['ORGAN'], ['IAM_UNIT_ADD'], allPermissions)
  *
  * // 精确匹配：配置 ORGAN_ADD，用户有 ORGAN_ADD → true
- * matchPermit(['ORGAN_ADD'], ['ORGAN_ADD'], allPermissions)
+ * matchPermit(['IAM_UNIT_ADD'], ['IAM_UNIT_ADD'], allPermissions)
  *
  * // 精确匹配：配置 ORGAN_ADD，用户只有 ORGAN → false
- * matchPermit(['ORGAN_ADD'], ['ORGAN'], allPermissions)
+ * matchPermit(['IAM_UNIT_ADD'], ['ORGAN'], allPermissions)
  */
 export function matchPermit(
   configPermissions: string[],

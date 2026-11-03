@@ -27,19 +27,19 @@ const cases: Case[] = [
     label: '资产列表',
     url: '/mock-api/asset/allot/search',
     type: 'POST',
-    data: { format: 'demo/asset/bill', page: 2, pagesize: 30 },
+    data: { format: 'atlas/demo/asset/bill', page: 2, pagesize: 30 },
   },
   {
     label: '凭证分录',
     url: '/mock-api/vouch/entry/search',
     type: 'POST',
-    data: { format: 'demo/vouch/entry', page: 1, pagesize: 5 },
+    data: { format: 'atlas/demo/vouch/entry', page: 1, pagesize: 5 },
   },
   {
     label: '员工信息',
     url: '/mock-api/staff/info/search',
     type: 'POST',
-    data: { format: 'demo/staff/info', page: 1, pagesize: 5 },
+    data: { format: 'atlas/demo/staff/info', page: 1, pagesize: 5 },
   },
   {
     label: '资产详情',
@@ -47,7 +47,7 @@ const cases: Case[] = [
     type: 'GET',
     params: { id: '1' },
   },
-  { label: '导出', url: '/mock-api/asset/allot/export', type: 'POST', data: { format: 'demo/asset/bill' } },
+  { label: '导出', url: '/mock-api/asset/allot/export', type: 'POST', data: { format: 'atlas/demo/asset/bill' } },
   { label: '列定义', url: '/mock-api/dataformat/get', type: 'GET', params: { name: 'demo/asset/bill' } },
 ]
 
@@ -84,7 +84,7 @@ for (const item of cases) {
 const page = handleMockRequest({
   url: '/mock-api/asset/allot/search',
   type: 'POST',
-  data: { format: 'demo/asset/bill', page: 1, pagesize: 3 },
+  data: { format: 'atlas/demo/asset/bill', page: 1, pagesize: 3 },
   params: {},
 }).data as any
 

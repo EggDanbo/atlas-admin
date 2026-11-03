@@ -125,22 +125,29 @@
   },
   "discovered": {
     "icons": [
+      "ant-design:book-outlined",
+      "ant-design:calculator-outlined",
       "ant-design:cloud-download-outlined",
       "ant-design:cloud-server-outlined",
       "ant-design:delete-row-outline",
+      "ant-design:folder-open-outlined",
+      "ant-design:gold-outlined",
+      "ant-design:idcard-outlined",
       "ant-design:mail-outlined",
       "ant-design:node-index-outlined",
       "ant-design:poweroff-outlined",
       "ant-design:property-safety-outlined",
       "ant-design:retweet-outlined",
       "ant-design:share-alt-outlined",
-      "ant-design:skin-outlined"
+      "ant-design:skin-outlined",
+      "ant-design:team-outlined",
+      "ant-design:tool-outlined"
     ],
-    "lastUpdate": "2026-09-21T11:14:31.932Z",
+    "lastUpdate": "2026-11-03T13:46:23.736Z",
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
-    "totalIcons": 117,
+    "totalIcons": 124,
     "byCollection": {
       "ant-design": 113,
       "circle-flags": 2,

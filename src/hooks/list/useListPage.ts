@@ -18,7 +18,7 @@ import toast from '@/utils/toast'
  * // 基本用法（分页 + 导出/打印）
  * function createQueryModel() {
  *   return {
- *     format: 'organ/team',
+ *     format: 'atlas/access/unit',
  *     filter: null as string | null,
  *     stoped: null as string | null,
  *   }

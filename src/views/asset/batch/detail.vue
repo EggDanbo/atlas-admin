@@ -11,9 +11,9 @@ import { SpCascader } from '@/components/SpCascader'
 import { AssetOrderSelect } from '@/components/TableSelect'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { batch as api } from '@/service/api/asset'
-import { asset as assetApi } from '@/service/api/basic'
-import { team as teamApi } from '@/service/api/organ'
+import { assetCategory as assetApi } from '@/service/api/masterdata'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
@@ -137,7 +137,7 @@ const {
   },
   createFormModel,
   title: '资产验收',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_BATCH' },
+  permission: { useTabPermission: true, permName: 'AST_BATCH' },
   canEdit: form => !form.stoped,
   onSuccess: (action) => {
     emit('on-action', action)

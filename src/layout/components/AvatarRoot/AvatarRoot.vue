@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue'
-import team from '@/service/api/organ/team'
+import team from '@/service/api/access/unit'
 import { useUserStore } from '@/store/modules/user'
 import { tenantStorage } from '@/utils/tenant'
 

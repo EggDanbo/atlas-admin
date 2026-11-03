@@ -14,10 +14,10 @@ export function usePermission() {
    * hasPermission(['ORGAN'])
    *
    * // 精确匹配：配置 ORGAN_ADD，用户有 ORGAN_ADD → true
-   * hasPermission(['ORGAN_ADD'])
+   * hasPermission(['IAM_UNIT_ADD'])
    *
    * // 精确匹配：配置 ORGAN_ADD，用户只有 ORGAN → false
-   * hasPermission(['ORGAN_ADD'])
+   * hasPermission(['IAM_UNIT_ADD'])
    */
   function hasPermission(accesses: string[]): boolean {
     if (!accesses || !accesses.length)

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { TableSelectItem } from './useTableSelect'
 import type { TableProps } from '@/components/SpTable'
-import { user as userApi } from '@/service/api/organ'
+import { member as userApi } from '@/service/api/access'
 import { useEnumStore } from '@/store/modules/enums'
 import { isArray } from '@/utils/is'
 import { SelectProps } from './props'

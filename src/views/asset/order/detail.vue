@@ -11,8 +11,8 @@ import { SpCascader } from '@/components/SpCascader'
 import { AssetApplySelect } from '@/components/TableSelect'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { order as api } from '@/service/api/asset'
-import { team as teamApi } from '@/service/api/organ'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
@@ -126,7 +126,7 @@ const {
   },
   createFormModel,
   title: '资产采购',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_ORDER' },
+  permission: { useTabPermission: true, permName: 'AST_ORDER' },
   canEdit: form => !form.stoped,
   onSuccess: (action) => {
     emit('on-action', action)

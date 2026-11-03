@@ -11,8 +11,8 @@ import { SpCascader } from '@/components/SpCascader'
 import { AssetInfoSelect, OuterSelect } from '@/components/TableSelect'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { repair as api } from '@/service/api/asset'
-import { team as teamApi } from '@/service/api/organ'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
@@ -126,7 +126,7 @@ const {
   },
   createFormModel,
   title: '资产维保',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_REPAIR' },
+  permission: { useTabPermission: true, permName: 'AST_REPAIR' },
   canEdit: form => !form.stoped,
   onSuccess: (action) => {
     emit('on-action', action)

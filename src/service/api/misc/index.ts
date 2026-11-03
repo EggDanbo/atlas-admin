@@ -6,8 +6,8 @@ import verifycode from './verifycode'
 
 export { common, file, print, sliderCaptcha, verifycode }
 export default {
-  file,
   common,
+  file,
   print,
   sliderCaptcha,
   verifycode,

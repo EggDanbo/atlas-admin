@@ -4,8 +4,8 @@ import type { TableProps } from '@/components/SpTable'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDateRange } from '@/components/SpDateRange'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit } from '@/service/api/access'
 import { check as api } from '@/service/api/asset'
-import { team } from '@/service/api/organ'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 
@@ -16,7 +16,7 @@ const tabPermName = getPermission()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
-  const { isSuccess, data } = await team.tree({
+  const { isSuccess, data } = await unit.tree({
     permission: [tabPermName],
     tenant: tenantStorage.get(),
   })

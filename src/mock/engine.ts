@@ -17,7 +17,7 @@ import {
   isSummable,
   resolveTitle,
 } from './data/fieldValue'
-import { buildPermissionTree, DEMO_PERMISSION_CODES } from './data/permissions'
+import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
 import { FIELD_TITLE_DICT } from './schema/schema.generated'
@@ -246,7 +246,7 @@ function buildPage(module: string, params: Record<string, any>) {
 // ==================== 各类响应 ====================
 
 /** 当前登录用户（演示身份，拥有全部菜单与操作权限的普通用户） */
-const DEMO_USER = {
+const MOCK_USER = {
   userid: '10001',
   code: 'demo',
   name: '演示用户',
@@ -371,6 +371,39 @@ function buildModuleTree(path: string) {
   }))
 }
 
+/** 法定节假日排期（演示数据，按当年生成） */
+function buildHolidayRows() {
+  const year = new Date().getFullYear()
+  const plan: Array<[string, number, number, number]> = [
+    ['元旦', 1, 1, 3],
+    ['春节', 2, 10, 7],
+    ['清明节', 4, 4, 3],
+    ['劳动节', 5, 1, 5],
+    ['端午节', 6, 10, 3],
+    ['中秋节', 9, 17, 3],
+    ['国庆节', 10, 1, 7],
+  ]
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return plan.map(([name, month, start, count], index) => {
+    const days = Array.from({ length: count }, (_, offset) => {
+      const d = new Date(year, month - 1, start + offset)
+      return {
+        day: `${year}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+        // 1 法定假日、2 调休补班
+        day_type: offset === count - 1 && count >= 5 ? 2 : 1,
+      }
+    })
+    return {
+      id: 100 + index,
+      year,
+      name,
+      notes: count >= 5 ? '含调休补班' : '',
+      sort: index + 1,
+      days,
+    }
+  })
+}
+
 /** 字典下拉的候选值：按字典名关键字挑选语义相近的中文选项 */
 const DICT_OPTIONS: Array<{ test: RegExp, options: readonly string[] }> = [
   { test: /status|state|状态/i, options: ['草稿', '已提交', '已审核', '已完成', '已作废'] },
@@ -471,21 +504,31 @@ function buildDictionaryNodes(parentId: string) {
   }))
 }
 
-/** 角色列表：用于角色下拉与按类型分组，接口约定返回数组而非分页对象 */
+/** 角色数据范围候选值 */
+const ROLE_DATA_SCOPES = ['全部数据', '本部门及下级', '本部门', '仅本人']
+
+/**
+ * 角色列表：用于角色下拉、按类型分组与角色台账页
+ *
+ * 返回数组而非分页对象，页面对返回值直接 forEach / 当数组消费。
+ */
 function buildRoleList() {
-  const groups: Array<[string, string[]]> = [
-    ['业务角色', ['业务录入员', '业务审核员', '业务主管']],
-    ['财务角色', ['会计', '出纳', '财务主管']],
-    ['管理角色', ['系统管理员', '档案管理员', '只读查询员']],
+  const groups: Array<[string, Array<[string, string]>]> = [
+    ['业务角色', [['业务录入员', 'biz_entry'], ['业务审核员', 'biz_audit'], ['业务主管', 'biz_manager']]],
+    ['财务角色', [['会计', 'fin_accountant'], ['出纳', 'fin_cashier'], ['财务主管', 'fin_manager']]],
+    ['管理角色', [['系统管理员', 'sys_admin'], ['档案管理员', 'doc_admin'], ['只读查询员', 'readonly']]],
   ]
   const list: Record<string, any>[] = []
-  groups.forEach(([kind, names], gi) => {
-    names.forEach((name, ni) => {
+  groups.forEach(([kind, roles], gi) => {
+    roles.forEach(([name, code], ni) => {
       list.push({
         id: `R${gi + 1}${String(ni + 1).padStart(2, '0')}`,
         name,
+        code,
         kind,
         role_desc: kind,
+        data: ROLE_DATA_SCOPES[(gi + ni) % ROLE_DATA_SCOPES.length],
+        perms: `${12 + (((gi * 3) + ni) * 7) % 40} 项`,
         sort: (gi + 1) * 10 + ni,
       })
     })
@@ -541,9 +584,10 @@ function buildWorkflowItems(kind: string, count = 9) {
       biz_id: String(1000 + index),
       team_name: ctx.team.name,
       user_name: ctx.person.name,
-      content: `${pick(ctx.rng, DIGESTS)} · 金额 ${floatBetween(ctx.rng, 200, 26000, 2)} 元`,
+      content: `${biz.label} · 金额 ${floatBetween(ctx.rng, 200, 26000, 2)} 元`,
       ctime: toDateTimeString(new Date(Date.now() - index * 5400 * 1000)),
-      status: kind === 'apply' ? 'wait' : 'approve',
+      // 状态值需落在 BillStatus 枚举内（2 待审核 / 4 已审批），否则页面无法映射中文
+      status: kind === 'apply' ? '2' : '4',
     }
   })
 }
@@ -581,12 +625,12 @@ interface MonitorModule {
 
 /** 统计口径：与左侧一级导航一一对应，二级名称取自各模块真实菜单 */
 const MONITOR_MODULES: MonitorModule[] = [
-  { code: 'staff', name: '人事管理', children: ['人员档案', '人员变动', '考勤记录', '工资管理'] },
-  { code: 'trade', name: '业务管理', children: ['客户管理', '项目管理', '应收管理', '发票管理'] },
-  { code: 'asset', name: '资产管理', children: ['资产信息', '资产申领', '资产采购', '资产调拨'] },
-  { code: 'pense', name: '费用报销', children: ['费用申请', '事前申请', '付款合同', '费用支付'] },
-  { code: 'vouch', name: '账务处理', children: ['凭证录入', '凭证分录', '期间处理', '余额查询'] },
-  { code: 'paper', name: '档案管理', children: ['档案信息', '档案借阅'] },
+  { code: 'crm', name: '客户与项目', children: ['客户', '项目', '应收', '回款'] },
+  { code: 'hr', name: '人力资源', children: ['员工名册', '异动管理', '考勤记录', '薪酬管理'] },
+  { code: 'expense', name: '费用管理', children: ['费用申请', '事前申请', '费用支付', '预算额度'] },
+  { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
+  { code: 'finance', name: '财务核算', children: ['凭证', '账簿', '报表', '余额查询'] },
+  { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
 ]
 
 /** 最近 N 个月的标签，如 2025-12 */
@@ -693,10 +737,10 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
 
   // ---------- 身份与权限 ----------
   if (/identity\/profile\/get$/.test(path))
-    return ok(DEMO_USER)
+    return ok(MOCK_USER)
   if (/identity\/profile\/info$/.test(path)) {
     return ok({
-      ...DEMO_USER,
+      ...MOCK_USER,
       sex: 1,
       birthday: '1990-06-18',
       email: 'demo@example.com',
@@ -708,7 +752,7 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   if (/identity\/permit\/list$/.test(path))
     return ok(buildPermissionTree())
   if (/identity\/permit\/currentuser$/.test(path))
-    return ok(DEMO_PERMISSION_CODES)
+    return ok(MOCK_PERMISSION_CODES)
   if (/identity\/profile\/switch$/.test(path) || path.endsWith('getscreentoken'))
     return ok(buildToken())
 
@@ -744,14 +788,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   if (/dataformat\/getusergrid(list)?$/.test(path))
     return ok(null)
 
-  // ---------- 组织机构 ----------
-  if (/organ\/team\/tenant\/list$/.test(path)) {
+  // ---------- 组织与权限 ----------
+  if (/access\/unit\/tenant\/list$/.test(path)) {
     // 单租户场景：自动选中，页面无需手动选择组织机构
     return ok([{ value: 'T200', label: '示例企业', select: true }])
   }
-  if (/organ\/team\/tree$/.test(path) || /organ\/team\/treebyid$/.test(path))
+  if (/access\/unit\/tree$/.test(path) || /access\/unit\/treebyid$/.test(path))
     return ok(buildTeamTree())
-  if (/organ\/branch\/tree$/.test(path))
+  if (/hr\/team\/tree$/.test(path))
     return ok(buildBranchTree())
   // 其余模块的树接口（仓库、会议室、分类…）统一返回节点数组，
   // 否则页面按数组解析时会抛 "tree is not iterable"
@@ -777,11 +821,11 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
     const list = buildWorkflowItems('approve')
     return ok({ list, totalcount: list.length, page: 1, pageindex: 0, pagesize: list.length, totalpages: 1, isempty: false })
   }
-  if (/board\/workplace\/getalter$/.test(path))
+  if (/dashboard\/overview\/getalter$/.test(path))
     return ok(buildWorkplaceDynamic())
 
-  // ---------- 监控台 ----------
-  if (/board\/monitor\/(overview|chart|charts|summary)$/.test(path))
+  // ---------- 运营监控 ----------
+  if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
     return ok(buildMonitorOverview())
 
   // ---------- 消息通知 ----------
@@ -842,6 +886,11 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // ---------- 通用列表 ----------
   if (LIST_ACTIONS.has(action))
     return ok(buildPage(module, params))
+
+  // ---------- 假期安排：按年度返回列表 ----------
+  // 该接口虽名为 get，语义是「取某年度的全部节假日」，页面按数组消费
+  if (/hr\/attendance\/holiday\/get$/.test(path))
+    return ok(buildHolidayRows())
 
   // ---------- 通用详情 ----------
   if (DETAIL_ACTIONS.has(action)) {

@@ -2,7 +2,7 @@
 import type { TableSelectItem } from './useTableSelect'
 import type { ModalInst } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
-import { info as api } from '@/service/api/staff'
+import { roster as api } from '@/service/api/hr'
 import { isArray } from '@/utils/is'
 import { SelectProps } from './props'
 import { useTableSelect } from './useTableSelect'

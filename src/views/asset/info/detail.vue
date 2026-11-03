@@ -10,9 +10,9 @@ import { SpCascader } from '@/components/SpCascader'
 import { UserSelect } from '@/components/TableSelect'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { info as api } from '@/service/api/asset'
-import { asset as assetApi } from '@/service/api/basic'
-import { team as teamApi } from '@/service/api/organ'
+import { assetCategory as assetApi } from '@/service/api/masterdata'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 
@@ -115,7 +115,7 @@ const {
   api,
   createFormModel,
   title: '资产信息',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_INFO' },
+  permission: { useTabPermission: true, permName: 'AST_INFO' },
   canEdit: form => form.stoped === '0',
   onSuccess: (action) => {
     emit('on-action', action)

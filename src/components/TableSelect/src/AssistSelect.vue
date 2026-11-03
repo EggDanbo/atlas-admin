@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { TableSelectItem } from './useTableSelect'
 import type { TableProps } from '@/components/SpTable'
-import { assist } from '@/service/api/basic'
+import { dimension } from '@/service/api/masterdata'
 import { useEnumStore } from '@/store/modules/enums'
 import { isArray } from '@/utils/is'
 import { SelectProps } from './props'
@@ -166,7 +166,7 @@ async function fetchNames(value: string | string[]) {
  * 获取用户列表数据（业务特定）
  */
 async function fetchData(params: any) {
-  const { isSuccess, data } = await assist.list({
+  const { isSuccess, data } = await dimension.list({
     ...params,
     ...filterModel,
     team_id: props.team_id,

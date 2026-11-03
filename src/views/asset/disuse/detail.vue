@@ -11,8 +11,8 @@ import { SpCascader } from '@/components/SpCascader'
 import { AssetInfoSelect, UserSelect } from '@/components/TableSelect'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { disuse as api } from '@/service/api/asset'
-import { team as teamApi } from '@/service/api/organ'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
@@ -126,7 +126,7 @@ const {
   },
   createFormModel,
   title: '资产处置',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_ALLOT' },
+  permission: { useTabPermission: true, permName: 'AST_ALLOT' },
   canEdit: form => !form.stoped,
   onSuccess: (action) => {
     emit('on-action', action)
@@ -330,7 +330,7 @@ export default { name: 'AssetDisuseDetail' }
           <UserSelect
             v-model:value="formModel.user_id"
             v-model:options="formModel.user_name"
-            permission="DEMO_ASSET_ALLOT"
+            permission="AST_ALLOT"
             :team_id="formModel.team_id"
             :disabled="!formModel.team_id"
           />

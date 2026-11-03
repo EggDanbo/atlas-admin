@@ -7,11 +7,11 @@ import CryptoJS from 'crypto-js'
  * 演示版本改为本地占位值：登录请求不会发往任何服务端，
  * 因此这里的加解密仅用于保持调用链完整，不具备任何保密意义。
  */
-const DEMO_KEY = 'demo-mock-only-not-a-secret-key'.padEnd(32, '0').slice(0, 32)
-const DEMO_IV = 'demo-mock-iv-001'.padEnd(16, '0').slice(0, 16)
+const MOCK_KEY = 'atlas-local-mock-key-placeholder'.padEnd(32, '0').slice(0, 32)
+const MOCK_IV = 'atlas-local-mock-iv'.padEnd(16, '0').slice(0, 16)
 
-const key = CryptoJS.enc.Utf8.parse(DEMO_KEY)
-const iv = CryptoJS.enc.Utf8.parse(DEMO_IV)
+const key = CryptoJS.enc.Utf8.parse(MOCK_KEY)
+const iv = CryptoJS.enc.Utf8.parse(MOCK_IV)
 
 /* 加密 */
 export function encrypt(word: string) {

@@ -11,10 +11,10 @@ export { authorize, external, permit, permitgroup, permituser, profile, role, we
 export default {
   authorize,
   external,
-  wechatwork,
   permit,
   permitgroup,
   permituser,
   profile,
   role,
+  wechatwork,
 }

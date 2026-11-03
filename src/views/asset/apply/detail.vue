@@ -10,8 +10,8 @@ import { LogProcess } from '@/components/Logs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { unit as teamApi } from '@/service/api/access'
 import { apply as api } from '@/service/api/asset'
-import { team as teamApi } from '@/service/api/organ'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
@@ -125,7 +125,7 @@ const {
   },
   createFormModel,
   title: '资产申领',
-  permission: { useTabPermission: true, permName: 'DEMO_ASSET_APPLY' },
+  permission: { useTabPermission: true, permName: 'AST_APPLY' },
   canEdit: form => !form.opt_submit,
   onSuccess: (action) => {
     emit('on-action', action)

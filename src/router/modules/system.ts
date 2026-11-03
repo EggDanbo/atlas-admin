@@ -3,88 +3,87 @@ import type { RouteRecordRaw } from 'vue-router'
 const routes: RouteRecordRaw[] = [
   {
     path: '/system',
-    name: 'system',
+    name: 'System',
     meta: {
-      title: '系统设置',
-      icon: 'ant-design:scissor-outlined',
-      permissions: ['SYSTEM_SETTINGS', 'SYSTEM_DICTIONARY'],
+      title: '系统管理',
+      icon: 'ant-design:tool-outlined',
+      permissions: ['SYS_PARAMETER', 'SYS_DICTIONARY', 'SYS_GRID', 'SYS_LOG'],
       alwaysShow: true,
-      sort: 95,
+      sort: 90,
     },
     children: [
       {
-        path: 'settings',
-        name: 'SystemSettings',
+        path: 'parameter',
+        name: 'SystemParameter',
         meta: {
           title: '系统参数',
-          permissions: ['SYSTEM_SETTINGS'],
+          permissions: ['SYS_PARAMETER'],
         },
-        component: () => import('@/views/system/settings/index.vue'),
+        component: () => import('@/views/system/parameter/index.vue'),
       },
       {
         path: 'dictionary',
         name: 'SystemDictionary',
         meta: {
-          title: '选项设置',
-          permissions: ['SYSTEM_DICTIONARY'],
+          title: '数据字典',
+          permissions: ['SYS_DICTIONARY'],
           keepAlive: true,
         },
         component: () => import('@/views/system/dictionary/index.vue'),
       },
       {
-        path: 'usergrid',
-        name: 'SystemUsergrid',
+        path: 'grid',
+        name: 'SystemGrid',
         meta: {
           title: '表格格式',
-          permissions: ['SYSTEM_USERGRID'],
+          permissions: ['SYS_GRID'],
           keepAlive: true,
         },
-        component: () => import('@/views/system/usergrid/index.vue'),
-      },
-    ],
-  },
-  {
-    path: '/log',
-    name: 'log',
-    meta: {
-      title: '系统日志',
-      icon: 'ant-design:sound-outlined',
-      permissions: ['SYSTEM_LOG'],
-      alwaysShow: true,
-      sort: 98,
-    },
-    children: [
-      {
-        path: 'app',
-        name: 'LogApp',
-        meta: {
-          title: '应用日志',
-          permissions: ['SYSTEM_LOG'],
-          keepAlive: true,
-        },
-        component: () => import('@/views/system/logs/app.vue'),
+        component: () => import('@/views/system/grid/index.vue'),
       },
       {
-        path: 'access',
-        name: 'LogAccess',
+        path: 'log',
+        name: 'SystemLog',
         meta: {
-          title: '访问日志',
-          permissions: ['SYSTEM_LOG'],
-          keepAlive: true,
+          title: '操作审计',
+          permissions: ['SYS_LOG'],
+          alwaysShow: true,
         },
-        component: () => import('@/views/system/logs/access.vue'),
-      },
-      {
-        path: 'bizlog',
-        name: 'LogBizlog',
-        meta: {
-          title: '操作日志',
-          permissions: ['SYSTEM_LOG'],
-          keepAlive: true,
-        },
-        component: () => import('@/views/system/logs/bizlog.vue'),
+        children: [
+          {
+            path: 'app',
+            name: 'SystemLogApp',
+            meta: {
+              title: '应用日志',
+              permissions: ['SYS_LOG'],
+              keepAlive: true,
+            },
+            component: () => import('@/views/system/log/app.vue'),
+          },
+          {
+            path: 'access',
+            name: 'SystemLogAccess',
+            meta: {
+              title: '访问日志',
+              permissions: ['SYS_LOG'],
+              keepAlive: true,
+            },
+            component: () => import('@/views/system/log/access.vue'),
+          },
+          {
+            path: 'operation',
+            name: 'SystemLogOperation',
+            meta: {
+              title: '操作日志',
+              permissions: ['SYS_LOG'],
+              keepAlive: true,
+            },
+            component: () => import('@/views/system/log/operation.vue'),
+          },
+        ],
       },
     ],
   },
 ]
+
 export default routes

@@ -4,7 +4,7 @@ import type { ModalInst } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
 import { SpTree } from '@/components/SpTree'
 import { info as api } from '@/service/api/asset'
-import { article } from '@/service/api/basic'
+import { itemCategory } from '@/service/api/masterdata'
 import { isArray } from '@/utils/is'
 import { SelectProps } from './props'
 import { useTableSelect } from './useTableSelect'
@@ -306,7 +306,7 @@ function dblClick({ row }: { row: any }) {
 }
 
 async function loadArticleTreeOptions() {
-  const { isSuccess, data } = await article.tree()
+  const { isSuccess, data } = await itemCategory.tree()
   if (!isSuccess)
     return
   articleTreeOptions.value = data

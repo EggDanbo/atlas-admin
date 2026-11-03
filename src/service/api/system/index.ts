@@ -7,17 +7,7 @@ import logVisits from './logVisits'
 import mapGeocode from './mapGeocode'
 import settings from './settings'
 
-export {
-  dictionary,
-  logAccess,
-  logApp,
-  logBizLog,
-  logImport,
-  logVisits,
-  mapGeocode,
-  settings,
-}
-
+export { dictionary, logAccess, logApp, logBizLog, logImport, logVisits, mapGeocode, settings }
 export default {
   dictionary,
   logAccess,

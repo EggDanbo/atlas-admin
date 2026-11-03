@@ -1,0 +1,48 @@
+import { request } from '@/service/http'
+
+const url = 'expense/reimburse'
+
+export default {
+  /**
+   * 获取分录的生成信息
+   * @param data 请求数据
+   */
+  vouch: (data: Recordable) => {
+    return request.Post<Service.ResultPage<Recordable>>(`${url}/vouch`, data)
+  },
+  /**
+   * 获取分页列表
+   * @param data 请求数据
+   */
+  search: (data: Service.SearchCondition) => {
+    return request.Post<Service.ResultPage<Recordable>>(`${url}/search`, data)
+  },
+  /**
+   * 支付
+   * @param data 请求数据
+   */
+  confirm: (data: Recordable) => {
+    return request.Post<Service.Result<string>>(`${url}/confirm`, data)
+  },
+  /**
+   * 取消
+   * @param data 请求数据
+   */
+  cancel: (data: Recordable) => {
+    return request.Post<Service.Response>(`${url}/cancel`, data)
+  },
+  /**
+   * 导出Excel
+   * @param data 请求数据
+   */
+  export: (data: Service.SearchCondition) => {
+    return request.Post<Service.Result<string>>(`${url}/export`, data, { timeout: 1000 * 60 * 2 })
+  },
+  /**
+   * 打印
+   * @param data 请求数据
+   */
+  print: (data: Service.SearchCondition) => {
+    return request.Post<Service.Result<string>>(`${url}/print`, data, { timeout: 1000 * 60 * 2 })
+  },
+}
