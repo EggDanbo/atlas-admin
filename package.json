@@ -28,7 +28,11 @@
     "icons:generate": "tsx scripts/generate-icons.ts",
     "icons:all": "tsx scripts/scan-icons.ts && tsx scripts/generate-icons.ts",
     "icons:check": "tsx scripts/scan-icons.ts --check",
-    "mock:schema": "node scripts/mock/extract-schema.mjs"
+    "mock:schema": "node scripts/mock/extract-schema.mjs",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "verify": "pnpm run lint && pnpm run typecheck && pnpm run test:run"
   },
   "dependencies": {
     "@ant-design/colors": "^8.0.1",
@@ -125,6 +129,7 @@
     "vite-plugin-router-warn": "^2.0.0",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vite-plugin-vue-layouts": "^0.11.0",
+    "vitest": "^2.1.9",
     "vue-tsc": "^3.3.11"
   },
   "simple-git-hooks": {

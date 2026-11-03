@@ -493,8 +493,14 @@ export function resolveTitle(
 
 // ==================== 列类型 ====================
 
-const MONEY_RE = /(amount|money|price|debit|credit|balance|total|tax|value|fee|cost|salary|wage|pay|budget|sum|deposit|margin)$/i
-const INT_RE = /(num|count|qty|quantity|scale|ratio|rate|sort|seq|age|days|hours|number|index|page|size)$/i
+/**
+ * 字段名到列类型的判定规则
+ *
+ * 业务字段存在单复数混用（total / totals、tax / taxes、qty / pcs），
+ * 匹配时统一兼容复数形式，否则列会退化成文本、失去右对齐与合计。
+ */
+const MONEY_RE = /(amounts?|money|prices?|debit|credit|balance|totals?|tax(es)?|values?|fees?|costs?|salary|wages?|pay|budgets?|sums?|deposit|margins?)$/i
+const INT_RE = /(nums?|counts?|pcs|qtys?|quantity|scales?|ratios?|rates?|sort|seq|age|days|hours|numbers?|index|page|size)$/i
 const DATE_RE = /(^date$|_date$|date_|^day$|birthday|expire|period|^start$|^end$|deadline|checkdate|printdate|createdate|updatedate)/i
 const DATETIME_RE = /(^time$|_time$|timestamp|datetime|created_at|updated_at)/i
 const BOOL_RE = /^(printed|stoped|enabled|disabled|is\w+|has\w+|checked|finished|locked)$/i
@@ -539,20 +545,42 @@ function bankAccount(rng: Rng): string {
   return `${acc.slice(0, 6)} **** **** ${acc.slice(-4)}`
 }
 
+/** 业务域默认单号前缀 */
 const SERIAL_PREFIX: Record<string, string> = {
   asset: 'ZC',
-  vouch: 'PZ',
-  pense: 'BX',
-  staff: 'YG',
-  trade: 'HT',
-  basic: 'JC',
-  organ: 'ZZ',
-  paper: 'DA',
+  finance: 'PZ',
+  expense: 'BX',
+  hr: 'YG',
+  crm: 'HT',
+  masterdata: 'JC',
+  access: 'ZZ',
+  archive: 'DA',
+  system: 'SYS',
+}
+
+/** 单据类模块的单号前缀（覆盖业务域默认值） */
+const SERIAL_PREFIX_BY_MODULE: Record<string, string> = {
+  'crm/invoice': 'FP',
+  'crm/receipt': 'SK',
+  'crm/receivable': 'YS',
+  'crm/project': 'XM',
+  'finance/voucher': 'PZ',
+  'finance/opening': 'QC',
+  'expense/reimburse': 'BX',
+  'expense/advance': 'JK',
+  'expense/payment': 'FK',
+  'expense/travel': 'CL',
+  'expense/entertain': 'ZK',
+  'asset/allot': 'DB',
+  'asset/apply': 'SQ',
+  'asset/order': 'CG',
+  'archive/document': 'DA',
+  'archive/borrow': 'JY',
 }
 
 function buildSerial(ctx: RowContext): string {
   const top = ctx.module.split('/')[0] || 'DJ'
-  const prefix = SERIAL_PREFIX[top] || 'DJ'
+  const prefix = SERIAL_PREFIX_BY_MODULE[ctx.module] || SERIAL_PREFIX[top] || 'DJ'
   const date = dateOffset(-(ctx.index % 90))
   const ym = `${date.getFullYear()}${`${date.getMonth() + 1}`.padStart(2, '0')}`
   return `${prefix}${ym}${`${ctx.index + 1}`.padStart(4, '0')}`

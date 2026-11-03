@@ -28,12 +28,12 @@ interface MonitorOverview {
 
 /** 每个一级模块固定一种颜色，便于跨图表对应 */
 const MODULE_COLORS: Record<string, string> = {
-  人事管理: '#F97316',
-  业务管理: '#2BA8E8',
+  客户与项目: '#2BA8E8',
+  人力资源: '#F97316',
+  费用管理: '#E9A020',
   资产管理: '#22B99A',
-  费用报销: '#E9A020',
-  账务处理: '#E8635F',
-  档案管理: '#8B6BE8',
+  财务核算: '#E8635F',
+  文档中心: '#8B6BE8',
 }
 
 const FALLBACK_COLOR = '#8B93A7'
