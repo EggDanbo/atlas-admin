@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
@@ -10,10 +11,13 @@ import { makeup as api } from '@/service/api/hr/attendance-apply'
 import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import toast from '@/utils/toast'
+import { viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
 const enumStore = useEnumStore()
+
+const viewTableRef = ref<TableInstance | null>(null)
 
 const logBizRef = ref<OpenModal | null>(null)
 const logProcessRef = ref<OpenModal | null>(null)
@@ -183,7 +187,7 @@ export default { name: 'HrApplyMakeupDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="900" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       label-placement="left"
       require-mark-placement="left"
@@ -277,39 +281,11 @@ export default { name: 'HrApplyMakeupDetail' }
             </n-form-item-gi>
           </n-grid>
 
-          <div class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+          <div class="mt-4">
             <n-divider title-placement="left" style="margin: 0;">
               补卡明细
             </n-divider>
-            <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-              <div class="flex items-stretch">
-                <div class="label-nums">
-                  <n-text strong>
-                    #{{ Number(key) + 1 }}
-                  </n-text>
-                </div>
-
-                <div class="detail-card-box-content">
-                  <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                    <n-form-item-gi :span="8" label="资产编码" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.code" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="16" label="资产名称" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.name" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="品牌" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.brand" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="16" label="规格型号" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.model" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="24" label="备注" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.remark" type="textarea" :rows="3" readonly="true" />
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
-              </div>
-            </n-card>
+            <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list" />
           </div>
         </n-layout>
       </n-layout>

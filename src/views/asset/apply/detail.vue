@@ -8,7 +8,7 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { apply as api } from '@/service/api/asset'
@@ -204,38 +204,7 @@ function rowsChange(e, tref) {
   $table?.editRowEvent(e.row)
 }
 
-async function tableItemsAdd({ opt, key = 0 }: { opt: string, key?: number | string }) {
-  const list: any = {}
-  const items = formModel[opt]
-  items.splice(Number(key) + 1, 0, list)
-}
-
-function tableItemsRemove({ opt, key }: { opt: string, key?: number | string }) {
-  formModel[opt].splice(key, 1)
-}
-
-function tableItemsMoveUp({ opt, key }: { opt: string, key?: number | string }) {
-  const nuns = Number(key)
-  if (nuns === 0)
-    return
-  const items = formModel[opt];
-  [items[nuns], items[nuns - 1]] = [items[nuns - 1], items[nuns]]
-}
-
-function tableItemsMoveDown({ opt, key }: { opt: string, key?: number | string }) {
-  const nuns = Number(key)
-  if (nuns < formModel[opt].length - 1) {
-    const items = formModel[opt];
-    [items[nuns], items[nuns + 1]] = [items[nuns + 1], items[nuns]]
-  }
-}
-
-function tableItemsCopy({ opt, key }: { opt: string, key?: number | string }) {
-  const items = formModel[opt]
-  const item = items[Number(key)]
-  const { _X_ROW_KEY: _, ...newItem } = item
-  items.splice(Number(key) + 1, 0, newItem)
-}
+const { tableItemsAdd, tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown, tableItemsCopy } = useTableItems(formModel)
 
 async function handleProcess(opt: string) {
   processTypes.value = opt

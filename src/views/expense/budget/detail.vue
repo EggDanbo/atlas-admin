@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import { add as lodashAdd } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
@@ -9,7 +10,7 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { budget as api } from '@/service/api/expense'
@@ -18,6 +19,7 @@ import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
+import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
@@ -25,6 +27,9 @@ const { getPermission } = useTabbar()
 const tabPermName = getPermission()
 
 const enumStore = useEnumStore()
+
+const tableRef = ref<TableInstance | null>(null)
+const viewTableRef = ref<TableInstance | null>(null)
 
 const logBizRef = ref<OpenModal | null>(null)
 const logProcessRef = ref<OpenModal | null>(null)
@@ -162,7 +167,7 @@ const {
     return true
   },
   beforeView: (data) => {
-    if (data.list.length !== 0) {
+    if (data.list && data.list.length !== 0) {
       data.list.forEach((item: any) => {
         item.transform = {}
         item.transform.indate = item.indate && Number(item.indate) > 0 ? format((Number(item.indate)), 'yyyy-MM-dd') : null
@@ -179,36 +184,15 @@ const {
   },
 })
 
+const { tableItemsAdd, tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown, tableItemsCopy } = useTableItems(formModel)
+
+/** 新增一行的默认值，与表单字段保持一致 */
 function itemsAdd() {
-  const def = {
-    content_id: null,
-    amount: null,
-  }
-  formModel.list.push(def)
+  tableItemsAdd({ opt: 'list', def: { content_id: null, amount: null } })
 }
 
-function itemsMoveUp(key) {
-  if (Number(key) === 0)
-    return
-  const items = formModel.list;
-  [items[key], items[key - 1]] = [items[key - 1], items[key]]
-}
-
-function itemsMoveDown(key) {
-  if (Number(key) < formModel.list.length - 1) {
-    const items = formModel.list;
-    [items[key], items[key + 1]] = [items[key + 1], items[key]]
-  }
-}
-
-function itemsCopy(key) {
-  const items = formModel.list[key]
-  const newItems = { ...items }
-  formModel.list.splice(key + 1, 0, newItems)
-}
-
-function itemsRemove(key) {
-  formModel.list.splice(key, 1)
+function rowsChange(e, tref) {
+  tref?.editRowEvent(e.row)
 }
 
 async function handleProcess(opt: string) {
@@ -303,23 +287,6 @@ function handleAmountTotal() {
   formModel.amount = amount.toFixed(2)
 }
 
-function itemsContentSelected(e, options) {
-  for (const i in formModel.list) {
-    const items = formModel.list[i]
-    if (items.expense_id === e) {
-      if (options.code.includes('005') || options.code.includes('006')) {
-        items.isCar = true
-        if (!items.vehicle)
-          items.vehicle = null
-      }
-      else {
-        items.isCar = false
-        items.vehicle = null
-      }
-    }
-  }
-}
-
 defineExpose(exposed)
 </script>
 
@@ -328,7 +295,7 @@ export default { name: 'ExpenseBudgetDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"
@@ -373,79 +340,73 @@ export default { name: 'ExpenseBudgetDetail' }
         </n-form-item-gi>
       </n-grid>
 
-      <div class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+      <div class="mt-4">
         <n-divider title-placement="left" style="margin: 0;">
           预算额度明细
         </n-divider>
-        <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-          <div class="flex items-stretch">
-            <div class="label-nums">
-              <n-text strong>
-                #{{ Number(key) + 1 }}
-              </n-text>
+        <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
+          <template #operate="{ rowIndex }">
+            <div class="flex items-center justify-right gap-[10px]">
+              <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:arrow-up-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:arrow-down-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsCopy({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:copy-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsAdd({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:plus-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:delete-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
             </div>
-
-            <div class="detail-card-box-content">
-              <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                <n-form-item-gi :span="8" label="费用分类" :path="`list[${key}].content_id`" label-width="80" :show-feedback="false">
-                  <SpCascader
-                    v-model:value="item.content_id"
-                    :options="contentTreeOptions"
-                    placeholder="请选择"
-                    value-field="id"
-                    @update:value="itemsContentSelected"
-                  />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="有效期" :path="`list[${key}].indate`" label-width="80" :show-feedback="false">
-                  <n-date-picker v-model:value="item.indate" type="date" fast-month-select clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="金额" :path="`list[${key}].amount`" label-width="80" :show-feedback="false">
-                  <n-input-number
-                    v-model:value="item.amount"
-                    :precision="2"
-                    :show-button="false"
-                    clearable
-                    @update:value="handleAmountTotal"
-                  />
-                </n-form-item-gi>
-              </n-grid>
-            </div>
-
-            <div class="menu-bar">
-              <div class="flex items-start justify-center gap-[10px]">
-                <n-button v-if="formModel.list.length > 1" :disabled="Number(key) === 0" text @click="itemsMoveUp(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button v-if="formModel.list.length > 1" :disabled="Number(key) === formModel.list.length - 1" text @click="itemsMoveDown(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="itemsCopy(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:copy-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="itemsRemove(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
-            </div>
-          </div>
-        </n-card>
-        <div class="w-full flex">
+          </template>
+          <template #content_default="{ row }">
+            {{ row.content_name }}
+          </template>
+          <template #content_edit="{ row }">
+            <SpCascader
+              v-model:value="row.content_id"
+              :options="contentTreeOptions"
+              placeholder="请选择"
+              value-field="id"
+              @update:value="(_, options) => row.content_name = options.label"
+            />
+          </template>
+          <template #indate_default="{ row }">
+            {{ row.indate && Number(row.indate) > 0 ? format(Number(row.indate), 'yyyy-MM-dd') : '' }}
+          </template>
+          <template #indate_edit="{ row }">
+            <n-date-picker v-model:value="row.indate" type="date" fast-month-select clearable />
+          </template>
+          <template #amount_edit="{ row }">
+            <n-input-number v-model:value="row.amount" :precision="2" :show-button="false" clearable @update:value="handleAmountTotal" />
+          </template>
+        </SpTable>
+        <div class="mt-2 w-full flex">
           <n-button tertiary round size="small" class="w-full" @click="itemsAdd()">
             <template #icon>
               <n-icon>
@@ -540,33 +501,15 @@ export default { name: 'ExpenseBudgetDetail' }
             </n-form-item-gi>
           </n-grid>
 
-          <div class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+          <div class="mt-4">
             <n-divider title-placement="left" style="margin: 0;">
               预算额度明细
             </n-divider>
-            <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-              <div class="flex items-stretch">
-                <div class="label-nums">
-                  <n-text strong>
-                    #{{ Number(key) + 1 }}
-                  </n-text>
-                </div>
-
-                <div class="detail-card-box-content">
-                  <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                    <n-form-item-gi :span="8" label="费用分类" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.content_name" placeholder="" readonly />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="有效期" label-width="80" :show-feedback="false">
-                      <n-input :value="item.transform?.indate" placeholder="" readonly />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="金额" label-width="80" :show-feedback="false">
-                      <n-input-number v-model:value="item.amount" placeholder="" :show-button="false" :readonly="true" />
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
-              </div>
-            </n-card>
+            <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
+              <template #indate_default="{ row }">
+                {{ row.transform?.indate }}
+              </template>
+            </SpTable>
           </div>
         </n-layout>
       </n-layout>

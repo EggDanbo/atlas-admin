@@ -32,7 +32,7 @@ export default { name: 'HrRecordPunchDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="900" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       label-placement="left"
       require-mark-placement="left"

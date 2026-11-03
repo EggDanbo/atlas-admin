@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import { add } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
@@ -14,11 +15,15 @@ import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import toast from '@/utils/toast'
+import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
 const enumStore = useEnumStore()
 const userStore = useUserStore()
+
+const tableRef = ref<TableInstance | null>(null)
+const viewTableRef = ref<TableInstance | null>(null)
 
 const logBizRef = ref<OpenModal | null>(null)
 const logProcessRef = ref<OpenModal | null>(null)
@@ -248,7 +253,7 @@ export default { name: 'HrApplyOvertimeDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"
@@ -308,43 +313,28 @@ export default { name: 'HrApplyOvertimeDetail' }
         </n-form-item-gi>
       </n-grid>
 
-      <div v-if="formModel.list.length > 0" class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+      <div v-if="formModel.list.length > 0" class="mt-4">
         <n-divider title-placement="left" style="margin: 0;">
           加班明细
         </n-divider>
-        <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-          <div class="flex items-stretch">
-            <div class="label-nums">
-              <n-text strong>
-                #{{ Number(key) + 1 }}
-              </n-text>
-            </div>
-
-            <div class="detail-card-box-content">
-              <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                <n-form-item-gi :span="12" label="加班日期" label-width="80" :show-feedback="false">
-                  <n-input v-model:value="item.day" placeholder="" readonly="true">
-                    <template #suffix>
-                      {{ item.day_type_fmt }}
-                    </template>
-                  </n-input>
-                </n-form-item-gi>
-                <n-form-item-gi :span="12" label="加班时长" :path="`list[${key}].over_time`" label-width="80" :show-feedback="false">
-                  <n-input-number
-                    v-model:value="item.over_time"
-                    :show-button="false"
-                    :precision="1"
-                    @update:value="handleOvertimeUpdate"
-                  >
-                    <template #suffix>
-                      小时
-                    </template>
-                  </n-input-number>
-                </n-form-item-gi>
-              </n-grid>
-            </div>
-          </div>
-        </n-card>
+        <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list">
+          <template #day_default="{ row }">
+            {{ row.day }}<span v-if="row.day_type_fmt" class="ml-1 text-gray-400">（{{ row.day_type_fmt }}）</span>
+          </template>
+          <template #over_time_edit="{ row }">
+            <n-input-number
+              v-model:value="row.over_time"
+              :show-button="false"
+              :precision="1"
+              clearable
+              @update:value="handleOvertimeUpdate"
+            >
+              <template #suffix>
+                小时
+              </template>
+            </n-input-number>
+          </template>
+        </SpTable>
       </div>
     </n-form>
 
@@ -443,43 +433,15 @@ export default { name: 'HrApplyOvertimeDetail' }
             </n-form-item-gi>
           </n-grid>
 
-          <div v-if="formModel.list.length > 0" class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+          <div v-if="formModel.list.length > 0" class="mt-4">
             <n-divider title-placement="left" style="margin: 0;">
               加班明细
             </n-divider>
-            <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-              <div class="flex items-stretch">
-                <div class="label-nums">
-                  <n-text strong>
-                    #{{ Number(key) + 1 }}
-                  </n-text>
-                </div>
-
-                <div class="detail-card-box-content">
-                  <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                    <n-form-item-gi :span="12" label="加班日期" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.day" placeholder="" readonly="true">
-                        <template #suffix>
-                          {{ item.day_type_fmt }}
-                        </template>
-                      </n-input>
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="12" label="加班时长" :path="`list[${key}].over_time`" label-width="80" :show-feedback="false">
-                      <n-input-number
-                        v-model:value="item.over_time"
-                        :show-button="false"
-                        readonly
-                        placeholder=""
-                      >
-                        <template #suffix>
-                          小时
-                        </template>
-                      </n-input-number>
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
-              </div>
-            </n-card>
+            <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
+              <template #day_default="{ row }">
+                {{ row.day }}<span v-if="row.day_type_fmt" class="ml-1 text-gray-400">（{{ row.day_type_fmt }}）</span>
+              </template>
+            </SpTable>
           </div>
         </n-layout>
       </n-layout>

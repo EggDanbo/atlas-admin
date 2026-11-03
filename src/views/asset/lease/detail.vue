@@ -9,7 +9,7 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { AssetLedgerPicker, MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { lease as api } from '@/service/api/asset'
@@ -184,25 +184,7 @@ function rowsChange(e, tref) {
   $table?.editRowEvent(e.row)
 }
 
-function tableItemsRemove({ opt, key }: { opt: string, key: number | string }) {
-  formModel[opt].splice(key, 1)
-}
-
-function tableItemsMoveUp({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns === 0)
-    return
-  const items = formModel[opt];
-  [items[nuns], items[nuns - 1]] = [items[nuns - 1], items[nuns]]
-}
-
-function tableItemsMoveDown({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns < formModel[opt].length - 1) {
-    const items = formModel[opt];
-    [items[nuns], items[nuns + 1]] = [items[nuns + 1], items[nuns]]
-  }
-}
+const { tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown } = useTableItems(formModel)
 
 function handleItemAssetInfoSelected(options) {
   options.forEach((item) => {
@@ -312,7 +294,7 @@ export default { name: 'AssetLeaseDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"

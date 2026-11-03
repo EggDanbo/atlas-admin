@@ -188,7 +188,7 @@ export default { name: 'HrRelationContractDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="960" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"

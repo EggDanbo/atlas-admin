@@ -213,7 +213,7 @@ export default { name: 'HrApplyFieldDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"

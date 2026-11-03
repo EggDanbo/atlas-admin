@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
@@ -8,7 +9,7 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { ExpenseContractPicker, MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { entertain as api } from '@/service/api/expense'
@@ -17,6 +18,7 @@ import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
+import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
@@ -25,10 +27,11 @@ const tabPermName = getPermission()
 
 const enumStore = useEnumStore()
 
+const tableRef = ref<TableInstance | null>(null)
+const viewTableRef = ref<TableInstance | null>(null)
+
 const logBizRef = ref<OpenModal | null>(null)
 const logProcessRef = ref<OpenModal | null>(null)
-
-const PenseApplySelectRef = ref<OpenModal | null>(null)
 
 const isApprove = ref<boolean>(false)
 const detailMode = ref<string | null>(null)
@@ -165,46 +168,15 @@ const {
   },
 })
 
-function itemsAdd(opt?: string) {
-  if (opt && opt === 'open') {
-    PenseApplySelectRef.value?.open()
-  }
-  else {
-    const def = {
-      name: null,
-      model: null,
-      unit: null,
-      pcs: null,
-      outer_id: null,
-      price: null,
-      remark: null,
-    }
-    formModel.list.push(def)
-  }
+const { tableItemsAdd, tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown, tableItemsCopy } = useTableItems(formModel)
+
+/** 新增一行的默认值，与表单字段保持一致 */
+function itemsAdd() {
+  tableItemsAdd({ opt: 'list', def: { address: null, pcs: null, guests: null, content_id: null, amount: null, quotas: null, remark: null } })
 }
 
-function itemsMoveUp(key) {
-  if (Number(key) === 0)
-    return
-  const items = formModel.list;
-  [items[key], items[key - 1]] = [items[key - 1], items[key]]
-}
-
-function itemsMoveDown(key) {
-  if (Number(key) < formModel.list.length - 1) {
-    const items = formModel.list;
-    [items[key], items[key + 1]] = [items[key + 1], items[key]]
-  }
-}
-
-function itemsCopy(key) {
-  const items = formModel.list[key]
-  const newItems = { ...items }
-  formModel.list.splice(key + 1, 0, newItems)
-}
-
-function itemsRemove(key) {
-  formModel.list.splice(key, 1)
+function rowsChange(e, tref) {
+  tref?.editRowEvent(e.row)
 }
 
 async function handleProcess(opt: string) {
@@ -302,7 +274,7 @@ export default { name: 'ExpenseRequestEntertainDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"
@@ -350,91 +322,89 @@ export default { name: 'ExpenseRequestEntertainDetail' }
         </n-form-item-gi>
       </n-grid>
 
-      <div class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+      <div class="mt-4">
         <n-divider title-placement="left" style="margin: 0;">
           招待申请明细
         </n-divider>
-        <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-          <div class="flex items-stretch">
-            <div class="label-nums">
-              <n-text strong>
-                #{{ Number(key) + 1 }}
-              </n-text>
+        <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
+          <template #operate="{ rowIndex }">
+            <div class="flex items-center justify-right gap-[10px]">
+              <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:arrow-up-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:arrow-down-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsCopy({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:copy-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsAdd({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:plus-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
+              <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
+                <template #icon>
+                  <n-icon>
+                    <Icon icon="ant-design:delete-outlined" />
+                  </n-icon>
+                </template>
+              </n-button>
             </div>
-
-            <div class="detail-card-box-content">
-              <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                <n-form-item-gi :span="16" label="用餐地点" :path="`list[${key}].address`" label-width="80" :show-feedback="false">
-                  <n-input v-model:value="item.address" clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="用餐人数" :path="`list[${key}].pcs`" label-width="80" :show-feedback="false">
-                  <n-input-number v-model:value="item.pcs" :show-button="false" clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="24" label="招待对象" :path="`list[${key}].guests`" label-width="80" :show-feedback="false">
-                  <n-input v-model:value="item.guests" clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="费用科目" :path="`list[${key}].content_id`" label-width="96" :show-feedback="false">
-                  <SpCascader
-                    v-model:value="item.content_id"
-                    :options="contentTreeOptions"
-                    placeholder="请选择"
-                    value-field="id"
-                  />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="金额" :path="`list[${key}].amount`" label-width="80" :show-feedback="false">
-                  <n-input-number v-model:value="item.amount" :precision="2" :show-button="false" clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="8" label="预算标准" :path="`list[${key}].quotas`" label-width="80" :show-feedback="false">
-                  <n-input-number v-model:value="item.quotas" :precision="2" :show-button="false" clearable />
-                </n-form-item-gi>
-                <n-form-item-gi :span="24" label="备注" :path="`list[${key}].remark`" label-width="80" :show-feedback="false">
-                  <n-input v-model:value="item.remark" type="textarea" :rows="3" clearable />
-                </n-form-item-gi>
-              </n-grid>
-            </div>
-
-            <div class="menu-bar">
-              <div class="flex items-start justify-center gap-[10px]">
-                <n-button v-if="formModel.list.length > 1" :disabled="Number(key) === 0" text @click="itemsMoveUp(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button v-if="formModel.list.length > 1" :disabled="Number(key) === formModel.list.length - 1" text @click="itemsMoveDown(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="itemsCopy(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:copy-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="itemsRemove(key)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
-            </div>
-          </div>
-        </n-card>
-        <div class="w-full flex">
+          </template>
+          <template #address_edit="{ row }">
+            <n-input v-model:value="row.address" clearable />
+          </template>
+          <template #pcs_edit="{ row }">
+            <n-input-number v-model:value="row.pcs" :show-button="false" clearable />
+          </template>
+          <template #guests_edit="{ row }">
+            <n-input v-model:value="row.guests" clearable />
+          </template>
+          <template #content_default="{ row }">
+            {{ row.content_name }}
+          </template>
+          <template #content_edit="{ row }">
+            <SpCascader
+              v-model:value="row.content_id"
+              :options="contentTreeOptions"
+              placeholder="请选择"
+              value-field="id"
+              @update:value="(_, options) => row.content_name = options.label"
+            />
+          </template>
+          <template #amount_edit="{ row }">
+            <n-input-number v-model:value="row.amount" :precision="2" :show-button="false" clearable />
+          </template>
+          <template #quotas_edit="{ row }">
+            <n-input-number v-model:value="row.quotas" :precision="2" :show-button="false" clearable />
+          </template>
+          <template #remark_edit="{ row }">
+            <n-input v-model:value="row.remark" clearable />
+          </template>
+        </SpTable>
+        <div class="mt-2 w-full flex">
           <n-button dashed round size="small" class="w-full" @click="itemsAdd()">
             <template #icon>
               <n-icon>
                 <Icon icon="ant-design:plus-outlined" />
               </n-icon>
             </template>
-            添加招待明细
+            添加明细
           </n-button>
         </div>
       </div>
@@ -522,45 +492,11 @@ export default { name: 'ExpenseRequestEntertainDetail' }
             </n-form-item-gi>
           </n-grid>
 
-          <div class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+          <div class="mt-4">
             <n-divider title-placement="left" style="margin: 0;">
               招待申请明细
             </n-divider>
-            <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-              <div class="flex items-stretch">
-                <div class="label-nums">
-                  <n-text strong>
-                    #{{ Number(key) + 1 }}
-                  </n-text>
-                </div>
-
-                <div class="detail-card-box-content">
-                  <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                    <n-form-item-gi :span="16" label="用餐地点" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.address" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="用餐人数" label-width="80" :show-feedback="false">
-                      <n-input-number v-model:value="item.pcs" placeholder="" :show-button="false" :readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="24" label="招待对象" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.guests" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="费用科目" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.content_name" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="金额" label-width="80" :show-feedback="false">
-                      <n-input-number v-model:value="item.amount" :precision="2" placeholder="" :show-button="false" :readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="预算标准" label-width="80" :show-feedback="false">
-                      <n-input-number v-model:value="item.quotas" :precision="2" placeholder="" :show-button="false" :readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="24" label="备注" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.remark" type="textarea" :rows="3" readonly="true" />
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
-              </div>
-            </n-card>
+            <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list" />
           </div>
         </n-layout>
       </n-layout>

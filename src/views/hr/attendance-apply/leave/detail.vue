@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
@@ -12,11 +13,15 @@ import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import toast from '@/utils/toast'
+import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
 const enumStore = useEnumStore()
 const userStore = useUserStore()
+
+const tableRef = ref<TableInstance | null>(null)
+const viewTableRef = ref<TableInstance | null>(null)
 
 const logBizRef = ref<OpenModal | null>(null)
 const logProcessRef = ref<OpenModal | null>(null)
@@ -255,7 +260,7 @@ export default { name: 'HrApplyLeaveDetail' }
 </script>
 
 <template>
-  <SpModal ref="modalRef" width="80vw" height="85vh" :before-close="clearTabState">
+  <SpModal ref="modalRef" width="90vw" height="90vh" :before-close="clearTabState">
     <n-form
       v-if="isEdit"
       ref="formRef"
@@ -332,30 +337,15 @@ export default { name: 'HrApplyLeaveDetail' }
         </n-form-item-gi>
       </n-grid>
 
-      <div v-if="formModel.list.length > 0" class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+      <div v-if="formModel.list.length > 0" class="mt-4">
         <n-divider title-placement="left" style="margin: 0;">
           请假明细
         </n-divider>
-        <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-          <div class="flex items-stretch">
-            <div class="label-nums">
-              <n-text strong>
-                #{{ Number(key) + 1 }}
-              </n-text>
-            </div>
-
-            <div class="detail-card-box-content">
-              <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                <n-form-item-gi :span="12" label="请假日期" label-width="80" :show-feedback="false">
-                  <n-input v-model:value="item.day" placeholder="" readonly="true" />
-                </n-form-item-gi>
-                <n-form-item-gi :span="12" label="请假时长" label-width="80" :show-feedback="false">
-                  <n-input :value="item.is_work_day ? `请假${item.leave_time_fmt}` : '休息'" placeholder="" readonly="true" />
-                </n-form-item-gi>
-              </n-grid>
-            </div>
-          </div>
-        </n-card>
+        <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list">
+          <template #leave_time="{ row }">
+            {{ row.is_work_day ? `请假${row.leave_time_fmt}` : '休息' }}
+          </template>
+        </SpTable>
       </div>
     </n-form>
 
@@ -456,30 +446,15 @@ export default { name: 'HrApplyLeaveDetail' }
             </n-form-item-gi>
           </n-grid>
 
-          <div v-if="formModel.list.length > 0" class="flex flex-col" style="gap: 16px; margin-top: 16px;">
+          <div v-if="formModel.list.length > 0" class="mt-4">
             <n-divider title-placement="left" style="margin: 0;">
               请假明细
             </n-divider>
-            <n-card v-for="(item, key) in formModel.list" :key="key" :content-style="{ padding: '0' }" class="detail-card-box">
-              <div class="flex items-stretch">
-                <div class="label-nums">
-                  <n-text strong>
-                    #{{ Number(key) + 1 }}
-                  </n-text>
-                </div>
-
-                <div class="detail-card-box-content">
-                  <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                    <n-form-item-gi :span="12" label="请假日期" label-width="80" :show-feedback="false">
-                      <n-input v-model:value="item.day" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="12" label="请假时长" label-width="80" :show-feedback="false">
-                      <n-input :value="item.is_work_day ? `请假${item.leave_time_fmt}` : '休息'" placeholder="" readonly="true" />
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
-              </div>
-            </n-card>
+            <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
+              <template #leave_time="{ row }">
+                {{ row.is_work_day ? `请假${row.leave_time_fmt}` : '休息' }}
+              </template>
+            </SpTable>
           </div>
         </n-layout>
       </n-layout>

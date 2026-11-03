@@ -206,7 +206,8 @@ export default { name: 'HrAttendanceHolidayDetail' }
 <template>
   <SpModal
     ref="modalRef"
-    width="720"
+    width="90vw"
+    height="90vh"
     :mask="true"
     :title="isEdit ? '编辑节日' : '新增节日'"
   >
