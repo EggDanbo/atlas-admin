@@ -11,7 +11,6 @@ import { useThemeStore } from '@/store/modules/theme'
 import MobileForm from '@/views/login/components/MobileForm.vue'
 import LoginForm from './components/LoginForm.vue'
 import ParticleBackground from './components/ParticleBackground.vue'
-import Qrcode from './components/Qrcode.vue'
 import { useParallax } from './composables/useParallax'
 import Privacy from './privacy.vue'
 import Protocol from './protocol.vue'
@@ -73,22 +72,12 @@ const tagline = computed(() => projectConfig.app.tagline)
                 <span>手机号</span>
               </n-flex>
             </n-tab>
-            <n-tab name="scanCode">
-              <n-flex :size="4" align="center">
-                <n-icon size="18">
-                  <Icon icon="ant-design:qrcode-outlined" />
-                </n-icon>
-                <span>扫码</span>
-              </n-flex>
-            </n-tab>
           </n-tabs>
         </div>
         <!-- 账号登录 -->
         <LoginForm v-if="loginType === 'account'" />
         <!-- 手机登录 -->
-        <MobileForm v-if=" loginType === 'mobile'" />
-        <!-- 扫码登录 -->
-        <Qrcode v-if=" loginType === 'scanCode'" />
+        <MobileForm v-if="loginType === 'mobile'" />
 
         <div class="mt-3 pl-1 pr-1 text-center">
           登录即表示您同意并愿意遵守<br>

@@ -290,14 +290,19 @@ export const CURRENCIES = ['人民币', '美元', '港币', '欧元'] as const
 /** 结算方式 */
 export const PAY_TYPES = ['银行转账', '现金', '支票', '电子承兑', '内部划转'] as const
 
-/** 单据状态 */
+/**
+ * 单据状态
+ *
+ * 顺序必须与 SYSTEM_ENUMS.BillStatus 的取值一一对应：
+ * 1 草稿 / 2 待审核 / 3 审批中 / 4 已审批 / 5 已完成 / 6 已作废
+ */
 export const STATE_LABELS = [
   '草稿',
   '待审核',
   '审批中',
   '已审批',
-  '已作废',
   '已完成',
+  '已作废',
 ] as const
 
 /** 学历 */

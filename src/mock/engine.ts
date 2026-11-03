@@ -8,7 +8,7 @@ import type { RowContext } from './data/fieldValue'
  * 不发起任何网络请求，全部数据由本地确定性算法生成。
  */
 import type { DataFormatColumn } from '@/components/SpTable'
-import { ASSET_MODELS, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
+import { ASSET_BRANDS, ASSET_MODELS, ASSET_NAMES, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
 import {
   createRowContext,
@@ -516,16 +516,66 @@ function buildDictionaryNodes(parentId: string) {
 /**
  * 单据明细行
  *
- * 详情页的明细表格从详情接口的 list 字段取数。只有包含「规格 + 数量/单价」
- * 这类明细字段的模块才生成，避免给纯配置类页面塞入无意义的行。
+ * 详情页的明细表格从详情接口的 list 字段取数。按明细的形态分三类生成：
+ * 凭证分录、资产条目、费用条目；其余模块不生成，避免给纯配置页塞入无意义的行。
  */
 const LINE_ITEM_NAMES = ['办公用品', '设备配件', '技术服务费', '运输费', '咨询服务费', '材料费']
 
+/** 凭证分录：借贷必须相等，页面对合计做校验 */
+function buildVoucherLines(id: string): Record<string, any>[] {
+  const amount = floatBetween(createRng(`voucher#${id}`), 1200, 36000, 2)
+  const rows = [
+    { digest: '支付供应商货款', subject: '应付账款', debit: amount, credit: 0 },
+    { digest: '支付供应商货款', subject: '银行存款', debit: 0, credit: amount },
+  ]
+  return rows.map((row, index) => ({
+    id: `${id || 'V'}-${index + 1}`,
+    no: index + 1,
+    digest: row.digest,
+    content_id: row.subject,
+    content_name: row.subject,
+    debit: row.debit,
+    credit: row.credit,
+  }))
+}
+
+/** 资产类单据明细：资产编码 / 名称 / 品牌 / 型号 */
+function buildAssetDetailLines(module: string, id: string): Record<string, any>[] {
+  return [0, 1, 2].map((index) => {
+    const rng = createRng(`${module}#${id}#asset#line#${index}`)
+    const pcs = intBetween(rng, 1, 6)
+    const price = floatBetween(rng, 600, 12000, 2)
+    return {
+      id: `${id || 'A'}-${index + 1}`,
+      no: index + 1,
+      code: `ZC${intBetween(createRng(`asset#code#${id}#${index}`), 10000, 99999)}`,
+      name: pick(rng, ASSET_NAMES),
+      brand: pick(rng, ASSET_BRANDS),
+      model: pick(rng, ASSET_MODELS),
+      unit: pick(rng, MEASURE_UNITS),
+      pcs,
+      price,
+      amount: Number((pcs * price).toFixed(2)),
+      remark: '正常在用',
+    }
+  })
+}
+
 function buildDetailLines(module: string, id: string): Record<string, any>[] | undefined {
+  if (/^finance\/voucher$/.test(module))
+    return buildVoucherLines(id)
+
   const fields = resolveAllFields(module)
   const hasModel = fields.some(item => item.field === 'model')
+  if (!hasModel)
+    return undefined
+
+  if (/^asset\//.test(module))
+    return buildAssetDetailLines(module, id)
+
+  // 费用类单据：需要规格 + 数量/单价才生成
   const hasPrice = fields.some(item => ['price', 'unit_price', 'qty', 'nums'].includes(item.field))
-  if (!hasModel || !hasPrice)
+  if (!hasPrice)
     return undefined
 
   return [0, 1, 2].map((index) => {
@@ -548,6 +598,41 @@ function buildDetailLines(module: string, id: string): Record<string, any>[] | u
       taxes: Number((amount * rate).toFixed(2)),
     }
   })
+}
+
+/**
+ * 详情行的取值归一化（只作用于详情接口，列表返回保持原样）
+ *
+ * 1. 日期转时间戳：详情表单用 n-date-picker，页面的转换器写作 `format(Number(val))`，
+ *    收到 `yyyy-MM-dd` 字符串会算出 NaN 而显示为空。
+ * 2. 补齐单据状态：详情页右上角有一枚「印章」，取 workflow_status 的标签，
+ *    没有状态时会渲染出一个空的红色印章框。
+ */
+function normalizeDetailRow(row: Record<string, any>): Record<string, any> {
+  const result: Record<string, any> = { ...row }
+
+  for (const [key, value] of Object.entries(result)) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}/.test(value))
+      continue
+    const type = inferColumnType(key)
+    if (type !== 'date' && type !== 'datetime')
+      continue
+    const timestamp = Date.parse(value.replace(' ', 'T'))
+    if (!Number.isNaN(timestamp))
+      result[key] = timestamp
+  }
+
+  if (!result.status) {
+    const rng = createRng(`status#${String(row.id ?? '')}`)
+    // 只取草稿 / 待审核 / 审批中 / 已审批，作废与完成由业务动作产生
+    result.status = String(intBetween(rng, 1, 4))
+  }
+
+  // 部分模块的详情表单有「标题」，但字段结构里没有这一项，用名称兜底
+  if (!result.title && typeof result.name === 'string')
+    result.title = result.name
+
+  return result
 }
 
 /** 角色数据范围候选值 */
@@ -608,14 +693,22 @@ th{background:#f5f6f8}</style></head><body><h2>业务单据打印预览（演示
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
 }
 
-/** 工作台：我的申请 / 我的审批 使用的业务类型 */
+/**
+ * 工作台：我的申请 / 我的审批 使用的业务类型
+ *
+ * - `key`   详情弹窗映射键，必须与 BizDetailHost 的 BIZ_DETAIL_MAP 一致，
+ *           工作台点开条目时按它懒加载对应的 detail.vue
+ * - `module` 业务模块目录，用于取一条真实行数据的 id，保证详情能回填到同一单据
+ */
 const WORKFLOW_BIZ = [
-  { label: '资产调拨', route: 'AssetAllot' },
-  { label: '资产领用', route: 'AssetApply' },
-  { label: '费用报销', route: 'PenseApply' },
-  { label: '借款申请', route: 'PenseBorrow' },
-  { label: '收款单', route: 'TradeReceive' },
-  { label: '记账凭证', route: 'VouchEntry' },
+  { label: '资产调拨', key: 'asset_allot', module: 'asset/allot' },
+  { label: '资产领用', key: 'asset_apply', module: 'asset/apply' },
+  { label: '资产采购', key: 'asset_order', module: 'asset/order' },
+  { label: '费用报销', key: 'pense_apply', module: 'expense/payment' },
+  { label: '借款申请', key: 'pense_borrow', module: 'expense/advance' },
+  { label: '合同签订', key: 'pense_contract', module: 'expense/contract' },
+  { label: '记账凭证', key: 'vouch_entry', module: 'finance/voucher' },
+  { label: '档案借阅', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
 /** 构建工作台待办条目 */
@@ -623,14 +716,18 @@ function buildWorkflowItems(kind: string, count = 9) {
   return Array.from({ length: count }, (_, index) => {
     const ctx = createRowContext(`workflow/${kind}`, index)
     const biz = WORKFLOW_BIZ[index % WORKFLOW_BIZ.length]!
+    // 复用该模块的确定性行数据：id / 单号与详情页打开的是同一条记录
+    const row = buildRow(biz.module, index)
+    const no = String(row.no ?? row.code ?? row.id)
     return {
       id: `${kind === 'apply' ? 'A' : 'P'}${index + 1}`,
       biz_name: biz.label,
-      biz_route: biz.route,
-      biz_id: String(1000 + index),
+      biz_key: biz.key,
+      biz_id: String(row.id),
+      biz_no: no,
       team_name: ctx.team.name,
       user_name: ctx.person.name,
-      content: `${biz.label} · 金额 ${floatBetween(ctx.rng, 200, 26000, 2)} 元`,
+      content: `单号 ${no} · 金额 ${floatBetween(ctx.rng, 200, 26000, 2)} 元`,
       ctime: toDateTimeString(new Date(Date.now() - index * 5400 * 1000)),
       // 状态值需落在 BillStatus 枚举内（2 待审核 / 4 已审批），否则页面无法映射中文
       status: kind === 'apply' ? '2' : '4',
@@ -638,23 +735,29 @@ function buildWorkflowItems(kind: string, count = 9) {
   })
 }
 
+/** 工作台：最新动态（同样带上业务键，点击可打开对应详情） */
+const WORKFLOW_DYNAMIC = [
+  { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/payment' },
+  { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/allot' },
+  { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/apply' },
+  { title: '记账凭证已过账', types: '账', key: 'vouch_entry', module: 'finance/voucher' },
+  { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract' },
+  { title: '档案借阅已归还', types: '资', key: 'paper_borrow', module: 'archive/borrow' },
+]
+
 /** 工作台：最新动态 */
 function buildWorkplaceDynamic() {
-  const types = ['报', '审', '资', '账', '人']
-  const titles = [
-    '费用报销单已提交',
-    '资产调拨审批通过',
-    '工资发放表已生成',
-    '记账凭证已过账',
-    '人员入职信息已登记',
-    '合同收款计划已更新',
-  ]
-  return Array.from({ length: 6 }, (_, index) => {
+  return WORKFLOW_DYNAMIC.map((item, index) => {
     const ctx = createRowContext('workplace/dynamic', index)
+    const row = buildRow(item.module, index)
     return {
       id: `D${index + 1}`,
-      types: types[index % types.length],
-      title: titles[index % titles.length],
+      types: item.types,
+      title: item.title,
+      biz_name: item.title,
+      biz_key: item.key,
+      biz_id: String(row.id),
+      biz_no: String(row.no ?? row.code ?? row.id),
       content: `${ctx.team.name} · ${ctx.person.name}`,
       ctime: toDateTimeString(new Date(Date.now() - index * 7200 * 1000)),
     }
@@ -945,7 +1048,8 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
     const row = cached || buildRow(module, 0)
     // 单据类模块的详情页带有明细表格，需要随详情返回 list
     const lines = buildDetailLines(module, String(row.id ?? id))
-    return ok(lines ? { ...row, list: lines } : row)
+    const detail = normalizeDetailRow(row)
+    return ok(lines ? { ...detail, list: lines } : detail)
   }
 
   // ---------- 树 ----------

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
@@ -14,7 +14,6 @@ import { createIcon } from '@/utils/iconify'
 import toast from '@/utils/toast'
 
 const route = useRoute()
-const router = useRouter()
 
 const detailRef = ref<OpenModal | null>(null)
 const processModalRef = ref<ModalInst | null>(null)
@@ -100,23 +99,12 @@ const {
   },
   customHandleEdit(action, row, extra) {
     if (action === 'view' && row) {
-      if (Number(row.biz_id) === 1) {
-        const [first, second] = row.biz_name.split('_')
-        const bizName = `${first}_${second}`
-        const url = bizName
-          .split('_')
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-          .join('')
-        router.push({ name: url })
-      }
-      else {
-        bus.emit('biz-detail:open', {
-          biz_name: row.biz_route,
-          biz_id: row.biz_id,
-          mode: 'approve',
-          approve: true,
-        })
-      }
+      bus.emit('biz-detail:open', {
+        biz_name: row.biz_key,
+        biz_id: row.biz_id,
+        mode: 'approve',
+        approve: true,
+      })
     }
   },
 })
@@ -198,23 +186,12 @@ async function cancel() {
 }
 
 function handleDetail(id, name) {
-  if (Number(id) === 1) {
-    const [first, second] = name.split('_')
-    const bizName = `${first}_${second}`
-    const url = bizName
-      .split('_')
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-      .join('')
-    router.push({ name: url })
-  }
-  else {
-    bus.emit('biz-detail:open', {
-      biz_name: name,
-      biz_id: id,
-      mode: 'approve',
-      approve: true,
-    })
-  }
+  bus.emit('biz-detail:open', {
+    biz_name: name,
+    biz_id: id,
+    mode: 'approve',
+    approve: true,
+  })
 }
 
 async function loadTeamTree() {

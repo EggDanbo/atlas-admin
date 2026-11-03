@@ -64,24 +64,16 @@ async function getViewApproveOptions() {
   viewModel.value.approveOptions = data.list
 }
 
-function open(items, approve = false) {
-  if (Number(items.biz_id) === 1) {
-    const [first, second] = items.biz_name.split('_')
-    const bizName = `${first}_${second}`
-    const url = bizName
-      .split('_')
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-      .join('')
-    router.push({ name: url })
-  }
-  else {
-    bus.emit('biz-detail:open', {
-      biz_name: items.biz_route,
-      biz_id: items.biz_id,
-      mode: approve ? 'approve' : 'apply',
-      approve,
-    })
-  }
+/** 打开业务详情：统一走 BizDetailHost 的 detail.vue 弹窗，不做路由跳转 */
+function openDetail(item: Recordable, approve = false) {
+  if (!item?.biz_key)
+    return
+  bus.emit('biz-detail:open', {
+    biz_name: item.biz_key,
+    biz_id: item.biz_id,
+    mode: approve ? 'approve' : 'apply',
+    approve,
+  })
 }
 
 function handleMore(opt: string) {
@@ -223,7 +215,7 @@ onUnmounted(() => {
                     v-for="(items, keys) of viewModel.applyOptions"
                     :key="keys"
                     class="cursor-pointer"
-                    @click="open(items)"
+                    @click="openDetail(items)"
                   >
                     <n-thing>
                       <template #header>
@@ -243,9 +235,12 @@ onUnmounted(() => {
                           <p class="text-gray-500" style="line-height: 1">
                             {{ items.content }}
                           </p>
-                          <p class="text-gray-500" style="line-height: 1">
+                          <span class="dash-meta">
                             {{ items.ctime }}
-                          </p>
+                            <n-icon size="13" class="dash-chevron">
+                              <Icon icon="ant-design:right-outlined" />
+                            </n-icon>
+                          </span>
                         </div>
                       </template>
                     </n-thing>
@@ -296,7 +291,7 @@ onUnmounted(() => {
                     v-for="(items, keys) of viewModel.approveOptions"
                     :key="keys"
                     class="cursor-pointer"
-                    @click="open(items, true)"
+                    @click="openDetail(items, true)"
                   >
                     <n-thing>
                       <template #header>
@@ -316,9 +311,12 @@ onUnmounted(() => {
                           <p class="text-gray-500" style="line-height: 1">
                             {{ items.content }}
                           </p>
-                          <p class="text-gray-500" style="line-height: 1">
+                          <span class="dash-meta">
                             {{ items.ctime }}
-                          </p>
+                            <n-icon size="13" class="dash-chevron">
+                              <Icon icon="ant-design:right-outlined" />
+                            </n-icon>
+                          </span>
                         </div>
                       </template>
                     </n-thing>
@@ -364,7 +362,13 @@ onUnmounted(() => {
           >
             <div class="h-full overflow-auto">
               <n-list style="width: 100%; padding: 0 12px" hoverable>
-                <n-list-item v-for="item in viewModel.dynamiclist" :key="item" style="width: 100%">
+                <n-list-item
+                  v-for="item in viewModel.dynamiclist"
+                  :key="item.id"
+                  style="width: 100%"
+                  class="cursor-pointer"
+                  @click="openDetail(item)"
+                >
                   <n-thing style="width: 100%">
                     <template #avatar>
                       <n-avatar
@@ -381,10 +385,13 @@ onUnmounted(() => {
                       </p>
                     </template>
                     <template #description>
-                      <div class="mt-3 flex justify-between">
+                      <div class="mt-3 flex items-center justify-between">
                         <p class="text-sm text-gray-500">
-                          {{ item.date }}
+                          {{ item.ctime }}
                         </p>
+                        <n-icon size="15" class="dash-chevron">
+                          <Icon icon="ant-design:right-outlined" />
+                        </n-icon>
                       </div>
                     </template>
                   </n-thing>
@@ -411,6 +418,27 @@ onUnmounted(() => {
 /* 列表底部渐隐，提示还有内容可滚动 */
 .workplace-box :deep(.overflow-auto) {
   mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent 100%);
+}
+
+/* 条目可点开详情：箭头作为可点击的轻提示，hover 时右移并跟随主色 */
+.dash-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+  color: var(--atlas-text-tertiary);
+}
+
+.dash-chevron {
+  color: var(--atlas-text-tertiary);
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease;
+}
+
+:deep(.n-list-item:hover) .dash-chevron {
+  color: var(--atlas-brand);
+  transform: translateX(2px);
 }
 
 /* 顶部问候卡 */

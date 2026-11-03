@@ -16,16 +16,26 @@ function createEnum(name: string, entries: Array<[string, string]>): SystemEnums
   }
 }
 
+/** 单据状态取值：详情页右上角的印章与状态列都按它翻译 */
+const BILL_STATUS_ENTRIES: Array<[string, string]> = [
+  ['1', '草稿'],
+  ['2', '待审核'],
+  ['3', '审批中'],
+  ['4', '已审批'],
+  ['5', '已完成'],
+  ['6', '已作废'],
+]
+
 export const SYSTEM_ENUMS: Record<string, SystemEnums> = {
   /** 单据状态 */
-  BillStatus: createEnum('BillStatus', [
-    ['1', '草稿'],
-    ['2', '待审核'],
-    ['3', '审批中'],
-    ['4', '已审批'],
-    ['5', '已完成'],
-    ['6', '已作废'],
-  ]),
+  BillStatus: createEnum('BillStatus', BILL_STATUS_ENTRIES),
+  /**
+   * 单据状态（页面沿用的后端枚举名）
+   *
+   * 详情页的印章与大量表格调用的是 `getLabel('workflow_status', ...)`，
+   * 缺这个键时取不到标签，印章会渲染成一个只有边框的空红框。
+   */
+  workflow_status: createEnum('workflow_status', BILL_STATUS_ENTRIES),
   /** 人员状态 */
   UserStatus: createEnum('UserStatus', [
     ['1', '在职'],
