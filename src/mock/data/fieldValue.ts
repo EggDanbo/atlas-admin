@@ -766,6 +766,16 @@ export function generateValue(field: string, ctx: RowContext, type?: ColumnType,
   if (lower === 'unit_name' || lower === 'measure_unit' || lower === 'unit')
     return pick(rng, MEASURE_UNITS)
 
+  // ---------- 单据明细通用字段 ----------
+  if (lower === 'pcs' || lower === 'qty' || lower === 'nums' || lower === 'quantity')
+    return intBetween(rng, 1, 20)
+  if (lower === 'totals' || lower === 'total' || lower === 'taxes' || lower === 'tax')
+    return floatBetween(rng, 100, 60000, 2)
+  if (lower === 'rates' || lower === 'tax_rate')
+    return pick(rng, [0.06, 0.09, 0.13])
+  if (lower === 'drawer' || lower === 'biller')
+    return ctx.person.name
+
   // ---------- 按类型兜底 ----------
   switch (t) {
     case 'money':

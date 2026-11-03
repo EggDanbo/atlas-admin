@@ -206,8 +206,9 @@ export default { name: 'TradeInvoiceDetail' }
       :label-width="100"
       :model="formModel"
     >
-      <div class="stamp-text">
-        {{ formModel.status }}
+      <!-- 仅在作废单据上盖作废章，避免正常单据也出现红色印章 -->
+      <div v-if="String(formModel.status) === '6'" class="stamp-text">
+        已作废
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="发票来源">

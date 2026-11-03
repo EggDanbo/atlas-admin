@@ -8,7 +8,7 @@ import type { RowContext } from './data/fieldValue'
  * 不发起任何网络请求，全部数据由本地确定性算法生成。
  */
 import type { DataFormatColumn } from '@/components/SpTable'
-import { BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
+import { ASSET_MODELS, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
 import {
   createRowContext,
@@ -182,6 +182,10 @@ function buildRow(module: string, index: number): Record<string, any> {
     if (key in row)
       row[key] = String(intBetween(ctx.rng, 1, STATE_LABELS.length))
   }
+
+  // 价税合计与税额保持勾稽关系（税额 = 价税合计 ÷ 1.13 × 13%）
+  if ('totals' in row && 'taxes' in row && Number(row.totals) > 0)
+    row.taxes = Number((Number(row.totals) / 1.13 * 0.13).toFixed(2))
 
   // 停用标记只落到极少数行：列表面板会把停用行整行高亮，
   // 按 25% 概率生成会让整张表泛黄，失去「异常标记」的意义
@@ -507,6 +511,43 @@ function buildDictionaryNodes(parentId: string) {
     ctime: toDateTimeString(new Date(Date.now() - intBetween(rng, 30, 400) * 86400000)),
     utime: toDateTimeString(new Date(Date.now() - intBetween(rng, 0, 29) * 86400000)),
   }))
+}
+
+/**
+ * 单据明细行
+ *
+ * 详情页的明细表格从详情接口的 list 字段取数。只有包含「规格 + 数量/单价」
+ * 这类明细字段的模块才生成，避免给纯配置类页面塞入无意义的行。
+ */
+const LINE_ITEM_NAMES = ['办公用品', '设备配件', '技术服务费', '运输费', '咨询服务费', '材料费']
+
+function buildDetailLines(module: string, id: string): Record<string, any>[] | undefined {
+  const fields = resolveAllFields(module)
+  const hasModel = fields.some(item => item.field === 'model')
+  const hasPrice = fields.some(item => ['price', 'unit_price', 'qty', 'nums'].includes(item.field))
+  if (!hasModel || !hasPrice)
+    return undefined
+
+  return [0, 1, 2].map((index) => {
+    const rng = createRng(`${module}#${id}#line#${index}`)
+    const qty = intBetween(rng, 1, 20)
+    const price = floatBetween(rng, 12, 2600, 2)
+    const amount = Number((qty * price).toFixed(2))
+    const rate = pick(rng, [0.06, 0.09, 0.13])
+    // 字段名与视图里的明细列保持一致（unit / pcs / rates / taxes）
+    return {
+      id: `${id || 'L'}-${index + 1}`,
+      no: index + 1,
+      name: pick(rng, LINE_ITEM_NAMES),
+      model: pick(rng, ASSET_MODELS),
+      unit: pick(rng, MEASURE_UNITS),
+      pcs: qty,
+      price,
+      amount,
+      rates: rate,
+      taxes: Number((amount * rate).toFixed(2)),
+    }
+  })
 }
 
 /** 角色数据范围候选值 */
@@ -901,7 +942,10 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   if (DETAIL_ACTIONS.has(action)) {
     const id = String(params.id ?? params.key ?? '')
     const cached = id ? rowCache.get(`${module}:${id}`) : undefined
-    return ok(cached || buildRow(module, 0))
+    const row = cached || buildRow(module, 0)
+    // 单据类模块的详情页带有明细表格，需要随详情返回 list
+    const lines = buildDetailLines(module, String(row.id ?? id))
+    return ok(lines ? { ...row, list: lines } : row)
   }
 
   // ---------- 树 ----------

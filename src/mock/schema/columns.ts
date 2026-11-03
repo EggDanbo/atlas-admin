@@ -160,11 +160,9 @@ const ROLE_FIELDS: MockFieldSchema[] = [
 const INVOICE_FIELDS: MockFieldSchema[] = [
   { field: 'no', title: '发票号码' },
   { field: 'date', title: '开票日期' },
-  { field: 'partner_name', title: '客户单位' },
-  { field: 'amount', title: '价税合计' },
-  { field: 'tax', title: '税额' },
+  { field: 'outer_name', title: '客户单位' },
+  { field: 'totals', title: '价税合计' },
   { field: 'status', title: '状态' },
-  { field: 'user_name', title: '经办人' },
 ]
 
 /** 资产台账字段 */
