@@ -183,6 +183,15 @@ const CLASSIFY_FIELDS: MockFieldSchema[] = [
   { field: 'remark', title: '备注' },
 ]
 
+/** 会计科目字段 */
+const SUBJECT_FIELDS: MockFieldSchema[] = [
+  { field: 'code', title: '科目编码' },
+  { field: 'name', title: '科目名称' },
+  { field: 'account_type', title: '科目类别' },
+  { field: 'direction', title: '余额方向' },
+  { field: 'balance', title: '科目余额' },
+]
+
 /** 物料档案字段 */
 const ITEM_FIELDS: MockFieldSchema[] = [
   { field: 'code', title: '物料编码' },
@@ -205,6 +214,7 @@ const FIELD_OVERRIDES: Record<string, MockFieldSchema[]> = {
   'masterdata/item-category': CLASSIFY_FIELDS,
   'masterdata/biz-type': CLASSIFY_FIELDS,
   'masterdata/item-code': ITEM_FIELDS,
+  'masterdata/subject': SUBJECT_FIELDS,
 }
 
 /**

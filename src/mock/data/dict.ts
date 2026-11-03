@@ -358,6 +358,7 @@ export const CATEGORY_NAMES: Record<string, readonly string[]> = {
   person: ['管理人员', '技术人员', '业务人员', '职能人员'],
   team: ['职能部门', '业务部门', '事业部', '分支机构'],
   role: ['业务角色', '财务角色', '管理角色'],
+  account: ['资产类', '负债类', '权益类', '成本类', '损益类'],
   generic: ['标准分类', '常用分类', '临时分类', '其他分类'],
 }
 

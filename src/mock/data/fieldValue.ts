@@ -66,27 +66,64 @@ export interface RowContext {
 }
 
 /** 模块所属业务域，用于让「名称」这类通用字段落到正确的实体上 */
-export type ModuleKind = 'person' | 'team' | 'asset' | 'partner' | 'product' | 'role' | 'document' | 'generic'
+export type ModuleKind
+  = | 'person'
+    | 'team'
+    | 'asset'
+    | 'partner'
+    | 'product'
+    | 'role'
+    | 'document'
+    | 'account'
+    | 'generic'
 
-/** 按模块路径判断业务域（如 staff/info → person、asset/allot → asset） */
+/**
+ * 按模块路径判断业务域
+ *
+ * 规则按「具体到宽泛」排列：先匹配 hr/roster 这类明确的人员页面，
+ * 再退到含 partner / customer 关键字的往来单位，最后回落到通用配置类。
+ */
 export function classifyModule(module: string): ModuleKind {
   const m = String(module || '').toLowerCase()
   if (!m)
     return 'generic'
-  if (/^(staff|personnel|organ\/user)/.test(m) || /(^|\/)user($|\/)/.test(m))
+
+  // 人员：人事各页、组织成员、个人中心
+  if (/^hr\/(roster|resume|relation|exit|movement|payroll|deduction|insurance)/.test(m)
+    || /^access\/member/.test(m)
+    || m.startsWith('profile')
+    || /(^|\/)user($|\/)/.test(m)) {
     return 'person'
-  if (/^(organ|basic)\/team/.test(m))
+  }
+
+  // 部门 / 组织单元 / 权限组
+  if (/^(access\/unit|access\/group|hr\/team)/.test(m))
     return 'team'
+
+  // 资产
   if (m.startsWith('asset'))
     return 'asset'
-  if (m.startsWith('paper'))
+
+  // 档案
+  if (m.startsWith('archive'))
     return 'document'
-  if (/(partner|outer|customer|client|custom|supplier)/.test(m))
-    return 'partner'
-  if (/^(trade|pense|vouch)\//.test(m))
-    return 'product'
-  if (/^(permit|role)/.test(m) || /(^|\/)role($|\/)/.test(m))
+
+  // 角色
+  if (/(^|\/)(role|partner-role)$/.test(m))
     return 'role'
+
+  // 会计科目
+  if (/(^|\/)subject$/.test(m))
+    return 'account'
+
+  // 往来单位
+  if (/^(crm\/customer|access\/partner)/.test(m) || /(partner|supplier|customer|client)/.test(m))
+    return 'partner'
+
+  // 项目 / 物品 / 费用项目
+  if (/^(crm\/project|masterdata\/item|expense\/)/.test(m))
+    return 'product'
+
   return 'generic'
 }
 
@@ -99,6 +136,7 @@ const NAME_TITLE_BY_KIND: Record<ModuleKind, string> = {
   product: '项目名称',
   role: '角色名称',
   document: '档案名称',
+  account: '科目名称',
   generic: '名称',
 }
 
@@ -128,6 +166,8 @@ function pickNameValue(ctx: RowContext, kind: ModuleKind): string {
       return pick(ctx.rng, ROLE_NAMES)
     case 'document':
       return `${pick(ctx.rng, DOCUMENT_NAMES)}（${pick(ctx.rng, ['2025', '2026'])} 年度）`
+    case 'account':
+      return pick(ctx.rng, ACCOUNT_SUBJECTS)
     default:
       return pick(ctx.rng, GENERIC_NAMES)
   }
@@ -803,6 +843,12 @@ export function generateValue(field: string, ctx: RowContext, type?: ColumnType,
     return pick(rng, [0.06, 0.09, 0.13])
   if (lower === 'drawer' || lower === 'biller')
     return ctx.person.name
+
+  // 会计方向与科目类别：直接落到「借贷」与会计准则分类，避免出现摘要
+  if (lower === 'direction' || lower === 'balance_direction' || lower === 'dc')
+    return pick(rng, ['借', '贷'])
+  if (lower === 'account_type' || lower === 'subject_type')
+    return pick(rng, CATEGORY_NAMES.account!)
 
   // ---------- 按类型兜底 ----------
   switch (t) {
