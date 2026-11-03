@@ -63,19 +63,17 @@ const showTitle = computed(() => {
     display: grid;
     place-items: center;
     flex: 0 0 auto;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--atlas-radius-md);
-    background: linear-gradient(140deg, var(--atlas-brand) 0%, #fb923c 100%);
-    box-shadow: 0 4px 10px -4px var(--atlas-brand-ring);
+    width: 30px;
+    height: 30px;
+    border-radius: var(--atlas-radius-sm);
+    overflow: hidden;
+    box-shadow: 0 2px 6px -2px rgba(31, 35, 41, 0.28);
     transition: transform var(--atlas-duration) var(--atlas-ease);
 
     img {
-      width: 20px;
-      height: 20px;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
-      /* 图标本身是彩色的，放在渐变块上做反白处理 */
-      filter: brightness(0) invert(1);
     }
   }
 

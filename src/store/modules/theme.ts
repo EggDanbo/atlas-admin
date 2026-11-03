@@ -115,7 +115,6 @@ export const useThemeStore = defineStore('theme-store', () => {
     root.style.setProperty('--atlas-brand-ring', tinyColor(colors[5]).setAlpha(0.22).toRgbString())
   })
 
-
   function toggleThemeMode(value?: string) {
     if (value) {
       theme.mode = value

@@ -3,14 +3,11 @@ import { useRouter } from 'vue-router'
 import { overview as api } from '@/service/api/dashboard'
 import { apply, approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
-import { useThemeStore } from '@/store/modules/theme'
 import { useUserStore } from '@/store/modules/user'
 import bus from '@/utils/bus'
 import toast from '@/utils/toast'
 
 const enumStore = useEnumStore()
-
-const { primaryColor } = storeToRefs(useThemeStore())
 
 const router = useRouter()
 
@@ -18,29 +15,38 @@ const userStore = useUserStore()
 
 const btnLoading = ref<boolean>(false)
 
+/** 顶部问候卡：按时段问候，并汇总当前待办规模 */
+const greeting = computed(() => {
+  const hour = new Date().getHours()
+  if (hour < 6)
+    return '夜深了'
+  if (hour < 12)
+    return '早上好'
+  if (hour < 14)
+    return '中午好'
+  if (hour < 18)
+    return '下午好'
+  return '晚上好'
+})
+
+const todayText = computed(() => {
+  const now = new Date()
+  const week = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()]
+  return `${now.getFullYear()} 年 ${now.getMonth() + 1} 月 ${now.getDate()} 日 ${week}`
+})
+
 const viewModel = ref<any>({
   applyOptions: [],
   approveOptions: [],
   dynamiclist: [],
 })
 
-function colors(val) {
-  switch (val) {
-    case 'error': {
-      return '#d03050'
-    }
-    case 'success': {
-      return '#18a058'
-    }
-    case 'warning': {
-      return '#f0a020'
-    }
-    default: {
-      // 默认类型跟随主题主色，换主题后不会残留蓝色
-      return primaryColor.value
-    }
-  }
-}
+/** 问候卡右侧的三个数字 */
+const heroStats = computed(() => [
+  { label: '待办申请', value: viewModel.value.applyOptions?.length ?? 0 },
+  { label: '待办审批', value: viewModel.value.approveOptions?.length ?? 0 },
+  { label: '业务动态', value: viewModel.value.dynamiclist?.length ?? 0 },
+])
 
 async function getViewApplyOptions() {
   const { isSuccess, data } = await apply.search()
@@ -146,8 +152,27 @@ onUnmounted(() => {
 
 <template>
   <NaPage style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-    <n-card :bordered="false" title="工作台">
-      显示个人信息、待办事项及最新变动信息等。
+    <n-card :bordered="false" class="dash-hero" content-style="padding: 18px 20px;">
+      <div class="dash-hero__row">
+        <div class="dash-hero__text">
+          <p class="dash-hero__greeting">
+            {{ greeting }}，{{ userStore.userInfo?.name || '同事' }}
+          </p>
+          <p class="dash-hero__meta">
+            {{ todayText }}
+            <span class="dash-hero__dot" />
+            待办 {{ viewModel.applyOptions.length }} 项
+            <span class="dash-hero__dot" />
+            待审批 {{ viewModel.approveOptions.length }} 项
+          </p>
+        </div>
+        <div class="dash-hero__stats">
+          <div v-for="item in heroStats" :key="item.label" class="dash-hero__stat">
+            <strong>{{ item.value }}</strong>
+            <em>{{ item.label }}</em>
+          </div>
+        </div>
+      </div>
     </n-card>
 
     <div
@@ -174,7 +199,7 @@ onUnmounted(() => {
         >
           <template #header>
             <div class="flex justify-between">
-              <p style="font-size: 18px">
+              <p class="section-title">
                 我的申请
               </p>
               <n-button type="primary" text @click="handleMore('apply')">
@@ -241,7 +266,7 @@ onUnmounted(() => {
         >
           <template #header>
             <div class="flex justify-between">
-              <p style="font-size: 18px">
+              <p class="section-title">
                 我的审批
               </p>
               <n-space>
@@ -317,7 +342,7 @@ onUnmounted(() => {
         >
           <template #header>
             <div class="flex justify-between">
-              <p style="font-size: 18px">
+              <p class="section-title">
                 最新动态
               </p>
             </div>
@@ -340,7 +365,11 @@ onUnmounted(() => {
                 <n-list-item v-for="item in viewModel.dynamiclist" :key="item" style="width: 100%">
                   <n-thing style="width: 100%">
                     <template #avatar>
-                      <n-avatar :size="55" :color="colors(item.types)">
+                      <n-avatar
+                        :size="42"
+                        color="var(--atlas-brand-soft)"
+                        :style="{ color: 'var(--atlas-brand)', borderRadius: '12px', fontWeight: 600 }"
+                      >
                         {{ item.types }}
                       </n-avatar>
                     </template>
@@ -368,6 +397,83 @@ onUnmounted(() => {
 </template>
 
 <style lang="less" scoped>
+/* 卡片小节标题：比页面标题轻一档，形成层级 */
+.section-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--atlas-text);
+}
+
+/* 列表底部渐隐，提示还有内容可滚动 */
+.workplace-box :deep(.overflow-auto) {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 26px), transparent 100%);
+}
+
+/* 顶部问候卡 */
+.dash-hero {
+  background: radial-gradient(140% 120% at 0% 0%, var(--atlas-brand-soft) 0%, transparent 62%), var(--atlas-surface);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  &__greeting {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    color: var(--atlas-text);
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0 0;
+    font-size: 12.5px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--atlas-border-strong);
+  }
+
+  &__stats {
+    display: flex;
+    gap: 28px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.2;
+
+    strong {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--atlas-brand);
+      font-variant-numeric: tabular-nums;
+    }
+
+    em {
+      margin-top: 4px;
+      font-size: 11.5px;
+      font-style: normal;
+      color: var(--atlas-text-tertiary);
+    }
+  }
+}
+
 .main-view {
   height: 100%;
 }
