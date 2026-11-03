@@ -129,8 +129,9 @@ function extractObjectBlock(source, startIndex) {
   let i = startIndex
   while (i < source.length) {
     const ch = source[i]
-    if (ch === '{')
+    if (ch === '{') {
       depth++
+    }
     else if (ch === '}') {
       depth--
       if (depth === 0)
@@ -167,16 +168,19 @@ function stripOperateColumns(text) {
 function pairFieldsWithTitles(text, sink) {
   const fieldMatches = []
   const fieldRe = /(?:\bfield|\bpath|\bcolumn)\s*:\s*(['"])([A-Za-z_$][\w$]*)\1/g
-  let m
-  while ((m = fieldRe.exec(text))) {
+  let m = fieldRe.exec(text)
+  while (m) {
     fieldMatches.push({ field: m[2], index: m.index })
+    m = fieldRe.exec(text)
   }
 
   const titleMatches = []
   const titleRe = /(?:\btitle|\blabel)\s*:\s*(['"])([^'"\n]{1,30})\1/g
-  while ((m = titleRe.exec(text))) {
+  m = titleRe.exec(text)
+  while (m) {
     if (CN_RE.test(m[2]) && m[2] !== '操作' && m[2] !== '序号')
       titleMatches.push({ title: m[2], index: m.index })
+    m = titleRe.exec(text)
   }
 
   for (const f of fieldMatches) {
@@ -201,9 +205,9 @@ function pairFieldsWithTitles(text, sink) {
 /** 收集 createFormModel 等模型字段名 */
 function collectModelFields(source) {
   const fields = new Set()
-  const re = /function\s+create\w*(?:Model|Form|Query)\w*\s*\(\s*\)\s*(?::\s*[^{]+\s*)?\{\s*return\s*\{/g
-  let m
-  while ((m = re.exec(source))) {
+  const re = /function\s+create\w*(?:Model|Form|Query)\w*\s*\(\s*\)\s*(?::[^{]+)?\{\s*return\s*\{/g
+  let m = re.exec(source)
+  while (m) {
     const start = m.index + m[0].length
     let depth = 1
     let i = start
@@ -215,10 +219,13 @@ function collectModelFields(source) {
       i++
     }
     const body = source.slice(start, i)
-    const keyRe = /^\s{4,}([A-Za-z_$][\w$]*)\s*:/gm
-    let k
-    while ((k = keyRe.exec(body)))
+    const keyRe = /^\s{4,}([A-Z_$][\w$]*)\s*:/gim
+    let k = keyRe.exec(body)
+    while (k) {
       fields.add(k[1])
+      k = keyRe.exec(body)
+    }
+    m = re.exec(source)
   }
   return fields
 }
@@ -226,11 +233,12 @@ function collectModelFields(source) {
 function collectFormats(source) {
   const formats = new Set()
   const re = /\bformat\s*:\s*(['"`])([^'"`\n]{2,80})\1/g
-  let m
-  while ((m = re.exec(source))) {
+  let m = re.exec(source)
+  while (m) {
     const value = m[2].trim()
-    if (/^[\w-]+\/[\w-]+(\/[\w-]+)*$/.test(value))
+    if (/^[\w-]+\/[\w-]+(?:\/[\w-]+)*$/.test(value))
       formats.add(value)
+    m = re.exec(source)
   }
   return formats
 }
@@ -275,12 +283,13 @@ for (const file of files) {
   }
   else if (base === 'index.vue') {
     const re = /\bcolumns\s*:\s*\[/g
-    let m
-    while ((m = re.exec(source))) {
+    let m = re.exec(source)
+    while (m) {
       const blockStart = m.index + m[0].length - 1
       const block = extractBlock(source, blockStart)
       if (/['"]default['"]|h\(|slots/.test(block))
         pairFieldsWithTitles(stripOperateColumns(block), bucket.columnFields)
+      m = re.exec(source)
     }
   }
 
@@ -302,13 +311,14 @@ function collectRoutePermissions() {
       continue
     const source = normalize(fs.readFileSync(path.join(routerDir, entry.name), 'utf8'))
     const re = /permissions\s*:\s*\[([^\]]*)\]/g
-    let m
-    while ((m = re.exec(source))) {
+    let m = re.exec(source)
+    while (m) {
       for (const item of m[1].matchAll(/'([A-Z0-9_]+)'|"([A-Z0-9_]+)"/g)) {
         const code = item[1] || item[2]
         if (code)
           codes.add(code)
       }
+      m = re.exec(source)
     }
   }
   return [...codes].sort()
@@ -327,7 +337,7 @@ for (const [field, title] of globalTitles) {
 }
 
 for (const [dir, bucket] of [...dirMap.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-  const pick = (map) => [...map.entries()]
+  const pick = map => [...map.entries()]
     .filter(([field]) => isBusinessField(field))
     .map(([field, title]) => ({ field, title }))
 

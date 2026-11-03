@@ -308,6 +308,7 @@ mock 引擎的价值在于「像真的」，而像不像真的取决于规则是
 | [ADR-0001](./docs/adr/0001-local-mock-engine.md) | 为什么用自研本地 mock 引擎而不是 msw / json-server |
 | [ADR-0002](./docs/adr/0002-dataformat-driven-columns.md) | 为什么表格列由「服务端下发 + 代码提取」而不是写死在页面 |
 | [ADR-0003](./docs/adr/0003-design-tokens.md) | 为什么用设计令牌 + 主题派生，以及皮肤层的边界 |
+| [docs/interview-guide.md](./docs/interview-guide.md) | 项目讲解手册：一分钟版本、四个可深挖技术点、高频追问答法、五分钟演示动线 |
 
 ### 文件命名约定
 
