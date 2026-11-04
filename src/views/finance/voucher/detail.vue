@@ -7,6 +7,7 @@ import printJS from 'print-js'
 import { add, multiply, round, subtract } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
 import { BizLogChanges, LogBiz } from '@/components/BizLogs/Biz'
+import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { AuxDimensionPicker } from '@/components/SpTablePicker'
 import { createTransformer, useDetail } from '@/hooks/detail'
@@ -283,32 +284,6 @@ async function tableItemsAdd({ opt, key = 0 }: { opt: string, key?: number | str
   formModel[opt].splice(listNums + 1, 0, list)
 }
 
-function tableItemsRemove({ opt, key }: { opt: string, key: number | string }) {
-  const items = formModel[opt]
-  if (items.length > 1) {
-    items.splice(key, 1)
-  }
-  else {
-    toast.warning('必须录入凭证信息')
-  }
-}
-
-function tableItemsMoveUp({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns === 0)
-    return
-  const items = formModel[opt];
-  [items[nuns], items[nuns - 1]] = [items[nuns - 1], items[nuns]]
-}
-
-function tableItemsMoveDown({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns < formModel[opt].length - 1) {
-    const items = formModel[opt];
-    [items[nuns], items[nuns + 1]] = [items[nuns + 1], items[nuns]]
-  }
-}
-
 function handleItemContentSelected(options, row) {
   if (options) {
     row.content_name = options.label
@@ -531,36 +506,11 @@ export default { name: 'FinanceVoucherCreateDetail' }
 
     <SpTable v-if="isEdit" ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
       <template #operate="{ rowIndex }">
-        <div class="flex items-center justify-right gap-[10px]">
-          <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
-            <template #icon>
-              <n-icon>
-                <Icon icon="ant-design:arrow-up-outlined" />
-              </n-icon>
-            </template>
-          </n-button>
-          <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
-            <template #icon>
-              <n-icon>
-                <Icon icon="ant-design:arrow-down-outlined" />
-              </n-icon>
-            </template>
-          </n-button>
-          <n-button text @click="tableItemsAdd({ opt: 'list', key: rowIndex })">
-            <template #icon>
-              <n-icon>
-                <Icon icon="ant-design:plus-outlined" />
-              </n-icon>
-            </template>
-          </n-button>
-          <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
-            <template #icon>
-              <n-icon>
-                <Icon icon="ant-design:delete-outlined" />
-              </n-icon>
-            </template>
-          </n-button>
-        </div>
+        <BizTableOperate
+          :model="formModel"
+          opt="list"
+          :row-index="Number(rowIndex)" add
+        />
       </template>
       <!-- 凭证摘要 -->
       <template #digest_edit="{ row }">

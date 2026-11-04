@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
@@ -185,31 +186,6 @@ async function tableItemsAdd({ opt, key = 0 }: { opt: string, key?: number | str
   formModel[opt].splice(listNums + 1, 0, list)
 }
 
-function tableItemsRemove({ opt, key }: { opt: string, key: number | string }) {
-  if (formModel[opt].length <= 1) {
-    toast.info('不能少于一行')
-    return
-  }
-
-  formModel[opt].splice(key, 1)
-}
-
-function tableItemsMoveUp({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns === 0)
-    return
-  const items = formModel[opt];
-  [items[nuns], items[nuns - 1]] = [items[nuns - 1], items[nuns]]
-}
-
-function tableItemsMoveDown({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns < formModel[opt].length - 1) {
-    const items = formModel[opt];
-    [items[nuns], items[nuns + 1]] = [items[nuns + 1], items[nuns]]
-  }
-}
-
 function handleRiseVarSetModal(key) {
   const item = formModel.list[key]
   riseDataIndex.value = Number(key)
@@ -353,36 +329,11 @@ export default { name: 'HrRelationLevelDetail' }
 
       <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
         <template #operate="{ rowIndex }">
-          <div class="flex items-center justify-right gap-[10px]">
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-up-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-down-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsAdd({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:plus-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:delete-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-          </div>
+          <BizTableOperate
+            :model="formModel"
+            opt="list"
+            :row-index="Number(rowIndex)" add
+          />
         </template>
 
         <template #name_edit="{ row }">

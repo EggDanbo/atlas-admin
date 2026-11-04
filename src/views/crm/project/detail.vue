@@ -8,6 +8,7 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { FileManager, Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { CustomerPicker, MemberPicker, TeamPicker } from '@/components/SpTablePicker'
@@ -509,31 +510,6 @@ async function tableItemsAdd({ opt, key = 0 }: { opt: string, key?: number | str
   formModel[opt].splice(listNums + 1, 0, list)
 }
 
-function tableItemsRemove({ opt, key }: { opt: string, key: number | string }) {
-  if (formModel[opt].length <= 1) {
-    toast.info('不能少于一行')
-    return
-  }
-
-  formModel[opt].splice(key, 1)
-}
-
-function tableItemsMoveUp({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns === 0)
-    return
-  const items = formModel[opt];
-  [items[nuns], items[nuns - 1]] = [items[nuns - 1], items[nuns]]
-}
-
-function tableItemsMoveDown({ opt, key }: { opt: string, key: number | string }) {
-  const nuns = Number(key)
-  if (nuns < formModel[opt].length - 1) {
-    const items = formModel[opt];
-    [items[nuns], items[nuns + 1]] = [items[nuns + 1], items[nuns]]
-  }
-}
-
 async function handleItemHeaderClick({ name, expanded }) {
   await nextTick()
   if (name === 'incomes' && expanded) {
@@ -1026,36 +1002,11 @@ export default { name: 'CrmProjectDetail' }
         <n-collapse-item title="收入明细" name="incomes">
           <SpTable ref="incomesTableRef" v-bind="incomesGridOptions" :data-source="formModel.incomes" @current-change="rowsChange($event, incomesTableRef)">
             <template #operate="{ rowIndex }">
-              <div class="flex items-center justify-right gap-[10px]">
-                <n-button v-if="formModel.incomes.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'incomes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button v-if="formModel.incomes.length > 1" :disabled="Number(rowIndex) === formModel.incomes.length - 1" text @click="tableItemsMoveDown({ opt: 'incomes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsAdd({ opt: 'incomes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:plus-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsRemove({ opt: 'incomes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
+              <BizTableOperate
+                :model="formModel"
+                opt="incomes"
+                :row-index="Number(rowIndex)" add
+              />
             </template>
             <template #team_default="{ row }">
               {{ row.team_name }}
@@ -1154,36 +1105,11 @@ export default { name: 'CrmProjectDetail' }
         <n-collapse-item title="费用明细" name="expenses">
           <SpTable ref="expensesTableRef" v-bind="expensesGridOptions" :data-source="formModel.expenses" @current-change="rowsChange($event, expensesTableRef)">
             <template #operate="{ rowIndex }">
-              <div class="flex items-center justify-right gap-[10px]">
-                <n-button v-if="formModel.expenses.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'expenses', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button v-if="formModel.expenses.length > 1" :disabled="Number(rowIndex) === formModel.expenses.length - 1" text @click="tableItemsMoveDown({ opt: 'expenses', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsAdd({ opt: 'expenses', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:plus-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsRemove({ opt: 'expenses', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
+              <BizTableOperate
+                :model="formModel"
+                opt="expenses"
+                :row-index="Number(rowIndex)" add
+              />
             </template>
             <template #team_default="{ row }">
               {{ row.team_name }}
@@ -1222,36 +1148,11 @@ export default { name: 'CrmProjectDetail' }
         <n-collapse-item title="级别明细" name="scales">
           <SpTable ref="scalesTableRef" v-bind="scalesGridOptions" :data-source="formModel.scales" @current-change="rowsChange($event, scalesTableRef)">
             <template #operate="{ rowIndex }">
-              <div class="flex items-center justify-right gap-[10px]">
-                <n-button v-if="formModel.scales.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'scales', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button v-if="formModel.scales.length > 1" :disabled="Number(rowIndex) === formModel.scales.length - 1" text @click="tableItemsMoveDown({ opt: 'scales', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsAdd({ opt: 'scales', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:plus-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsRemove({ opt: 'scales', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
+              <BizTableOperate
+                :model="formModel"
+                opt="scales"
+                :row-index="Number(rowIndex)" add
+              />
             </template>
 
             <template #name_edit="{ row }">
@@ -1333,41 +1234,11 @@ export default { name: 'CrmProjectDetail' }
         <n-collapse-item title="岗位明细" name="alloctes">
           <SpTable ref="alloctesTableRef" v-bind="alloctesGridOptions" :data-source="formModel.alloctes" @current-change="rowsChange($event, alloctesTableRef)">
             <template #operate="{ rowIndex }">
-              <div class="flex items-center justify-right gap-[10px]">
-                <n-button v-if="formModel.alloctes.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'alloctes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-up-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button
-                  v-if="formModel.alloctes.length > 1"
-                  :disabled="Number(rowIndex) === formModel.alloctes.length - 1"
-                  text
-                  @click="tableItemsMoveDown({ opt: 'alloctes', key: rowIndex })"
-                >
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:arrow-down-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsAdd({ opt: 'alloctes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:plus-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-                <n-button text @click="tableItemsRemove({ opt: 'alloctes', key: rowIndex })">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:delete-outlined" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </div>
+              <BizTableOperate
+                :model="formModel"
+                opt="alloctes"
+                :row-index="Number(rowIndex)" add
+              />
             </template>
 
             <template #team_default="{ row }">

@@ -6,6 +6,7 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { AssetApplyPicker } from '@/components/SpTablePicker'
 import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
@@ -166,7 +167,7 @@ function rowsChange(e, tref) {
   $table?.editRowEvent(e.row)
 }
 
-const { tableItemsAdd, tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown, tableItemsCopy } = useTableItems(formModel)
+const { tableItemsAdd } = useTableItems(formModel)
 
 async function handleItemAssetApplySelected(options) {
   options.forEach((item) => {
@@ -230,43 +231,11 @@ export default { name: 'AssetOrderDetail' }
 
       <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
         <template #operate="{ rowIndex }">
-          <div class="flex items-center justify-right gap-[10px]">
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-up-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-down-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsCopy({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:copy-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsAdd({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:plus-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:delete-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-          </div>
+          <BizTableOperate
+            :model="formModel"
+            opt="list"
+            :row-index="Number(rowIndex)" copy add
+          />
         </template>
 
         <template #name_edit="{ row }">

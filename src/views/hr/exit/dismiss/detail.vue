@@ -6,9 +6,10 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { StaffPicker } from '@/components/SpTablePicker'
-import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { dismiss as api } from '@/service/api/hr/exit'
@@ -180,8 +181,6 @@ function viewRowsChange(e) {
   tableKeys.value = Number(e.rowIndex)
 }
 
-const { tableItemsRemove, tableItemsMoveUp, tableItemsMoveDown } = useTableItems(formModel)
-
 function handleItemUserSelected(options) {
   options.forEach((item) => {
     formModel.list.push({
@@ -297,29 +296,11 @@ export default { name: 'HrExitDismissDetail' }
 
       <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
         <template #operate="{ rowIndex }">
-          <div class="flex items-center justify-right gap-[10px]">
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === 0" text @click="tableItemsMoveUp({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-up-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button v-if="formModel.list.length > 1" :disabled="Number(rowIndex) === formModel.list.length - 1" text @click="tableItemsMoveDown({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:arrow-down-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-            <n-button text @click="tableItemsRemove({ opt: 'list', key: rowIndex })">
-              <template #icon>
-                <n-icon>
-                  <Icon icon="ant-design:delete-outlined" />
-                </n-icon>
-              </template>
-            </n-button>
-          </div>
+          <BizTableOperate
+            :model="formModel"
+            opt="list"
+            :row-index="Number(rowIndex)"
+          />
         </template>
 
         <template #remark_edit="{ row }">
