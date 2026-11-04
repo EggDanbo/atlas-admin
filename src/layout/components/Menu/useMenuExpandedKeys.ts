@@ -43,7 +43,6 @@ export function useMenuExpandedKeys(props: ProMenuProps, expandedKeysRef?: Ref<M
 
   function emitExpandedKeys(keys: MenuKey[]) {
     innerExpandedKeys.value = keys
-    // if a merged ref is provided, update it so useVModel can emit
     if (expandedKeysRef) {
       expandedKeysRef.value = keys
     }

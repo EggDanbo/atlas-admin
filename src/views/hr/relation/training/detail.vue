@@ -73,7 +73,6 @@ const formRules = computed<FormRules>(() => {
     title: [{ required: true, message: '请输入标题', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].start`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].expire`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].branch`] = [{ required: true, trigger: ['blur', 'change'] }]
@@ -81,7 +80,6 @@ const formRules = computed<FormRules>(() => {
   //   rules[`list[${i}].outcome`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].contact`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].mobile`] = [{ required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })

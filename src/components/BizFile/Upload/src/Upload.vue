@@ -161,7 +161,6 @@ uploader.on('fileSuccess', (async (_rootFile: unknown, file: UploaderFile, _mess
 
 // 根下的单个文件（文件夹）上传完成
 uploader.on('fileComplete', ((_rootFile: unknown) => {
-  // console.log('fileComplete', rootFile);
 }) as (...args: unknown[]) => boolean | void)
 // 某个文件上传失败了
 uploader.on('fileError', ((_rootFile: unknown, _file: unknown, message: unknown) => {

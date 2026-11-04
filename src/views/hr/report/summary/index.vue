@@ -89,15 +89,6 @@ async function handleMore(key: string) {
 }
 
 function handleQuery(row: Recordable) {
-  // showModal({
-  //   format: 'atlas/finance/detail-ledger',
-  //   year: row.year,
-  //   month_begin: row.month,
-  //   month_end: row.month,
-  //   team_id: queryModel.team_id,
-  //   content_id: queryModel.content_id,
-  //   content_code: queryModel.content_code,
-  // })
 }
 </script>
 

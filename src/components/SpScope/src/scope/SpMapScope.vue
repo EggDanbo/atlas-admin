@@ -177,9 +177,7 @@ function initMapView(target) {
 
   translate.on('translateend', () => {
     const point = featurePoint.getGeometry() as Point
-    // console.log(point.getCoordinates());
     lnglat.value = toLonLat(point.getCoordinates())
-    // console.log(lnglat);
   })
 
   map.addInteraction(select)

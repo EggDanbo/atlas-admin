@@ -290,7 +290,6 @@ html[data-vxe-ui-theme='dark'] {
     }
 
     &.unread {
-      // background-color: rgba(45, 140, 240, 0.08);
     }
   }
 }

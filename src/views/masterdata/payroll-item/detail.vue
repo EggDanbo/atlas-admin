@@ -112,12 +112,6 @@ export default { name: 'MdmPayrollItemDetail' }
         已停用
       </div>
       <n-grid :cols="24" :x-gap="24">
-        <!-- <n-form-item-gi :span="12" label="字段名称">
-          <n-input v-model:value="formModel.field_name" placeholder="" readonly="true" />
-        </n-form-item-gi>
-        <n-form-item-gi :span="12" label="字段类型">
-          <n-input :value="dictLabel('basic_salary_types', formModel.field_type)" placeholder="" readonly="true" />
-        </n-form-item-gi> -->
         <n-form-item-gi :span="24" label="标题">
           <n-input v-model:value="formModel.title" placeholder="" readonly="true" />
         </n-form-item-gi>

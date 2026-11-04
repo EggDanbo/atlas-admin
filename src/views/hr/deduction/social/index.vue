@@ -133,7 +133,6 @@ function handleRemove(row: Recordable, batch: boolean = false) {
 }
 
 function handleFileOk(items: Recordable[]) {
-  console.log(items)
 }
 
 async function handleImportSuccess(fileId: string) {

@@ -423,15 +423,6 @@ export default { name: 'CrmInvoice' }
               @update:value="tableRef.clear()"
             />
           </n-gi>
-          <!-- <n-gi span="1">
-            <n-select
-              v-model:value="queryModel.stoped"
-              :options="querySchemas.stoped"
-              placeholder="是否停用"
-              clearable
-              @update:value="tableRef.clear()"
-            />
-          </n-gi> -->
           <n-gi span="2">
             <n-input
               v-model:value="queryModel.filter"

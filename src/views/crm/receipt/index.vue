@@ -435,12 +435,6 @@ export default { name: 'CrmReceipt' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">
           <template #toolbarLeftBtn>
-            <!-- <n-button
-              :disabled="!(queryModel.status && queryModel.status === '未入账')"
-              @click="handleVouch"
-            >
-              入账
-            </n-button> -->
             <n-button @click="handleVouch">
               入账
             </n-button>

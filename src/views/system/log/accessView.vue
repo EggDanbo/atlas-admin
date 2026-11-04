@@ -87,7 +87,6 @@ defineExpose(exposed)
             <n-descriptions-item label="IP地址">
               {{ formModel.ip }}
             </n-descriptions-item>
-            <!-- <n-descriptions-item label="IP归属地">{{ formModel.ipgeo }}</n-descriptions-item> -->
             <n-descriptions-item label="宿主机">
               {{ formModel.hostname }}
             </n-descriptions-item>

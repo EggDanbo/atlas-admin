@@ -157,27 +157,6 @@ const {
   },
 })
 
-// function updateInvalidModalShow() {
-//   updateInvalidInfo.value.id = formModel.id
-//   updateInvalidInfo.value.reason = formModel.reason
-//   updateInvalidInfo.value.files_zfsm = formModel.files_zfsm
-
-//   updateInvalidModalRef.value?.open()
-// }
-
-// async function handleUpdateInvalid() {
-//   btnLoading.value = true
-//   const { isSuccess } = await api
-//     .updateInvalid({ ...updateInvalidInfo.value })
-//     .finally(() => (btnLoading.value = false))
-//   if (isSuccess) {
-//     toast.success('操作成功')
-//     updateInvalidModalRef.value?.close()
-//     modalRef.value.close()
-//     emit('on-action', 'edit')
-//   }
-// }
-
 function updateExpireModalShow() {
   updateExpireInfo.value.id = formModel.id
   updateExpireInfo.value.expire = formModel.expire ? Number(formModel.expire) : null

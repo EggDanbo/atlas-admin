@@ -41,9 +41,6 @@ export type MockAdapter = AlovaRequestAdapter<MockRequestConfig, MockResponse, R
 const BASE_DELAY = 90
 const JITTER = 120
 
-/** 是否打印 mock 请求日志 */
-const LOGGER_ENABLED = String(import.meta.env.VITE_LOGGER_MOCK) === 'true'
-
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
@@ -101,10 +98,6 @@ export function createLocalMockAdapter(): MockAdapter {
         throw new Error('mock request aborted')
 
       const payload = handleMockRequest(input)
-
-      if (LOGGER_ENABLED) {
-        console.log('[mock]', input.type, input.url, '→', payload.data)
-      }
 
       return {
         status: 200,

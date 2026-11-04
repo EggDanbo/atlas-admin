@@ -59,7 +59,6 @@ const {
   api,
   detailRef,
   idField: 'id',
-  // rowClassName: ({ row }) => row.house_buy === 0 ? 'row-warning' : null,
   createQueryModel,
   columns: [
     {

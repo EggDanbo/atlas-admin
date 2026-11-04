@@ -175,29 +175,6 @@ const configStore = useConfigStore()
           </n-tooltip>
         </n-el>
       </n-gi>
-      <!--      <n-gi> -->
-      <!--        <n-el -->
-      <!--          :class="{ 'layout-selected': configStore.mode === 'mobile' }" -->
-      <!--          class="layout h-16 flex rounded-md border-2px border-transparent cursor-pointer" -->
-      <!--          tag="div" -->
-      <!--          @click="configStore.setMode('mobile')" -->
-      <!--        > -->
-      <!--          <n-tooltip trigger="hover"> -->
-      <!--            <template #trigger> -->
-      <!--              <div class="flex grid gap-1 w-96 shadow-md rounded p-2"> -->
-      <!--                <div class="layout-right flex flex-col w-full h-full"> -->
-      <!--                  <div class="flex grid gap-1"> -->
-      <!--                    <div class="rounded bg-primary header h-7 mb-1 w-1/4" /> -->
-      <!--                    <div class="rounded header h-7 mb-1 flex-1" /> -->
-      <!--                  </div> -->
-      <!--                  <div class="rounded content h-13" /> -->
-      <!--                </div> -->
-      <!--              </div> -->
-      <!--            </template> -->
-      <!--            <span>移动端布局</span> -->
-      <!--          </n-tooltip> -->
-      <!--        </n-el> -->
-      <!--      </n-gi> -->
     </n-grid>
   </div>
 </template>

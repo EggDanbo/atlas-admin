@@ -85,7 +85,6 @@ const formRules = computed<FormRules>(() => {
     title: [{ required: true, message: '请输入标题', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].article_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].name`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].brand`] = [{ required: true, trigger: ['blur', 'change'] }]
@@ -95,7 +94,6 @@ const formRules = computed<FormRules>(() => {
   //   rules[`list[${i}].amount`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].enroll`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].source`] = [{ required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })

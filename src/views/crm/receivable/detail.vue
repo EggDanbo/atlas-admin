@@ -60,9 +60,6 @@ type FormModel = ReturnType<typeof createFormModel> & { [key: string]: any, tran
 const formRules = computed<FormRules>(() => {
   const rules: FormRules = {}
 
-  // for (let i = 0; i < formModel.list.length; i++) {
-  //   const item = formModel.list[i]
-  //   for (let n = 0; n < item.incomes.length; n++) {
   //     rules[`list[${i}].incomes[${n}].period`] = [{ required: true, trigger: ['blur', 'change'] }]
   //     rules[`list[${i}].incomes[${n}].remain`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //     rules[`list[${i}].incomes[${n}].amount`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
@@ -71,8 +68,6 @@ const formRules = computed<FormRules>(() => {
   //     rules[`list[${i}].incomes[${n}].pcs`] = [{ type: 'number', required: false, trigger: ['blur', 'change'] }]
   //     rules[`list[${i}].incomes[${n}].unit`] = [{ required: false, trigger: ['blur', 'change'] }]
   //     rules[`list[${i}].incomes[${n}].totals`] = [{ type: 'number', required: false, trigger: ['blur', 'change'] }]
-  //   }
-  // }
 
   return rules
 })

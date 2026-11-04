@@ -355,7 +355,6 @@ const getTableBindValues = computed(() => {
   const showFooterInFloating = filterMode.value === 'floating' && hasSum
   const showFooterInFooterMode = filterMode.value === 'footer' && (hasSum || !notFilter)
   if (showFooterInFloating || showFooterInFooterMode) {
-    // if (!(hasMergeRow() && columns.find((q) => q.fixed === 'left'))) {
     propsData['showFooter'] = true
     if (!propsData['footerMethod']) {
       propsData['footerMethod'] = ({ columns, data }) => {
@@ -371,7 +370,6 @@ const getTableBindValues = computed(() => {
         return result
       }
     }
-    // }
   }
   return propsData
 })

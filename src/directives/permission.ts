@@ -28,7 +28,6 @@ export const perm: ObjectDirective = {
     if (!hasPermission(perms)) {
       el.disabled = true
       el.classList.add('n-button--disabled')
-      // el.setAttribute('disabled', '')
       // el.style['disabled'] = 'disabled'
     }
   },

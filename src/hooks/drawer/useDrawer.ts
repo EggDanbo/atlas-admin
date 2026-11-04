@@ -26,7 +26,6 @@ export function useDrawer() {
         },
       },
     }, config)
-    console.log('drawerProps', drawerProps)
     return drawer(contentVnode, {
       ...drawerProps,
     })

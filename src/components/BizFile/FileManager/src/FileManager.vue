@@ -38,8 +38,6 @@ const [videoModalRegister, videoModal] = useModal({
 })
 
 const playerOptions = reactive({
-  // height: 200,
-  // width: document.documentElement.clientWidth, //播放器宽度
   playbackRates: [0.7, 1, 1.5, 2], // 播放速度
   sources: [
     {
@@ -168,7 +166,6 @@ function handleDownFile(row: any) {
   let url = row.url // 返回的url
   url += !row.url.includes('?') ? '?' : '&' // 判断是否有问号
   const newUrl = `${url}down=1`
-  // window.location.href = newUrl;
   window.open(newUrl)
 }
 
@@ -253,20 +250,14 @@ function printImage() {
     printJS({
       printable: getDataModel.value.list.filter(q => isImage(q)).map(m => m.url),
       type: 'image',
-    // imageStyle: 'width:50%;margin-bottom:20px;',
     })
     return
   }
   printJS({
     printable: list.map(m => m.url),
     type: 'image',
-    // imageStyle: 'width:50%;margin-bottom:20px;',
   })
 }
-
-// function open(item: any) {
-//   window.open(item.url);
-// }
 
 function play(item: any) {
   playerOptions.sources[0]!.src = item.url
@@ -275,18 +266,8 @@ function play(item: any) {
   videoModal.open()
 }
 
-// async function handleScan() {
-//   const url = `${getApiBaseUrl()}/file/resource/upload?access_token=${token.get()?.access_token}`
-//   const res = await cameraDoc(
 //     url,
 //     filterModel.xid,
-//     encodeURIComponent(filterModel.mark),
-//     encodeURIComponent(filterModel.mark),
-//   )
-//   if (res.ok()) {
-//     await manager.fetch()
-//   }
-// }
 
 async function show(opt: ManagerType) {
   checkList.value = []
@@ -493,9 +474,6 @@ defineExpose(exposed)
         <n-button v-if="canRemove" type="primary" @click="handleRemove(checkList)">
           删除
         </n-button>
-        <!-- <n-button v-if="canUpload" type="primary" @click="handleScan">
-          扫描
-        </n-button> -->
         <n-button v-if="getDataModel.list.filter(q => isImage(q)).length !== 0" type="primary" @click="printImage">
           打印图片
         </n-button>

@@ -73,10 +73,6 @@ const contentFieldOptions = computed(() => {
   return salaryDictList.value
     .filter(q => q.field_type === 0 || q.field_type === 1 || q.field_type === 4)
     .map(item => item.title)
-  // return salaryDictList.value.map(item => ({
-  //   label: item.title,
-  //   value: item.title,
-  // }))
 })
 
 // 运算符选项（空格由插入逻辑自动补齐，避免出现连续多个空格）

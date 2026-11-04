@@ -157,10 +157,6 @@ function handleRemove(rows: Recordable[]) {
     negativeText: '取消',
     onPositiveClick: async () => {
       pageLoading.value = true
-      // const { isSuccess } = await api.delete({ list: rows.map(m => m.id) })
-      //   .finally(() => pageLoading.value = false)
-      // if (!isSuccess)
-      //   return
       toast.success('操作成功')
       tableRef.value?.refresh()
     },

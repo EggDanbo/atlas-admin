@@ -28,23 +28,18 @@ export const EXT_MIME_MAP: Record<string, string[]> = {
   '3gp': ['video/3gpp'],
   '3g2': ['video/3gpp2'],
   'm3u8': ['video/mpegurl', 'video/x-mpegurl'],
-  // PDF
   'pdf': ['application/pdf'],
-  // Word
   'doc': ['application/msword'],
   'docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
   'rtf': ['application/rtf'],
   'odt': ['application/vnd.oasis.opendocument.text'],
-  // Excel
   'xls': ['application/vnd.ms-excel'],
   'xlsx': ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
   'csv': ['text/csv'],
   'ods': ['application/vnd.oasis.opendocument.spreadsheet'],
-  // PPT
   'ppt': ['application/vnd.ms-powerpoint'],
   'pptx': ['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
   'odp': ['application/vnd.oasis.opendocument.presentation'],
-  // Markdown
   'md': ['text/markdown'],
   'markdown': ['text/markdown'],
   // 代码 / 文本

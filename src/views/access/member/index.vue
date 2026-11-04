@@ -212,7 +212,6 @@ function showFileMgr(row: Recordable) {
 }
 
 function handleFileOk(items: Recordable[]) {
-  console.log(items)
 }
 
 async function handleImportSuccess(fileId: string) {

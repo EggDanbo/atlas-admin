@@ -117,7 +117,6 @@ const moreOptions = reactive([
   { label: '批量删除', key: '批量删除', icon: createIcon('ant-design:delete-row-outlined') },
   { type: 'divider', key: 'd1' },
   // { label: '重新校验', key: '重新校验', icon: createIcon('ant-design:check-circle-outlined') },
-  // { type: 'divider', key: 'd2' },
   { label: '打印预览', key: 'pdf', icon: createIcon('ant-design:printer-outlined'), disabled: !hasPermPrint },
   { label: '导出Excel', key: 'excel', icon: createIcon('ant-design:file-excel-outlined'), disabled: !hasPermExport },
 ])
@@ -126,9 +125,6 @@ async function handleMore(key: string) {
   const rows = tableRef.value.getCheckboxRows()
   if (['excel', 'pdf', 'print'].includes(key)) {
     await handleExportOrPrint(key, rows)
-  }
-  else if (key === '重新校验') {
-    // TODO
   }
   else if (key === '批量删除') {
     handleRemove(rows)

@@ -18,7 +18,6 @@ export const gridOptions = reactive<TableProps>({
   editRules: {
     ranks: [{ required: true, message: '' }],
     position: [{ required: true, message: '' }],
-    // scale: [{ required: true, message: '' }],
   },
   validConfig: {
     msgMode: 'full',
@@ -87,8 +86,6 @@ export const gridOptions = reactive<TableProps>({
       width: 150,
       align: 'left',
       headerAlign: 'center',
-      // editRender: {},
-      // slots: { edit: 'scale_edit' },
     },
     {
       field: 'salary',
@@ -96,8 +93,6 @@ export const gridOptions = reactive<TableProps>({
       width: 120,
       align: 'right',
       headerAlign: 'center',
-      // editRender: {},
-      // slots: { edit: 'salary_edit' },
     },
     {
       field: 'remark',

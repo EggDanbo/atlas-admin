@@ -155,18 +155,10 @@ export const useUserStore = defineStore(
 
     function logoutRedirect(redirect?: string) {
       // 重置全局配置信息
-      // configStore.resetStore()
       // 重置主题配置信息
-      // themeStore.resetStore()
       const baseURL = (import.meta.env.VITE_PUBLIC_PATH as string) ?? '/'
 
       window.location.href = `${baseURL}login${redirect ? `?redirect=${redirect}` : ``}`
-      // return router.push({
-      //   path: LOGIN_ROUTE_PATH,
-      //   query: {
-      //     redirect: redirect ?? route.fullPath,
-      //   },
-      // })
     }
 
     /**

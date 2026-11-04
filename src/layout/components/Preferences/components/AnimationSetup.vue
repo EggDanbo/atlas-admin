@@ -49,27 +49,6 @@ const animateOptions = [
     </n-gi>
   </n-grid>
   <!-- TOOD -->
-  <!-- <n-grid
-    :cols="4"
-    class="my-4"
-  >
-    <n-gi
-      :span="2"
-      class="pt-1.5"
-    >
-      <n-text depth="3">
-        页面切换动画
-      </n-text>
-    </n-gi>
-    <n-gi
-      :span="2"
-      class="text-right"
-    >
-      <n-switch
-        v-model:value="configStore.pageAnimate"
-      />
-    </n-gi>
-  </n-grid> -->
   <n-grid
     :cols="4"
     class="my-4"

@@ -87,7 +87,6 @@ function renderMenuLabel(option: MenuOption) {
 </script>
 
 <template>
-  <!--  :accordion="sidebarMenuAccordion" -->
   <n-menu
     :class="[
       mergedCollapsed && collapsedShowTitle && 'pro-menu--collapsed-show-title',

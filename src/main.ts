@@ -14,8 +14,6 @@ import {
 } from '@/setups'
 import { setupStore } from '@/store'
 import App from './App.vue'
-import { useGlobSetting } from './hooks/setting'
-import { isProdMode } from './utils/env'
 import '@unocss/reset/tailwind-compat.css'
 
 import 'virtual:uno.css'
@@ -75,11 +73,3 @@ async function install() {
 }
 
 void install()
-
-if (!isProdMode()) {
-  console.log(import.meta.env)
-
-  const globSetting = useGlobSetting()
-
-  console.log('当前项目环境变量：', globSetting)
-}

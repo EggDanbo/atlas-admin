@@ -297,7 +297,6 @@ export function downloadFile(res, filename?) {
   let fileName = filename || res.headers['content-disposition'].split('filename=').pop()
   fileName = decodeURIComponent(fileName)
   if (window.navigator && (navigator as any).msSaveOrOpenBlob) {
-    // IE
     (navigator as any).msSaveOrOpenBlob(blob, fileName)
   }
   else {

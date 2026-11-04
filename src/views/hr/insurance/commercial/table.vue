@@ -48,7 +48,6 @@ function close() {
 }
 
 async function print() {
-  console.log(tableRef.value)
   btnLoading.value = true
   const { isSuccess, data } = await api.printList({ ...filterModel.value, insure_id: insureId.value }).finally(() => {
     btnLoading.value = false

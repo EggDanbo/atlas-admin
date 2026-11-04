@@ -230,8 +230,8 @@ export const useAsyncRouteStore = defineStore('async-route-store', () => {
       try {
         accessedRouters = await getAsyncRoutes()
       }
-      catch (error) {
-        console.log(error)
+      catch {
+        // 拉取菜单失败时保留空路由，由页面自行提示
       }
     }
     else {
@@ -239,8 +239,8 @@ export const useAsyncRouteStore = defineStore('async-route-store', () => {
         // 过滤账户是否拥有某一个权限，并将菜单从加载列表移除
         accessedRouters = filter(asyncRoutes, routeFilter)
       }
-      catch (error) {
-        console.log(error)
+      catch {
+        // 拉取菜单失败时保留空路由，由页面自行提示
       }
     }
     accessedRouters = accessedRouters.filter(routeFilter)

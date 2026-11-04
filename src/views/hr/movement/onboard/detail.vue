@@ -98,15 +98,11 @@ const formRules = computed<FormRules>(() => {
     team_id: [{ required: true, message: '请选择调出单位', trigger: 'change' }],
     date: [{ type: 'number', required: true, message: '请选择单据日期', trigger: 'change' }],
     predict: [{ type: 'number', required: true, message: '请选择预计生效日期', trigger: 'change' }],
-    // title: [{ required: true, message: '请输入标题', trigger: 'change' }],
-    // digest: [{ required: true, message: '请输入申请事由', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].ranks`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].scale`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].position`] = [{ required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })
@@ -238,7 +234,6 @@ async function handleConfirm() {
 }
 
 function handleEntryModalShow(item) {
-  console.log(item)
   entryRef.value?.open({ id: item.cid, opt: 'view' })
 }
 
@@ -286,18 +281,6 @@ export default { name: 'HrMovementOnboardDetail' }
             选择人员
           </n-button>
         </n-form-item-gi>
-        <!-- <n-form-item-gi :span="24" label="标题" path="title">
-          <n-input v-model:value="formModel.title" clearable />
-        </n-form-item-gi>
-        <n-form-item-gi :span="24" label="入职事由" path="digest">
-          <n-input v-model:value="formModel.digest" type="textarea" :rows="3" clearable />
-        </n-form-item-gi>
-        <n-form-item-gi :span="24" label="备注" path="remark">
-          <n-input v-model:value="formModel.remark" type="textarea" :rows="3" clearable />
-        </n-form-item-gi>
-        <n-form-item-gi :span="24" label="附件">
-          <Upload v-model:value="formModel.files" :only-image="false" upload-title="上传附件" />
-        </n-form-item-gi> -->
       </n-grid>
 
       <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
@@ -337,9 +320,6 @@ export default { name: 'HrMovementOnboardDetail' }
         <template #position_edit="{ row }">
           <SpDict v-model:value="row.position" name="职务" clearable />
         </template>
-        <!-- <template #scale_edit="{ row }">
-          <SpDict v-model:value="row.scale" name="工资级别" clearable />
-        </template> -->
         <template #remark_edit="{ row }">
           <n-input v-model:value="row.remark" clearable />
         </template>
@@ -382,22 +362,6 @@ export default { name: 'HrMovementOnboardDetail' }
             <n-form-item-gi :span="24" label="入职单位">
               <n-input v-model:value="formModel.team_name" placeholder="" readonly />
             </n-form-item-gi>
-            <!-- <n-form-item-gi :span="24" label="标题">
-              <n-input v-model:value="formModel.title" placeholder="" readonly />
-            </n-form-item-gi>
-            <n-form-item-gi :span="24" label="入职事由">
-              <n-input v-model:value="formModel.digest" type="textarea" :rows="3" placeholder="" readonly />
-            </n-form-item-gi>
-            <n-form-item-gi :span="24" label="备注">
-              <n-input v-model:value="formModel.remark" type="textarea" :rows="3" placeholder="" readonly />
-            </n-form-item-gi>
-            <n-form-item-gi
-              v-if="formModel.files && formModel.files.length > 0"
-              :span="24"
-              label="附件"
-            >
-              <Upload v-model:value="formModel.files" :disabled="true" />
-            </n-form-item-gi> -->
           </n-grid>
 
           <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">

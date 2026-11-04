@@ -66,7 +66,6 @@ const {
   api,
   detailRef,
   idField: 'id',
-  // rowClassName: ({ row }) => row.house_buy === 0 ? 'row-warning' : null,
   createQueryModel,
   columns: [
     {
@@ -133,9 +132,6 @@ async function handleMore(key: string) {
   }
   else if (key === '参保导入') {
     batchImportRef.value?.open()
-  }
-  else if (key === '报盘导出') {
-    // batchImportRef.value?.open()
   }
 }
 

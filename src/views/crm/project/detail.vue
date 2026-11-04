@@ -249,52 +249,32 @@ type FormModel = ReturnType<typeof createFormModel> & { [key: string]: any, tran
 const formRules = computed<FormRules>(() => {
   const rules: FormRules = {
     team_id: [{ required: true, message: '请选择所属单位', trigger: 'change' }],
-    // user_id: [{ required: true, message: '请选择负责人', trigger: 'change' }],
     name: [{ required: true, message: '请输入项目名称', trigger: 'change' }],
     date: [{ type: 'number', required: true, message: '请选择登记日期', trigger: 'change' }],
     indate: [{ type: 'number', required: true, message: '请选择开始日期', trigger: 'change' }],
     expire: [{ type: 'number', required: true, message: '请选择结束日期', trigger: 'change' }],
     types: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
     pattern: [{ required: true, message: '请选择业务模式', trigger: 'change' }],
-    // amount: [{ type: 'number', required: true, message: '请输入项目总服务费', trigger: 'change' }],
     files_htyj: [{ type: 'array', required: true, message: '请上传合同原件', trigger: 'change' }],
     files_yyzz: [{ type: 'array', required: false, message: '请上传营业执照', trigger: 'change' }],
-    // files_sfz: [{ type: 'array', required: false, message: '请上传身份证', trigger: 'change' }],
-    // files_cbys: [{ type: 'array', required: false, message: '请上传成本预算表', trigger: 'change' }],
-    // files_jht: [{ type: 'array', required: false, message: '请上传旧合同', trigger: 'change' }],
-    // files_bcxy: [{ type: 'array', required: false, message: '请上传补充协议', trigger: 'change' }],
   }
 
-  // if (Number(formModel.source) === 2) {
-  //   if (Number(formModel.types) === 1) {
   //     rules.files_yyzz[0].required = true
-  //   }
   //   else {
   //     rules.files_yyzz[0].required = true
   //     rules.files_sfz[0].required = true
   //     rules.files_cbys[0].required = true
-  //   }
-  // }
   // else if (Number(formModel.source) === 0 && formModel.source !== null) {
-  //   if (Number(formModel.types) === 1) {
   //     rules.files_jht[0].required = true
-  //   }
   //   else {
   //     rules.files_jht[0].required = true
   //     rules.files_cbys[0].required = true
-  //   }
-  // }
   // else if (Number(formModel.source) === 1 || Number(formModel.source) === 3) {
-  //   if (Number(formModel.types) === 1) {
   //     rules.files_bcxy[0].required = true
-  //   }
   //   else {
   //     rules.files_bcxy[0].required = true
   //     rules.files_cbys[0].required = true
-  //   }
-  // }
 
-  // for (let i = 0; i < formModel.incomes.length; i++) {
   //   rules[`incomes[${i}].team_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`incomes[${i}].outer_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`incomes[${i}].product_id`] = [{ required: true, trigger: ['blur', 'change'] }]
@@ -303,20 +283,14 @@ const formRules = computed<FormRules>(() => {
   //   rules[`incomes[${i}].period`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`incomes[${i}].price`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`incomes[${i}].amount`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
-  // }
 
-  // for (let i = 0; i < formModel.expenses.length; i++) {
   //   rules[`expenses[${i}].team_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`expenses[${i}].content_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`expenses[${i}].amount`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
-  // }
 
-  // for (let i = 0; i < formModel.scales.length; i++) {
   //   rules[`scales[${i}].name`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`scales[${i}].salary`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
-  // }
 
-  // for (let i = 0; i < formModel.alloctes.length; i++) {
   //   rules[`alloctes[${i}].team_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`alloctes[${i}].branch_id`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`alloctes[${i}].branch_address`] = [{ required: true, trigger: ['blur', 'change'] }]
@@ -324,7 +298,6 @@ const formRules = computed<FormRules>(() => {
   //   rules[`alloctes[${i}].position`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`alloctes[${i}].amount`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`alloctes[${i}].pcs`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })
@@ -574,9 +547,6 @@ function handleRiseVarSetModal(key) {
     }
   }
 
-  // if (riseDataList.value.length === 0) {
-  //   riseDataListItemAdd()
-  // }
   riseModalRef.value?.open()
 }
 
@@ -612,12 +582,9 @@ function riseDataListItemCopy(key) {
 }
 
 function riseDataListItemRemove(key) {
-  // if (riseDataList.value.length > 1) {
   riseDataList.value.splice(key, 1)
-  // }
   // else {
   //   toast.info('请填写浮动绩效工资')
-  // }
 }
 
 function riseDataListItemCheck() {
@@ -626,10 +593,7 @@ function riseDataListItemCheck() {
       toast.error(`请选择 #${index + 1} 评级`)
       return true
     }
-    // if (!item.value) {
     //   toast.error(`请输入 #${index + 1} 值`)
-    //   return true
-    // }
     return false
   })
 
@@ -761,7 +725,6 @@ function updateFiles() {
 }
 
 function handleFileOk(items: Recordable[]) {
-  console.log(items)
 }
 
 watch(
@@ -942,53 +905,6 @@ export default { name: 'CrmProjectDetail' }
             upload-title="上传附件"
           />
         </n-form-item-gi>
-        <!-- <n-form-item-gi
-          v-if="Number(formModel.types) !== 2 && Number(formModel.source) === 0"
-          :span="8"
-          label="身份证"
-          path="files_sfz"
-        >
-          <Upload
-            v-model:value="formModel.files_sfz"
-            :max-number="1"
-            :only-image="false"
-            upload-title="上传附件"
-          />
-        </n-form-item-gi>
-        <n-form-item-gi
-          v-if="Number(formModel.types) !== 2 && Number(formModel.source) === 2"
-          :span="8"
-          label="旧合同"
-          path="files_jht"
-        >
-          <Upload
-            v-model:value="formModel.files_jht"
-            :max-number="1"
-            :only-image="false"
-            upload-title="上传附件"
-          />
-        </n-form-item-gi>
-        <n-form-item-gi
-          v-if="Number(formModel.types) !== 2 && (Number(formModel.source) === 1 || Number(formModel.source) === 3)"
-          :span="8"
-          label="补充协议"
-          path="files_bcxy"
-        >
-          <Upload
-            v-model:value="formModel.files_bcxy"
-            :max-number="1"
-            :only-image="false"
-            upload-title="上传附件"
-          />
-        </n-form-item-gi>
-        <n-form-item-gi v-if="Number(formModel.types) === 2" :span="8" label="证明材料" path="files_zmcl">
-          <Upload
-            v-model:value="formModel.files_zmcl"
-            :max-number="1"
-            :only-image="false"
-            upload-title="上传附件"
-          />
-        </n-form-item-gi> -->
       </n-grid>
 
       <n-collapse arrow-placement="right" :default-expanded-names="['incomes']" @item-header-click="handleItemHeaderClick">

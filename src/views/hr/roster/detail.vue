@@ -197,7 +197,6 @@ const formRules = computed<FormRules>(() => {
     team_id: [{ required: true, message: '请选择所属单位', trigger: 'change' }],
     card: [{ required: true, message: '请输入身份证号', trigger: 'change' }],
     name: [{ required: true, message: '请输入姓名', trigger: 'change' }],
-    // ranks: [{ required: true, message: '请选择人员职务', trigger: 'change' }],
     nation: [{ required: true, message: '请选择民族', trigger: 'change' }],
     extent: [{ required: true, message: '请选择文化程度', trigger: 'change' }],
     status: [{ required: true, message: '请选择入职状态', trigger: 'change' }],
@@ -638,21 +637,6 @@ export default { name: 'HrRosterDetail' }
             ]"
           />
         </n-form-item-gi>
-        <!-- <n-form-item-gi :span="8" label="招聘登记表">
-            <Upload
-              v-model:value="formModel.files_zpdjb"
-              uploadTitle="上传附件"
-              :maxNumber="1"
-              :accepts="[
-                'image/png',
-                'image/jpg',
-                'image/bmp',
-                'image/jpeg',
-                'image/pjpeg',
-                'application/pdf',
-              ]"
-            />
-          </n-form-item-gi> -->
         <n-form-item-gi :span="8" label="无犯罪记录证明">
           <Upload
             v-model:value="formModel.files_wfzzm"
@@ -1326,9 +1310,6 @@ export default { name: 'HrRosterDetail' }
         <n-form-item-gi :span="8" label="离职时间">
           <n-input :value="formModel.transform?.end_date" placeholder="" readonly="true" />
         </n-form-item-gi>
-        <!-- <n-form-item-gi :span="8" label="事假最大天数">
-          <n-input-number v-model:value="formModel.leave_max" placeholder="" :show-button="false" :readonly="true" />
-        </n-form-item-gi> -->
         <n-form-item-gi :span="16" label="工资开户银行">
           <n-input v-model:value="formModel.salary_open" placeholder="" readonly="true" />
         </n-form-item-gi>
@@ -1358,9 +1339,6 @@ export default { name: 'HrRosterDetail' }
         <n-form-item-gi :span="8" label="面试登记表">
           <Upload v-model:value="formModel.files_msdjb" :only-image="false" :disabled="true" />
         </n-form-item-gi>
-        <!-- <n-form-item-gi :span="8" label="招聘登记表">
-            <Upload v-model:value="formModel.files_zpdjb" :only-image="false" :disabled="true" />
-          </n-form-item-gi> -->
         <n-form-item-gi :span="8" label="无犯罪记录证明">
           <Upload v-model:value="formModel.files_wfzzm" :only-image="false" :disabled="true" />
         </n-form-item-gi>

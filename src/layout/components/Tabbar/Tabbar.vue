@@ -150,12 +150,7 @@ const operateOptions = computed(() => {
       key: '7',
       icon: createIcon('ant-design:fullscreen-outlined'),
     },
-    // {
-    //   label: '新窗口打开',
-    //   key: '9',
     //   disabled,
-    //   icon: createIcon('ant-design:export-outlined'),
-    // },
   ]
 
   // 白名单路由不显示收藏选项
@@ -203,7 +198,6 @@ function closeHandleSelect(key) {
   switch (key) {
     // 刷新
     case '1':
-      // reloadPage()
       asyncRouteStore.reloadPage()
       break
       // 关闭
@@ -228,7 +222,6 @@ function closeHandleSelect(key) {
       break
       // 内容页全屏
     case '7':
-      // emit('pageFullScreen')
       mode.value = 'full-content'
       break
       // 收藏/取消收藏

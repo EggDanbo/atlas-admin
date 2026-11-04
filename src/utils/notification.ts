@@ -15,7 +15,6 @@ function send(title: string, body: string, tag?: string) {
     dir: 'auto',
     lang: 'zh-CN',
     tag,
-    // icon: '', //通知的缩略图,//icon 支持ico、png、jpg、jpeg格式
     body, // 通知的具体内容
     requireInteraction: true,
     renotify: true,
@@ -34,19 +33,11 @@ export function notify(title: string, body: string, tag?: string) {
 
   if (NotificationConstructor.permission === 'granted') {
     send(title, body, tag)
-    // console.log('用户允许通知');
   }
-  else if (NotificationConstructor.permission === 'denied') {
-    // console.log('用户拒绝通知');
-  }
-  else {
+  else if (NotificationConstructor.permission !== 'denied') {
     NotificationConstructor.requestPermission((status) => {
-      if (status === 'granted') {
+      if (status === 'granted')
         send(title, body, tag)
-      }
-      else if (status === 'denied') {
-        // console.log('用户拒绝通知');
-      }
     })
   }
 }

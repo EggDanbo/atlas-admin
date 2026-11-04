@@ -78,12 +78,10 @@ const formRules = computed<FormRules>(() => {
     digest: [{ required: true, message: '请输入申请事由', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].name`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].pcs`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].unit`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].model`] = [{ required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })

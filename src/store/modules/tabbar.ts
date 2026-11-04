@@ -157,11 +157,7 @@ export const useTabbarStore = defineStore('tabbar-store', () => {
       item => item.name && validNames.includes(item.name as string),
     )
     const after = favoritesPage.value.length
-    const removed = before - after
-    if (removed > 0) {
-      console.log(`[收藏清理] 移除了 ${removed} 个无效收藏`)
-    }
-    return removed
+    return before - after
   }
 
   /**

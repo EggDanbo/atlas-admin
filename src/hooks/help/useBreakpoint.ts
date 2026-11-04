@@ -88,7 +88,6 @@ export function createBreakpointListen(fn?: (opt: {
       getWindowWidth()
       resizeFn()
     },
-    // wait: 100,
   })
 
   getWindowWidth()

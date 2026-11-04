@@ -318,7 +318,6 @@ function checkInDateAdd(opt: CheckInOptionType, index: number) {
     checkInDateInfo.value = formModel.checkin_date ? deepClone(formModel.checkin_date[index]) : []
   }
 
-  console.log('ADD', formModel.checkin_date)
   checkInDateRef.value?.open()
 }
 
@@ -347,7 +346,6 @@ function checkInDateSave() {
     formModel.checkin_date[checkInDateNums.value] = data
   }
 
-  console.log('SAVE', formModel.checkin_date)
   checkInDateRef.value?.close()
 }
 

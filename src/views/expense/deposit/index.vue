@@ -210,15 +210,6 @@ export default { name: 'ExpenseClaimDeposit' }
               @update:value="tableRef.clear()"
             />
           </n-gi>
-          <!-- <n-gi span="1">
-            <n-select
-              v-model:value="queryModel.printed"
-              :options="querySchemas.printed"
-              placeholder="是否打印"
-              clearable
-              @update:value="tableRef.clear()"
-            />
-          </n-gi> -->
           <n-gi span="2">
             <n-input
               v-model:value="queryModel.filter"

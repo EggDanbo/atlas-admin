@@ -5,67 +5,27 @@ import type { App } from 'vue'
 import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
 import ExcelJS from 'exceljs'
 import {
-  // VxeAnchor,
-  // VxeAnchorLink,
-  // VxeBreadcrumb,
-  // VxeBreadcrumbItem,
   VxeButton,
   VxeButtonGroup,
-  // VxeCalendar,
-  // VxeCard,
   VxeCheckbox,
   VxeCheckboxGroup,
-  // VxeCol,
-  // VxeCollapse,
-  // VxeCollapsePane,
-  // VxeDateInput,
-  // VxeDrawer,
-  // VxeFlowDesign,
-  // VxeFlowView,
   VxeForm,
-  // VxeFormDesign,
-  // VxeFormGather,
   VxeFormItem,
-  // VxeFormView,
   VxeIcon,
   VxeInput,
-  // VxeLayoutAside,
-  // VxeLayoutBody,
-  // VxeLayoutContainer,
-  // VxeLayoutFooter,
-  // VxeLayoutHeader,
-  // VxeLink,
-  // VxeListDesign,
-  // VxeListView,
-  // VxeList,
   VxeLoading,
-  // VxeMenu,
   VxeModal,
-  // VxeNumberInput,
-  // VxeOptgroup,
-  // VxeOption,
   VxePager,
-  // VxePasswordInput,
-  // VxePrint,
-  // VxePulldown,
   VxeRadio,
   VxeRadioButton,
   VxeRadioGroup,
-  // VxeRow,
   VxeSelect,
   VxeSwitch,
-  // VxeTabPane,
-  // VxeTabs,
   VxeTextarea,
-  // VxeTips,
   VxeTooltip,
   VxeUI,
-  // VxeTree,
-  // VxeTreeSelect,
-  // VxeUpload,
 } from 'vxe-pc-ui'
 import zhCN from 'vxe-pc-ui/lib/language/zh-CN'
-// ...
 import { VxeColgroup, VxeColumn, VxeGrid, VxeTable, VxeToolbar } from 'vxe-table'
 
 // 导入主题变量，也可以重写主题变量
@@ -85,63 +45,24 @@ function LazyVxeTable(app) {
 }
 
 function LazyVxeUI(app) {
-  // app.use(VxeAnchor);
-  // app.use(VxeAnchorLink);
-  // app.use(VxeBreadcrumb);
-  // app.use(VxeBreadcrumbItem);
   app.use(VxeButton)
   app.use(VxeButtonGroup)
-  // app.use(VxeCalendar);
-  // app.use(VxeCard);
   app.use(VxeCheckbox)
   app.use(VxeCheckboxGroup)
-  // app.use(VxeCol);
-  // app.use(VxeCollapse);
-  // app.use(VxeCollapsePane);
-  // app.use(VxeDateInput);
-  // app.use(VxeDrawer);
-  // app.use(VxeFlowDesign);
-  // app.use(VxeFlowView);
   app.use(VxeForm)
-  // app.use(VxeFormDesign);
-  // app.use(VxeFormGather);
   app.use(VxeFormItem)
-  // app.use(VxeFormView);
   app.use(VxeIcon)
   app.use(VxeInput)
-  // app.use(VxeLayoutAside);
-  // app.use(VxeLayoutBody);
-  // app.use(VxeLayoutContainer);
-  // app.use(VxeLayoutFooter);
-  // app.use(VxeLayoutHeader);
-  // app.use(VxeLink);
-  // app.use(VxeListDesign);
-  // app.use(VxeListView);
-  // app.use(VxeList);
   app.use(VxeLoading)
-  // app.use(VxeMenu);
   app.use(VxeModal)
-  // app.use(VxeNumberInput);
-  // app.use(VxeOptgroup);
-  // app.use(VxeOption);
   app.use(VxePager)
-  // app.use(VxePasswordInput);
-  // app.use(VxePrint);
-  // app.use(VxePulldown);
   app.use(VxeRadio)
   app.use(VxeRadioButton)
   app.use(VxeRadioGroup)
-  // app.use(VxeRow);
   app.use(VxeSelect)
   app.use(VxeSwitch)
-  // app.use(VxeTabPane);
-  // app.use(VxeTabs);
   app.use(VxeTextarea)
-  // app.use(VxeTips);
   app.use(VxeTooltip)
-  // app.use(VxeTree);
-  // app.use(VxeTreeSelect);
-  // app.use(VxeUpload);
 }
 
 function useTable(app: App) {
@@ -154,9 +75,6 @@ VxeUI.use(VxeUIPluginExportXLSX, {
 })
 
 VxeUI.setConfig({
-  // size: null, // 全局尺寸
-  // zIndex: 5001, // 全局 zIndex 起始值，如果项目的的 z-index 样式值过大时就需要跟随设置更大，避免被遮挡
-  // version: 0, // 版本号，对于某些带数据缓存的功能有用到，上升版本号可以用于重置数据
   table: {
     border: true,
     autoResize: false,
@@ -173,7 +91,6 @@ VxeUI.setConfig({
       isHover: true,
     },
     columnDragConfig: {
-      // isCrossDrag: true,
       showGuidesStatus: true,
       showIcon: false,
       trigger: 'cell',

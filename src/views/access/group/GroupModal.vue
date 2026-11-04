@@ -135,7 +135,6 @@ async function handleAdd() {
     user_id: filterModel.user_id,
     perm_team: filterModel.team_id ? [filterModel.team_id] : [],
   })
-  console.log(editFormModel)
   editFormRef.value?.restoreValidation?.()
   editModalRef.value?.open()
 }

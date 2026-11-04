@@ -54,7 +54,6 @@ const gridOptions = reactive<TableProps>({
   height: 420,
   canResize: false,
 
-  // dataSource: [
   //   { memo: 'aasdas das啊实打实', ctime: '2020-05-65 66:11:11' },
   //   { memo: 'aasdas das啊实打实', ctime: '2020-05-65 66:11:11' },
   //   { memo: 'aasdas das啊实打实', ctime: '2020-05-65 66:11:11' },

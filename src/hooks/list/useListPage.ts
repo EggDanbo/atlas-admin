@@ -251,7 +251,6 @@ export function useListPage<
   }
 
   return {
-    // Refs
     tableRef: tableRef as any,
     pageLoading,
     pdfSettingRef,

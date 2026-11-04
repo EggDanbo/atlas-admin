@@ -374,9 +374,4 @@ addCollection({
   height: 24,
 })
 
-// 开发模式下输出注册日志
-if (import.meta.env.DEV) {
-  console.log('[Iconify] 已注册 114 个离线图标')
-}
-
 export const iconifyOfflineReady = true

@@ -112,13 +112,10 @@ export const useMessageStore = defineStore('message-store', () => {
   }
 
   return {
-    // State
     unreadCount,
     unreadMessages,
     filterType,
-    // Getters
     messageKind,
-    // Actions
     fetchUnread,
     markRead,
     markAllRead,

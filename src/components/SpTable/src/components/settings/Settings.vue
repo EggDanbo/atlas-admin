@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { DataFormatColumn, TableColumn } from '../../types/table'
 import { Icon } from '@iconify/vue'
-// import { SettingsOutline } from '@vicons/ionicons5'
 import { cloneDeep } from 'lodash-es'
 import { onUnmounted, ref, unref } from 'vue'
 import { SpModal, useModal } from '@/components/SpModal'
@@ -78,7 +77,6 @@ onUnmounted(() => {
     <span>网格设置</span>
   </n-tooltip>
   <SpModal width="660" height="580" @register="modalRegister">
-    <!-- <div v-for="item in columns" :key="item.title">{{ item.title }}</div> -->
     <vxe-grid
       border
       height="420"

@@ -92,9 +92,7 @@ const formRules = computed<FormRules>(() => {
     title: [{ required: true, message: '请输入标题', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].id`] = [{ required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })

@@ -252,7 +252,6 @@ async function open(params: any) {
   }
 
   // 先加载工资字典（建立映射关系）
-  // await loadSalaryDict()
 
   // 解析公式
   jsonFormula.value = formModel.value.formula

@@ -42,22 +42,18 @@ class Communication {
     if (this.connection != null || this.connected === true)
       return
     this.connection = this.createConnection()
-    this.connection.onclose(async (error) => {
+    this.connection.onclose(async () => {
       this.connected = false
-      console.log('UserWs-连接关闭', error)
 
       // SignalR 自动重连失败后触发 onclose, 重新启动连接
       await sleep(2000)
-      console.log('UserWs-准备重连...')
       await this.connect()
     })
-    this.connection.onreconnecting((error) => {
+    this.connection.onreconnecting(() => {
       this.connected = false
-      console.log('UserWs-连接已断开,尝试重新连接.', error)
     })
-    this.connection.onreconnected((connectionId) => {
+    this.connection.onreconnected(() => {
       this.connected = true
-      console.log('UserWs-重新连成功.', connectionId)
     })
 
     // 注册业务事件
@@ -72,8 +68,8 @@ class Communication {
       try {
         await this.connection.stop()
       }
-      catch (error) {
-        console.log(error)
+      catch {
+        // 连接已断开，忽略
       }
     }
     this.connected = false
@@ -105,13 +101,8 @@ class Communication {
         this.health()
         break
       }
-      catch (error) {
-        if (retries > 0) {
-          console.log(`UserWs-第${retries}次重连异常`, error)
-        }
-        else {
-          console.log('UserWs-连接异常', error)
-        }
+      catch {
+        // 连接失败，按指数退避后重试
       }
       await sleep(this.calculateExponentialDelay(++retries))
     }
@@ -126,7 +117,6 @@ class Communication {
       } as IHttpConnectionOptions)
       .withAutomaticReconnect({
         nextRetryDelayInMilliseconds: (retryContext) => {
-          console.log(`UserWs-第${retryContext.previousRetryCount + 1}次重连`)
           // 0-4次：间隔1秒
           if (retryContext.previousRetryCount < 5) {
             return 1000
@@ -167,7 +157,6 @@ class Communication {
 function registerEvent(connection: HubConnection) {
   // 欢迎
   connection.on('Welcome', () => {
-    console.log('welcome')
   })
   // 消息通知
   connection.on('Message', (data: Message.Notification) => {

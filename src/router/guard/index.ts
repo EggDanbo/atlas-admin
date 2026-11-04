@@ -86,9 +86,8 @@ export function createRouterGuards(router: Router) {
           userNet.start()
         }
       }
-      catch (error) {
+      catch {
         // 加载用户信息失败，如没权限等
-        console.log('加载用户信息异常', error)
         return
       }
     }

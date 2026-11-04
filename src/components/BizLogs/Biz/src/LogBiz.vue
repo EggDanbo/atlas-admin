@@ -115,28 +115,6 @@ const logColumns: TableColumn[] = [
 // 变更记录视图列（与修改日志页一致）
 const changeColumns: TableColumn[] = [
   seqColumn,
-  // {
-  //   field: 'mark',
-  //   title: '操作描述',
-  //   headerAlign: 'center',
-  //   align: 'left',
-  //   minWidth: 160,
-  //   showOverflow: 'tooltip',
-  // },
-  // {
-  //   field: 'name',
-  //   title: '业务表',
-  //   headerAlign: 'center',
-  //   align: 'center',
-  //   width: 130,
-  // },
-  // {
-  //   field: 'xid',
-  //   title: '业务ID',
-  //   headerAlign: 'center',
-  //   align: 'center',
-  //   width: 170,
-  // },
   {
     field: 'describe',
     title: '字段',

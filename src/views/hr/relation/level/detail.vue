@@ -85,10 +85,8 @@ const formRules = computed<FormRules>(() => {
     digest: [{ required: true, message: '请输入申请事由', trigger: 'change' }],
   }
 
-  // for (let i = 0; i < formModel.list.length; i++) {
   //   rules[`list[${i}].name`] = [{ required: true, trigger: ['blur', 'change'] }]
   //   rules[`list[${i}].salary`] = [{ type: 'number', required: true, trigger: ['blur', 'change'] }]
-  // }
 
   return rules
 })
@@ -204,9 +202,6 @@ function handleRiseVarSetModal(key) {
     }
   }
 
-  // if (riseDataList.value.length === 0) {
-  //   riseDataListItemAdd()
-  // }
   riseModalRef.value?.open()
 }
 
@@ -242,12 +237,9 @@ function riseDataListItemCopy(key) {
 }
 
 function riseDataListItemRemove(key) {
-  // if (riseDataList.value.length > 1) {
   riseDataList.value.splice(key, 1)
-  // }
   // else {
   //   toast.info('请填写浮动绩效工资')
-  // }
 }
 
 function riseDataListItemCheck() {
@@ -256,10 +248,7 @@ function riseDataListItemCheck() {
       toast.error(`请选择 #${index + 1} 评级`)
       return true
     }
-    // if (!item.value) {
     //   toast.error(`请输入 #${index + 1} 值`)
-    //   return true
-    // }
     return false
   })
 

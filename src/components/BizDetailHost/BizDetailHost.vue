@@ -77,7 +77,6 @@ interface BizDetailOpenOptions {
 }
 
 function handleOpen(data: unknown) {
-  console.log(data)
   const options = data as BizDetailOpenOptions
   const { biz_name, biz_id, ...rest } = options
 

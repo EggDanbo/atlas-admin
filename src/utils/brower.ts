@@ -1,6 +1,5 @@
 // 预编译正则表达式
 const SAFARI_REGEX = /Safari/
-// Edg = Chromium Edge, Edge = Legacy Edge
 // eslint-disable-next-line regexp/no-dupe-disjunctions
 const NON_SAFARI_REGEX = /Chrome|CriOS|Edg|Edge|Chromium/
 

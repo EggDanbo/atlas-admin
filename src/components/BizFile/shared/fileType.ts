@@ -58,23 +58,18 @@ const EXT_TO_KIND: Record<string, FileKind> = {
   '3gp': FileKind.Video,
   '3g2': FileKind.Video,
   'm4v': FileKind.Video,
-  // PDF
   'pdf': FileKind.Pdf,
-  // Word
   'doc': FileKind.Word,
   'docx': FileKind.Word,
   'rtf': FileKind.Word,
   'odt': FileKind.Word,
-  // Excel
   'xls': FileKind.Excel,
   'xlsx': FileKind.Excel,
   'csv': FileKind.Excel,
   'ods': FileKind.Excel,
-  // PPT
   'ppt': FileKind.Ppt,
   'pptx': FileKind.Ppt,
   'odp': FileKind.Ppt,
-  // Markdown
   'md': FileKind.Markdown,
   'markdown': FileKind.Markdown,
   // 代码

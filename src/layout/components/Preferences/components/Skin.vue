@@ -279,25 +279,6 @@ function themeTypeChange(value) {
       <n-switch v-model:value="sidebarLucency" />
     </n-gi>
   </n-grid>
-  <!-- <n-grid
-    :cols="4"
-    class="my-2"
-  >
-    <n-gi
-      :span="2"
-      class="text-left"
-    >
-      <n-text depth="3">
-        容器透明
-      </n-text>
-    </n-gi>
-    <n-gi
-      :span="2"
-      class="text-right"
-    >
-      <n-switch v-model:value="containerLucency" />
-    </n-gi>
-  </n-grid> -->
 </template>
 
 <style lang="less" scoped>

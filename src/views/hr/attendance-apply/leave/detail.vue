@@ -214,22 +214,6 @@ export default { name: 'HrApplyLeaveDetail' }
         <n-form-item-gi v-else :span="8" label="请假时长" path="times">
           <n-input v-model:value="formModel.times" placeholder="" readonly />
         </n-form-item-gi>
-        <!-- <n-form-item-gi :span="4" label="是否外出" path="leave">
-          <n-switch v-model:value="formModel.leave">
-            <template #checked>
-              是
-            </template>
-            <template #unchecked>
-              否
-            </template>
-          </n-switch>
-        </n-form-item-gi>
-        <n-form-item-gi :span="12" label="外出地点" path="address">
-          <n-input v-model:value="formModel.address" clearable />
-        </n-form-item-gi>
-        <n-form-item-gi :span="8" label="外出联系人" path="contacts">
-          <n-input v-model:value="formModel.contacts" clearable />
-        </n-form-item-gi> -->
         <n-form-item-gi :span="24" label="备注" path="remark">
           <n-input v-model:value="formModel.remark" type="textarea" :rows="3" clearable />
         </n-form-item-gi>
@@ -282,15 +266,6 @@ export default { name: 'HrApplyLeaveDetail' }
             <n-form-item-gi :span="8" label="请假时长">
               <n-input v-model:value="formModel.times" placeholder="" readonly />
             </n-form-item-gi>
-            <!-- <n-form-item-gi :span="8" label="是否外出">
-              <n-input :value="formModel.transform?.leave" placeholder="" readonly />
-            </n-form-item-gi>
-            <n-form-item-gi :span="8" label="外出地点">
-              <n-input v-model:value="formModel.address" placeholder="" readonly />
-            </n-form-item-gi>
-            <n-form-item-gi :span="8" label="外出联系人">
-              <n-input v-model:value="formModel.contacts" placeholder="" readonly />
-            </n-form-item-gi> -->
             <n-form-item-gi :span="24" label="备注">
               <n-input v-model:value="formModel.remark" type="textarea" :rows="3" placeholder="" readonly />
             </n-form-item-gi>

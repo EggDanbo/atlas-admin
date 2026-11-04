@@ -13,10 +13,6 @@ const preferencesOptions = [
     value: 'nav',
   },
   // 适用于配置偏好后，直接隐藏
-  // {
-  //   label: '隐藏',
-  //   value: 'none',
-  // },
 ]
 </script>
 

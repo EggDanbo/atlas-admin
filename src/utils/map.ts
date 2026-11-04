@@ -13,7 +13,6 @@ export function tencentTileLayer() {
         const z = xyz[0]
         const x = xyz[1]
         const y = xyz[2]
-        // const newY = Math.pow(2, z) - 1 - y;
         // return `https://rt2.map.gtimg.com/realtimerender?z=${z}&x=${x}&y=${newY}&type=vector&style=0`;
         // return `https://wprd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scl=1&style=7&x=${x}&y=${y}&z=${z}`;
         return `https://webrd04.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${x}&y=${y}&z=${z}`
@@ -90,12 +89,8 @@ export function printMap(map: Map, texts: any = [], format = 'a4', resolution = 
     }
 
     // 导出图片
-    // mapCanvas.toBlob(function (blob) {
     //   if (blob) downloadByData(blob, '地图.jpeg');
     //   // 重置地图大小
-    //   map.updateSize();
-    //   map.getView().setResolution(viewResolution);
-    // });
 
     const imageData = mapCanvas.toDataURL('png')
     // 重置地图大小

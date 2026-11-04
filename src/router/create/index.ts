@@ -2,8 +2,6 @@ import type { RouteRecordRaw } from 'vue-router'
 import type { MenuRecordRaw } from '@/router/types'
 import { Layout } from '@/router/base'
 
-// type AsyncComponent = () => Promise<{ default: DefineComponent }>
-
 const Iframe = () => import('@/views/needs/iframe/index.vue')
 const LayoutMap = new Map<string, () => Promise<typeof import('*.vue')>>()
 
@@ -39,7 +37,6 @@ export function routerGenerator(menuList: MenuRecordRaw[], parent?: MenuRecordRa
     if (item.children && item.children.length > 0) {
       // 如果未定义 redirect 默认第一个子路由为 redirect
       !item.redirect && (currentRouter.redirect = `${item.path}/${item.children[0]!.path}`)
-      // Recursion
       currentRouter.children = routerGenerator(item.children, currentRouter)
     }
     return currentRouter
@@ -54,13 +51,6 @@ export function getAsyncRoutes(): Promise<RouteRecordRaw[]> {
     const routeList = routerGenerator([])
     asyncImportRoute(routeList)
     resolve(routeList)
-    // fetchMenus().then((res) => {
-    //   const routeList = routerGenerator([])
-    //   asyncImportRoute(routeList)
-    //   resolve(routeList)
-    // }).catch((err) => {
-    //   reject(err)
-    // })
   })
 }
 /**
