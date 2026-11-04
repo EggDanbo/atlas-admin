@@ -1,6 +1,7 @@
 # Atlas Admin
 
 [![CI](https://github.com/EggDanbo/atlas-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/EggDanbo/atlas-admin/actions/workflows/ci.yml)
+[![在线演示](https://img.shields.io/badge/在线演示-eggdanbo.github.io-f97316)](https://eggdanbo.github.io/atlas-admin/)
 ![Vue](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
@@ -12,6 +13,9 @@
 > 基于 Vue 3 + TypeScript + Naive UI 的企业级后台，**纯前端运行**
 >
 > 所有数据均由本地 mock 引擎生成，不连接任何后端服务，克隆后 `pnpm dev` 即可完整浏览。
+
+**🚀 在线体验**：<https://eggdanbo.github.io/atlas-admin/>
+（演示账号 `demo` / `123456`，任意账号密码同样可进入）
 
 **关于名字**：Atlas 取「地图集」之意——一套界面把人事、业务、资产、费用、财务、档案六块业务收在同一张图上；
 也取「承载」之意，它承载的是一套开箱即跑、不依赖任何服务的完整演示数据。
@@ -196,7 +200,22 @@ pnpm typecheck     # 类型检查（vue-tsc）
 pnpm verify        # lint + typecheck + test 一次跑完
 pnpm mock:schema   # 重新提取字段结构
 pnpm icons:all     # 扫描并生成离线图标
+pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 ```
+
+## 🚀 部署
+
+站点通过 GitHub Actions 发布到 GitHub Pages，推 `main` 即触发（`.github/workflows/pages.yml`）。
+
+子路径部署有三个点容易漏，这里都处理了：
+
+| 问题 | 处理 |
+| ---- | ---- |
+| 资源全部 404 | Pages 站点在 `/atlas-admin/` 子路径下，构建时 base 必须带仓库名，见 `.env.github` |
+| 刷新子路由白屏 | history 路由需要回退页，构建后把 `index.html` 复制为 `404.html` |
+| 路由与资源前缀不一致 | 路由 base 取 `import.meta.env.BASE_URL`，与 vite 的 `base` 同源，不会各走一套 |
+
+本地的 `pnpm build` 仍以 `/` 为 base，不受影响。
 
 ## 🧩 功能模块
 
