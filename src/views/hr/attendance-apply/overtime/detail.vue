@@ -314,9 +314,6 @@ export default { name: 'HrApplyOvertimeDetail' }
       </n-grid>
 
       <div v-if="formModel.list.length > 0" class="mt-4">
-        <n-divider title-placement="left" style="margin: 0;">
-          加班明细
-        </n-divider>
         <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list">
           <template #day_default="{ row }">
             {{ row.day }}<span v-if="row.day_type_fmt" class="ml-1 text-gray-400">（{{ row.day_type_fmt }}）</span>
@@ -434,9 +431,6 @@ export default { name: 'HrApplyOvertimeDetail' }
           </n-grid>
 
           <div v-if="formModel.list.length > 0" class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              加班明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
               <template #day_default="{ row }">
                 {{ row.day }}<span v-if="row.day_type_fmt" class="ml-1 text-gray-400">（{{ row.day_type_fmt }}）</span>

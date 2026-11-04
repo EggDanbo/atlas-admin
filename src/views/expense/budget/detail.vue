@@ -341,9 +341,6 @@ export default { name: 'ExpenseBudgetDetail' }
       </n-grid>
 
       <div class="mt-4">
-        <n-divider title-placement="left" style="margin: 0;">
-          预算额度明细
-        </n-divider>
         <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
           <template #operate="{ rowIndex }">
             <div class="flex items-center justify-right gap-[10px]">
@@ -502,9 +499,6 @@ export default { name: 'ExpenseBudgetDetail' }
           </n-grid>
 
           <div class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              预算额度明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
               <template #indate_default="{ row }">
                 {{ row.transform?.indate }}

@@ -351,9 +351,6 @@ export default { name: 'ExpenseRequestTravelDetail' }
       </n-grid>
 
       <div class="mt-4">
-        <n-divider title-placement="left" style="margin: 0;">
-          出差申请明细
-        </n-divider>
         <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
           <template #operate="{ rowIndex }">
             <div class="flex items-center justify-right gap-[10px]">
@@ -540,9 +537,6 @@ export default { name: 'ExpenseRequestTravelDetail' }
           </n-grid>
 
           <div class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              出差申请明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
               <template #start_default="{ row }">
                 {{ row.transform?.start }}

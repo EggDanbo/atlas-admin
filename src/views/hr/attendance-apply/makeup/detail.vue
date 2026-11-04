@@ -282,9 +282,6 @@ export default { name: 'HrApplyMakeupDetail' }
           </n-grid>
 
           <div class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              补卡明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list" />
           </div>
         </n-layout>

@@ -338,9 +338,6 @@ export default { name: 'HrApplyLeaveDetail' }
       </n-grid>
 
       <div v-if="formModel.list.length > 0" class="mt-4">
-        <n-divider title-placement="left" style="margin: 0;">
-          请假明细
-        </n-divider>
         <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list">
           <template #leave_time="{ row }">
             {{ row.is_work_day ? `请假${row.leave_time_fmt}` : '休息' }}
@@ -447,9 +444,6 @@ export default { name: 'HrApplyLeaveDetail' }
           </n-grid>
 
           <div v-if="formModel.list.length > 0" class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              请假明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
               <template #leave_time="{ row }">
                 {{ row.is_work_day ? `请假${row.leave_time_fmt}` : '休息' }}

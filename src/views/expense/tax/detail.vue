@@ -3,7 +3,7 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
 import { format } from 'date-fns'
-import { add as lodashAdd, round } from 'xe-utils'
+import { add as lodashAdd } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
@@ -249,38 +249,6 @@ function rowsChange(e, tref) {
   tref?.editRowEvent(e.row)
 }
 
-function itemsAllotsAdd(keys) {
-  const def = {
-    team_id: null,
-    amount: null,
-  }
-  formModel.list[keys].allots.push(def)
-}
-
-function itemsAllotsMoveUp(keys, key) {
-  if (Number(key) === 0)
-    return
-  const items = formModel.list[keys].allots;
-  [items[key], items[key - 1]] = [items[key - 1], items[key]]
-}
-
-function itemsAllotsMoveDown(keys, key) {
-  if (Number(key) < formModel.list[keys].allots.length - 1) {
-    const items = formModel.list[keys].allots;
-    [items[key], items[key + 1]] = [items[key + 1], items[key]]
-  }
-}
-
-function itemsAllotsCopy(keys, key) {
-  const items = formModel.list[keys].allots[key]
-  const newItems = { ...items }
-  formModel.list[keys].allots.splice(key + 1, 0, newItems)
-}
-
-function itemsAllotsRemove(keys, key) {
-  formModel.list[keys].allots.splice(key, 1)
-}
-
 async function handleProcess(opt: string) {
   processTypes.value = opt
   processRemark.value = null
@@ -391,15 +359,6 @@ function handleOuterSelected(options: any) {
 function handleAmountTotal() {
   const amount = formModel.list.map(q => q.amount).reduce((a, b) => lodashAdd(a, b))
   formModel.amount = amount.toFixed(2)
-}
-
-function handleAllotAmountTotal(keys) {
-  const amount = formModel.list[keys].allots
-    .map(q => q.amount)
-
-    .reduce((a, b) => lodashAdd(a, b))
-  formModel.list[keys].amount = round(amount, 2)
-  handleAmountTotal()
 }
 
 async function handleTeamSelected(e, options) {
@@ -515,9 +474,6 @@ export default { name: 'ExpenseClaimTaxDetail' }
       </n-grid>
 
       <div class="mt-4">
-        <n-divider title-placement="left" style="margin: 0;">
-          报销明细
-        </n-divider>
         <SpTable ref="tableRef" v-bind="gridOptions" :data-source="formModel.list" @current-change="rowsChange($event, tableRef)">
           <template #operate="{ rowIndex }">
             <div class="flex items-center justify-right gap-[10px]">
@@ -588,106 +544,7 @@ export default { name: 'ExpenseClaimTaxDetail' }
           <template #files_edit="{ row }">
             <Upload v-model:value="row.files" :only-image="false" upload-title="上传附件" />
           </template>
-          <template #expand="{ row, rowIndex }">
-            <div class="detail-card-sub-box flex flex-col" style="gap: 16px; padding: 15px;">
-              <n-divider title-placement="left" style="margin: 0;">
-                分摊明细
-              </n-divider>
-              <n-card v-for="(allot, allot_key) in row.allots" :key="allot_key" :content-style="{ padding: '0' }" class="detail-card-box">
-                <div class="flex items-stretch">
-                  <div class="label-nums">
-                    <n-text strong>
-                      #{{ Number(allot_key) + 1 }}
-                    </n-text>
-                  </div>
-
-                  <div class="detail-card-box-content">
-                    <n-grid :cols="24" :x-gap="24" :y-gap="24">
-                      <n-form-item-gi :span="16" label="分摊单位" :path="`list[${rowIndex}].allots[${allot_key}].team_id`" label-width="80" :show-feedback="false">
-                        <SpCascader
-                          v-model:value="allot.team_id"
-                          :options="teamTreeOptions"
-                          placeholder="请选择"
-                          value-field="id"
-                        />
-                      </n-form-item-gi>
-                      <n-form-item-gi :span="8" label="分摊金额" :path="`list[${rowIndex}].allots[${allot_key}].amount`" label-width="80" :show-feedback="false">
-                        <n-input-number
-                          v-model:value="allot.amount"
-                          :precision="2"
-                          :show-button="false"
-                          clearable
-                          @update:value="handleAllotAmountTotal(rowIndex)"
-                        />
-                      </n-form-item-gi>
-                    </n-grid>
-                  </div>
-
-                  <div class="menu-bar">
-                    <div class="flex items-start justify-center gap-[10px]">
-                      <n-button v-if="row.allots.length > 1" :disabled="Number(allot_key) === 0" text @click="itemsAllotsMoveUp(rowIndex, allot_key)">
-                        <template #icon>
-                          <n-icon>
-                            <Icon icon="ant-design:arrow-up-outlined" />
-                          </n-icon>
-                        </template>
-                      </n-button>
-                      <n-button v-if="row.allots.length > 1" :disabled="Number(allot_key) === row.allots.length - 1" text @click="itemsAllotsMoveDown(rowIndex, allot_key)">
-                        <template #icon>
-                          <n-icon>
-                            <Icon icon="ant-design:arrow-down-outlined" />
-                          </n-icon>
-                        </template>
-                      </n-button>
-                      <n-button text @click="itemsAllotsCopy(rowIndex, allot_key)">
-                        <template #icon>
-                          <n-icon>
-                            <Icon icon="ant-design:copy-outlined" />
-                          </n-icon>
-                        </template>
-                      </n-button>
-                      <n-button text @click="itemsAllotsRemove(rowIndex, allot_key)">
-                        <template #icon>
-                          <n-icon>
-                            <Icon icon="ant-design:delete-outlined" />
-                          </n-icon>
-                        </template>
-                      </n-button>
-                    </div>
-                  </div>
-                </div>
-              </n-card>
-
-              <div v-if="row.allots.length === 0" style="padding: 20px 0">
-                <n-empty
-                  description="未填写分摊明细时默认由申请部门全部承担"
-                  :show-icon="false"
-                />
-              </div>
-
-              <div class="w-full flex">
-                <n-button dashed round size="small" class="w-full" @click="itemsAllotsAdd(rowIndex)">
-                  <template #icon>
-                    <n-icon>
-                      <Icon icon="ant-design:plus-outlined" />
-                    </n-icon>
-                  </template>
-                  添加分摊明细
-                </n-button>
-              </div>
-            </div>
-          </template>
         </SpTable>
-        <div class="mt-2 w-full flex">
-          <n-button tertiary round size="small" class="w-full" @click="itemsAdd()">
-            <template #icon>
-              <n-icon>
-                <Icon icon="ant-design:plus-outlined" />
-              </n-icon>
-            </template>
-            添加报销明细
-          </n-button>
-        </div>
       </div>
     </n-form>
 
@@ -792,29 +649,9 @@ export default { name: 'ExpenseClaimTaxDetail' }
           </n-grid>
 
           <div class="mt-4">
-            <n-divider title-placement="left" style="margin: 0;">
-              报销申请明细
-            </n-divider>
             <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
               <template #files_default="{ row }">
                 <span v-if="row.files && row.files.length > 0">{{ row.files.length }} 个附件</span>
-              </template>
-              <template #expand="{ row }">
-                <div style="padding: 20px">
-                  <n-divider title-placement="left">
-                    分摊明细
-                  </n-divider>
-                  <n-grid v-for="(allot, allot_key) in row.allots" :key="allot_key" :cols="24" :x-gap="20">
-                    <n-form-item-gi :span="16" label="分摊单位" label-width="80" :show-feedback="false">
-                      <div class="w-full">
-                        <n-input v-model:value="allot.team_name" placeholder="" readonly />
-                      </div>
-                    </n-form-item-gi>
-                    <n-form-item-gi :span="8" label="分摊金额" label-width="80" :show-feedback="false">
-                      <n-input-number v-model:value="allot.amount" placeholder="" :show-button="false" :readonly="true" />
-                    </n-form-item-gi>
-                  </n-grid>
-                </div>
               </template>
             </SpTable>
           </div>
