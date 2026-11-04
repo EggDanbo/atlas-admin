@@ -1,5 +1,6 @@
 # Atlas Admin
 
+[![CI](https://github.com/EggDanbo/atlas-admin/actions/workflows/ci.yml/badge.svg)](https://github.com/EggDanbo/atlas-admin/actions/workflows/ci.yml)
 ![Vue](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
