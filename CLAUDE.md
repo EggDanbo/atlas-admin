@@ -13,14 +13,14 @@
 | 框架 | Vue           | 3.5.x  | Composition API + `<script setup>`       |
 | 语言 | TypeScript    | 6.0.x  | 严格模式，禁用 `any`                     |
 | 构建 | Vite          | 8.0.x  | ES Module                                |
-| UI   | Naive UI      | 2.44.x | 按需自动导入                             |
-| 状态 | Pinia         | 3.0.x  | 持久化插件 `pinia-plugin-persistedstate` |
+| UI   | Naive UI      | 2.45.x | 按需自动导入                             |
+| 状态 | Pinia         | 4.0.x  | 持久化插件 `pinia-plugin-persistedstate` |
 | 路由 | Vue Router    | 5.0.x  | 动态路由 + 权限守卫                      |
 | HTTP | Alova         | 3.5.x  | **必须使用**，禁止 fetch/axios           |
 | 样式 | UnoCSS + Less | -      | 原子类优先                               |
-| 表格 | VXE Table     | 4.18.x | 高级表格场景                             |
-| 日期 | date-fns      | 4.1.x  | **必须使用**，禁止 moment.js             |
-| 工具 | lodash-es     | 4.17.x | ESM 版本                                 |
+| 表格 | VXE Table     | 4.21.x | 高级表格场景                             |
+| 日期 | date-fns      | 4.4.x  | **必须使用**，禁止 moment.js             |
+| 工具 | lodash-es     | 4.18.x | ESM 版本                                 |
 
 ## Project Structure
 
