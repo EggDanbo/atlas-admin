@@ -7,7 +7,6 @@ import type { BuildOptions } from 'vite'
 const VENDOR_REGEX = /node_modules[\\/](@vue|vue|vue-router|pinia)[\\/]/
 const NAIVE_UI_REGEX = /node_modules[\\/](naive-ui|vueuc|vooks|vdirs|seemly|evtd|css-render|@css-render|treeshaking|async-validator)[\\/]/
 const ECHARTS_REGEX = /node_modules[\\/]echarts[\\/]/
-const WANGEDITOR_REGEX = /node_modules[\\/]@wangeditor[\\/]/
 // lodash-es 不再单独分组（见下方 groups 内注释），正则一并停用
 // const LODASH_ES_REGEX = /node_modules[\\/]lodash-es[\\/]/
 const VUEUSE_REGEX = /node_modules[\\/]@vueuse[\\/]/
@@ -58,12 +57,6 @@ export function createBuild(_viteEnv?: ViteEnv): BuildOptions {
             {
               name: 'echarts',
               test: ECHARTS_REGEX,
-              priority: 15,
-            },
-            // 富文本编辑器
-            {
-              name: 'wangeditor',
-              test: WANGEDITOR_REGEX,
               priority: 15,
             },
             // 工具库

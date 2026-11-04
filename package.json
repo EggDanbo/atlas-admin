@@ -51,8 +51,6 @@
     "@vueuse/core": "^14.4.0",
     "@vueuse/integrations": "^14.4.0",
     "@vxe-ui/plugin-export-xlsx": "^4.5.4",
-    "@wangeditor/editor": "^5.1.23",
-    "@wangeditor/editor-for-vue": "^5.1.12",
     "@wecom/jssdk": "^2.4.2",
     "alova": "^3.5.5",
     "crypto-js": "^4.2.0",

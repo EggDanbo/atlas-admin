@@ -142,11 +142,13 @@ pnpm typecheck && pnpm build
 
 新增页面时最容易漏这条——**页面能打开、能查询，只是缓存悄悄失效**。
 
-## 9. 待处理
+## 9. 已清理的无引用组件
 
-`Tag`、`Password`、`Paragraph`、`ImageGroup`、`CountTo`、`CheckCard`、`SpRichTextEditor`（原 `wang-editor`）目前**没有任何页面引用**，属于原始工程遗留的未使用组件。它们在命名上已归位，但是否保留需要单独决定：
+`Tag`、`Password`、`Paragraph`、`ImageGroup`、`CountTo`、`CheckCard`、`SpRichTextEditor`
+（原 `wang-editor`）在命名归位之后仍然没有任何页面引用，已连同 `@wangeditor/*` 依赖
+与打包分块配置一并移除。
 
-- 保留：作为设计系统的"完整工具箱"存在，代价是仓库体积与认知负担
-- 删除：需要确认 `@wangeditor/*` 等依赖可一并移除，并跑一次全量路由巡检
+判据是「全仓 PascalCase 与 kebab-case 都不出现，且不在全局注册表里」——只靠 import
+语句判断会漏掉模板里以 kebab-case 使用、或由 `unplugin-vue-components` 自动注册的情况。
 
 另有 `views/access/room/`（路由已注释停用）与 `BizDetailHost` 里的 `pense_*` / `trade_*` / `organ_*` 业务键仍是旧域命名——前者是死代码，后者是运行时事件契约（改动需同步所有派发方），暂未动。
