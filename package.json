@@ -3,6 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@12.15.0",
   "description": "Atlas Admin · 一体化管理系统，纯前端演示版（本地 mock 数据）",
   "engines": {
     "node": ">= 22.0.0"
