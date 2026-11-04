@@ -14,7 +14,7 @@ import { applyData, getNestedValue, resolveDynamicTitle, resolveTitle, safeCall 
 
 // 重新导出类型和工具函数，方便外部使用
 export * from './types'
-export { createTransformer } from './utils'
+export { createTransformer, toDateLabel } from './utils'
 
 // ============ 只读模式实现 ============
 
@@ -450,6 +450,13 @@ function useDetailFull<TForm extends Recordable>(
     return canEdit ? canEdit(formModel as TForm) : true
   }
 
+  /** 审批完成后的收尾：收起详情弹窗并通知列表刷新 */
+  function finishApproval() {
+    modalRef.value?.close()
+    // 列表侧的 editAction 会做 toLowerCase，传 'edit' 与原先的 'EDIT' 行为一致
+    safeCall(onSuccess, 'edit')
+  }
+
   const exposed = {
     open: async (args?: any) => {
       resetForm()
@@ -500,6 +507,7 @@ function useDetailFull<TForm extends Recordable>(
     clearTabState,
     updateModel,
     refresh,
+    finishApproval,
   }
 }
 

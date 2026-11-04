@@ -6,7 +6,7 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { contract as api } from '@/service/api/hr/relation'
@@ -119,8 +119,8 @@ const {
     number: ['date', 'start', 'expire'],
     custom: {
       date: val => val ? format(Number(val), 'yyyy-MM') : null,
-      start: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      expire: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      start: val => toDateLabel(val),
+      expire: val => toDateLabel(val),
     },
     enum: {
       status: 'staff_labor_status',

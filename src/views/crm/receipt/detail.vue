@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { OpenModal } from '@/components/SpModal'
-import { format } from 'date-fns'
 import { add } from 'xe-utils'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { receipt as api } from '@/service/api/crm'
 import { gridOptions } from './columns'
 
@@ -57,7 +56,7 @@ const {
   transform: createTransformer({
     number: ['date', 'amount', 'totals'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
     },
   }),
   onOpen: async (params, mode) => {

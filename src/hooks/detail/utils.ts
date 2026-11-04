@@ -1,5 +1,25 @@
 import type { DetailParams, EnumTransformItem, FieldTransformConfig, TitleConfig } from './types'
+import { format } from 'date-fns'
 import { useEnumStore } from '@/store/modules/enums'
+
+/**
+ * 把接口返回的日期值格式化为展示文本
+ *
+ * 详情页原先各写一遍 `val ? format(Number(val), 'yyyy-MM-dd') : null`，
+ * 接口给出非时间戳（日期字符串、空对象等）时 date-fns 会抛 `Invalid time value`，
+ * 弹窗直接打不开。这里统一兜底：时间戳走 format，字符串尝试解析，非法值返回 null。
+ */
+export function toDateLabel(value: unknown, pattern = 'yyyy-MM-dd'): string | null {
+  if (value === null || value === undefined || value === '')
+    return null
+
+  const timestamp = Number(value)
+  if (Number.isFinite(timestamp) && timestamp > 0)
+    return format(timestamp, pattern)
+
+  const parsed = new Date(String(value).replace(' ', 'T'))
+  return Number.isNaN(parsed.getTime()) ? null : format(parsed, pattern)
+}
 
 /**
  * 规范化枚举转换配置

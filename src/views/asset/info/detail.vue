@@ -8,7 +8,7 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { info as api } from '@/service/api/asset'
@@ -125,8 +125,8 @@ const {
     nullIfZero: ['article_id'],
     number: ['enroll', 'disuse', 'date'],
     custom: {
-      enroll: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      disuse: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      enroll: val => toDateLabel(val),
+      disuse: val => toDateLabel(val),
       date: val => val ? format(Number(val), 'yyyy-MM') : null,
     },
     enum: {

@@ -38,13 +38,15 @@ export const basicProps = {
     type: Array as PropType<FileStorage.FileResourceModel[] | null>,
     default: () => [],
   },
+  /** 图片墙单元格宽度（仅图片形态生效；附件形态走紧凑列表，不受此值影响） */
   width: {
     type: Number as PropType<number>,
-    default: 150,
+    default: 96,
   },
+  /** 图片墙单元格高度（仅图片形态生效） */
   height: {
     type: Number as PropType<number>,
-    default: 150,
+    default: 96,
   },
   uploadTitle: {
     type: String,

@@ -9,7 +9,7 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { TeamPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { roster as api } from '@/service/api/hr'
@@ -275,11 +275,11 @@ const {
     nullIfZero: ['team_id', 'branch_id'],
     number: ['card_issue', 'card_valid', 'add_date', 'act_date', 'end_date'],
     custom: {
-      card_issue: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      card_issue: val => toDateLabel(val),
       card_valid: val => val ? format(Number(val), 'yyyy-MM-dd') : '长期有效',
-      add_date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      act_date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      end_date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      add_date: val => toDateLabel(val),
+      act_date: val => toDateLabel(val),
+      end_date: val => toDateLabel(val),
     },
     enum: {
       status: 'staff_info_status',

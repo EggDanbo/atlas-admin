@@ -4,7 +4,7 @@ import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { generate as api } from '@/service/api/hr/payroll'
@@ -80,8 +80,8 @@ const {
     number: ['user_add', 'start', 'expire'],
     custom: {
       user_add: val => val ? format(Number(val), 'yyyy-MM') : null,
-      start: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      expire: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      start: val => toDateLabel(val),
+      expire: val => toDateLabel(val),
     },
     enum: {
       status: 'staff_salary_status',

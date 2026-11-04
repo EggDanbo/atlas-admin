@@ -3,16 +3,15 @@ import type { FormRules } from 'naive-ui'
 import type { FileManagerInst } from '@/components/BizFile'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
-import { format } from 'date-fns'
 import { add, multiply, round } from 'xe-utils'
+import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { FileManager, Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { CustomerPicker, MemberPicker, TeamPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { project as api } from '@/service/api/crm'
@@ -40,7 +39,6 @@ const { getPermission } = useTabbar()
 const tabPermName = getPermission()
 
 const logBizRef = ref<OpenModal | null>(null)
-const logProcessRef = ref<OpenModal | null>(null)
 
 const riseModalRef = ref<ModalInst | null>(null)
 const riseDataList = ref<any>([])
@@ -188,11 +186,6 @@ const causesOptions = ref<any>([
 
 const fileMgrRef = ref<FileManagerInst>()
 
-const processModalRef = ref<ModalInst | null>(null)
-const processTitle = ref<string | null>(null)
-const processTypes = ref<string | null>(null)
-const processRemark = ref<string | null>(null)
-
 function createFormModel() {
   return {
     id: '0',
@@ -337,6 +330,14 @@ const formRules = computed<FormRules>(() => {
   return rules
 })
 
+/** 明细数组兜底：接口可能不返回该字段或返回非数组，统一成数组，避免下游取 length/forEach 崩溃 */
+function normalizeLines(target: Recordable) {
+  for (const key of ['incomes', 'expenses', 'scales', 'alloctes']) {
+    if (!Array.isArray(target[key]))
+      target[key] = []
+  }
+}
+
 const {
   isEdit,
   hasPerm,
@@ -351,6 +352,7 @@ const {
   clearTabState,
   params,
   updateModel,
+  finishApproval,
 } = useDetail<FormModel>({
   api: {
     get() {
@@ -381,11 +383,11 @@ const {
     string: ['types', 'pattern', 'paymetn'],
     number: ['date', 'pcs', 'amount', 'revise', 'expire', 'indate', 'insure'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      revise: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      expire: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      indate: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      insure: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
+      revise: val => toDateLabel(val),
+      expire: val => toDateLabel(val),
+      indate: val => toDateLabel(val),
+      insure: val => toDateLabel(val),
     },
     enum: {
       types: 'trade_project_types',
@@ -394,7 +396,8 @@ const {
     },
   }),
   beforeEdit: async () => {
-    if (formModel.incomes.length > 0) {
+    normalizeLines(formModel)
+    if (Array.isArray(formModel.incomes) && formModel.incomes.length > 0) {
       formModel.incomes.forEach((item: any) => {
         item.product_rate = Number(item.product_rate) ? Number(item.product_rate) : null
         item.product_add = Number(item.product_add) ? Number(item.product_add) : null
@@ -411,13 +414,13 @@ const {
       })
     }
 
-    if (formModel.scales.length > 0) {
+    if (Array.isArray(formModel.scales) && formModel.scales.length > 0) {
       formModel.scales.forEach((item: any) => {
         item.salary = Number(item.salary) ? Number(item.salary) : null
       })
     }
 
-    if (formModel.alloctes.length > 0) {
+    if (Array.isArray(formModel.alloctes) && formModel.alloctes.length > 0) {
       formModel.alloctes.forEach((item: any) => {
         item.pcs = Number(item.pcs) ? Number(item.pcs) : null
         item.van = Number(item.van) ? Number(item.van) : null
@@ -427,7 +430,7 @@ const {
       })
     }
 
-    if (formModel.incomes.length === 0) {
+    if (!formModel.incomes?.length) {
       tableItemsAdd({
         opt: 'incomes',
       })
@@ -437,7 +440,9 @@ const {
     return true
   },
   beforeView: (data) => {
-    if (data.incomes.length !== 0) {
+    normalizeLines(data)
+    // 详情接口未返回 incomes 时不能直接取 length，否则查看弹窗会打不开
+    if (Array.isArray(data.incomes) && data.incomes.length !== 0) {
       data.incomes.forEach((item: any) => {
         item.transform = {}
         item.transform.invoice = enumStore.getLabel('trade_invoice_types', item.invoice, 'name')
@@ -449,91 +454,38 @@ const {
   },
 })
 
-async function handleProcess(opt: string) {
-  processTypes.value = opt
-  processRemark.value = null
-  if (opt === '同意') {
-    processTitle.value = '审批意见'
-  }
-  else {
-    processTitle.value = `${opt}原因`
-  }
-  processModalRef.value?.open()
-}
-
-async function process() {
-  if (processTypes.value !== '同意' && !processRemark.value) {
-    toast.error(`请填写${processTitle.value}`)
-    return
-  }
-
-  const list = [{ id: formModel.id, biz_class: 'Trade' }]
-
-  btnLoading.value = true
-  if (processTypes.value === '撤回') {
-    const { isSuccess } = await approve.revoke({
-      list,
-      remark: processRemark.value,
-    }).finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  else if (processTypes.value === '作废') {
-    const { isSuccess } = await approve.invalid({
-      list,
-      remark: processRemark.value,
-    }).finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  else {
-    const { isSuccess } = await approve
-      .process({
-        list,
-        status: processTypes.value,
-        remark: processRemark.value,
-      })
-      .finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  toast.success('操作成功')
-  processModalRef.value?.close()
-  modalRef.value.close()
-  emit('on-action', 'EDIT')
-}
-
-async function handleCancel() {
-  toast.infoModal('确定取消审批吗？', {
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      btnLoading.value = true
-      const { isSuccess } = await approve
-        .cancel({
-          list: [{
-            id: formModel.id,
-            biz_class: 'Trade',
-          }],
-        })
-        .finally(() => (btnLoading.value = false))
-      if (!isSuccess)
-        return
-      toast.success('操作成功')
-      modalRef.value.close()
-      emit('on-action', 'EDIT')
-    },
-  })
-}
-
 function updateInvalidModalShow() {
-  processTypes.value = '作废'
-
   updateInvalidInfo.value.id = formModel.id
   updateInvalidInfo.value.reason = formModel.reason
   updateInvalidInfo.value.files_zfsm = formModel.files_zfsm
 
   updateInvalidModalRef.value?.open()
+}
+
+/** 项目作废：走审批作废接口，原因取自作废弹窗 */
+async function handleInvalid() {
+  if (!updateInvalidInfo.value.reason) {
+    toast.error('请填写作废原因')
+    return
+  }
+
+  btnLoading.value = true
+  try {
+    const { isSuccess } = await approve.invalid({
+      list: [{ id: formModel.id, biz_class: 'Trade' }],
+      remark: updateInvalidInfo.value.reason,
+    })
+    if (!isSuccess)
+      return
+
+    toast.success('操作成功')
+    updateInvalidModalRef.value?.close()
+    modalRef.value.close()
+    emit('on-action', 'EDIT')
+  }
+  finally {
+    btnLoading.value = false
+  }
 }
 
 function rowsChange(e, tref) {
@@ -585,7 +537,7 @@ function tableItemsMoveDown({ opt, key }: { opt: string, key: number | string })
 async function handleItemHeaderClick({ name, expanded }) {
   await nextTick()
   if (name === 'incomes' && expanded) {
-    if (formModel.incomes.length === 0) {
+    if (!formModel.incomes?.length) {
       tableItemsAdd({
         opt: 'incomes',
       })
@@ -599,14 +551,14 @@ async function handleItemHeaderClick({ name, expanded }) {
     }
   }
   if (name === 'scales' && expanded) {
-    if (formModel.scales.length === 0) {
+    if (!formModel.scales?.length) {
       tableItemsAdd({
         opt: 'scales',
       })
     }
   }
   if (name === 'alloctes' && expanded) {
-    if (formModel.alloctes.length === 0) {
+    if (!formModel.alloctes?.length) {
       tableItemsAdd({
         opt: 'alloctes',
       })
@@ -846,7 +798,7 @@ function handleFileOk(items: Recordable[]) {
 watch(
   () => formModel.alloctes,
   (value) => {
-    if (value && value.length > 0) {
+    if (Array.isArray(value) && value.length > 0) {
       let pcsSum: number = 0
       let priceSum: number = 0
       let laborSum: number = 0
@@ -876,15 +828,6 @@ watch(
     deep: true,
   },
 )
-
-function handleLogs(opt?: string) {
-  if (opt === 'process') {
-    logProcessRef.value?.open({ id: formModel.id })
-  }
-  else {
-    logBizRef.value?.open({ xid: formModel.id, name: 'trade_project' })
-  }
-}
 
 defineExpose(exposed)
 </script>
@@ -1491,48 +1434,7 @@ export default { name: 'CrmProjectDetail' }
         {{ enumStore.getLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
-        <n-layout-sider
-          v-if="formModel.processes && formModel.processes.length > 0"
-          show-trigger="bar"
-          collapse-mode="transform"
-          :collapsed-width="0"
-          :width="256"
-          :native-scrollbar="false"
-        >
-          <div class="mb-2 flex flex-col items-center justify-center gap-1">
-            <n-qr-code :value="formModel.no || ''" :size="160" padding="0" />
-            <span style="font-size: 20px">{{ formModel.no }}</span>
-            <n-button
-              quaternary
-              round
-              size="large"
-              :type="formModel.opt_return ? 'warning' : 'info'"
-              @click="handleLogs('process')"
-            >
-              点击查看流程日志
-            </n-button>
-          </div>
-          <n-steps vertical class="p-2">
-            <n-step
-              v-for="item in formModel.processes"
-              :key="item"
-              :status="item.status === '不同意' ? 'error' : item.status ? 'process' : 'wait'"
-            >
-              <template #title>
-                <span>{{ item.step_name }}</span>
-              </template>
-              <template #default>
-                <p>
-                  {{ item.audit_name }}<span v-if="item.status"> / {{ item.status }}</span>
-                </p>
-                <p v-if="item.remark">
-                  {{ item.remark }}
-                </p>
-                <p>{{ item.audit_time }}</p>
-              </template>
-            </n-step>
-          </n-steps>
-        </n-layout-sider>
+        <BizProcessSider :model="formModel" />
         <n-layout class="pl-6">
           <n-grid :cols="24" :x-gap="24">
             <n-form-item-gi :span="8" label="所属单位">
@@ -1750,7 +1652,7 @@ export default { name: 'CrmProjectDetail' }
         <n-button @click="modalRef?.close">
           关闭
         </n-button>
-        <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
+        <n-button v-if="Number(formModel.id) !== 0" @click="logBizRef?.open({ xid: formModel.id, name: 'trade_project' })">
           操作日志
         </n-button>
         <BizDraftBox
@@ -1800,36 +1702,14 @@ export default { name: 'CrmProjectDetail' }
           终止
         </n-button>
         <!-- 审批 -->
-        <n-button
-          v-if="formModel.opt_confirm && isApprove"
-          type="primary"
-          @click="handleProcess('同意')"
-        >
-          同意
-        </n-button>
-        <n-button
-          v-if="formModel.opt_confirm && isApprove"
-          type="primary"
-          @click="handleProcess('不同意')"
-        >
-          不同意
-        </n-button>
-        <n-button
-          v-if="formModel.opt_cancel && isApprove"
-          type="primary"
-          :loading="btnLoading"
-          @click="handleCancel"
-        >
-          取消
-        </n-button>
-        <n-button
-          v-if="formModel.opt_revoke && modalMode === 'apply'"
-          type="primary"
-          :loading="btnLoading"
-          @click="handleProcess('撤回')"
-        >
-          撤回
-        </n-button>
+        <BizApprovalActions
+          :model="formModel"
+          biz-class="Trade"
+          :is-approve="isApprove"
+          :detail-mode="modalMode"
+          confirm-with-remark
+          @done="finishApproval"
+        />
         <n-button
           v-if="formModel.opt_handle && !isEdit"
           type="primary"
@@ -1967,31 +1847,6 @@ export default { name: 'CrmProjectDetail' }
   </SpModal>
 
   <SpModal
-    ref="processModalRef"
-    width="500"
-    :title="processTitle"
-    :mask="true"
-    :draggable="true"
-  >
-    <template #default>
-      <div class="w-full flex pb-3 pt-3">
-        <n-input v-model:value="processRemark" type="textarea" :rows="5" clearable />
-      </div>
-    </template>
-
-    <template #footer>
-      <n-space justify="end">
-        <n-button @click="processModalRef?.close">
-          关闭
-        </n-button>
-        <n-button type="primary" :loading="btnLoading" @click="process">
-          提交
-        </n-button>
-      </n-space>
-    </template>
-  </SpModal>
-
-  <SpModal
     ref="updateStartModalRef"
     title="合同盖章"
     width="450"
@@ -2046,7 +1901,7 @@ export default { name: 'CrmProjectDetail' }
         <n-button @click="updateInvalidModalRef?.close">
           关闭
         </n-button>
-        <n-button type="primary" :loading="btnLoading" @click="process">
+        <n-button type="primary" :loading="btnLoading" @click="handleInvalid">
           提交
         </n-button>
       </n-space>
@@ -2193,6 +2048,5 @@ export default { name: 'CrmProjectDetail' }
   </SpModal>
 
   <LogBiz ref="logBizRef" />
-  <LogProcess ref="logProcessRef" />
   <FileManager ref="fileMgrRef" @on-ok="handleFileOk" />
 </template>

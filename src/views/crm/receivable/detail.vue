@@ -6,7 +6,7 @@ import { add } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { receivable as api } from '@/service/api/crm'
 import { bizType } from '@/service/api/masterdata'
 import { useEnumStore } from '@/store/modules/enums'
@@ -118,8 +118,8 @@ const {
     string: ['types', 'payment'],
     number: ['amount'],
     custom: {
-      indate: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      expire: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      indate: val => toDateLabel(val),
+      expire: val => toDateLabel(val),
     },
     enum: {
       types: 'trade_project_types',
@@ -127,7 +127,10 @@ const {
     },
   }),
   beforeEdit: async () => {
-    formModel.list.forEach((item: any, index: number) => {
+    // 接口未返回 list 时下游的 forEach / 表格渲染都会崩，先兜底成数组
+    if (!Array.isArray(formModel.list))
+      formModel.list = []
+    formModel.list.forEach((item: any) => {
       item.transform = {}
       item.transform.payment = enumStore.getLabel('trade_project_payment', item.payment)
     })
@@ -135,7 +138,7 @@ const {
     await load()
 
     formModel.list.forEach((item: any, index: number) => {
-      if (item.incomes.length === 0) {
+      if (!item.incomes?.length) {
         tableItemsAdd({ opt: 'incomes', index })
       }
     })
@@ -143,7 +146,9 @@ const {
     return true
   },
   beforeView: (data) => {
-    data.list.forEach((item: any, index: number) => {
+    if (!Array.isArray(data.list))
+      data.list = []
+    data.list.forEach((item: any) => {
       item.transform = {}
       item.transform.payment = enumStore.getLabel('trade_project_payment', item.payment)
     })
@@ -152,7 +157,7 @@ const {
   onOpen: async (params, mode) => {
     await nextTick()
     if (mode === 'view') {
-      formModel.list.forEach((item: any, index: number) => {
+      formModel.list?.forEach((item: any, index: number) => {
         getTableRef(`view_${index}`).redoHeight()
       })
     }

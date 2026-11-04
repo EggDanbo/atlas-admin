@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { UploaderFile } from '@/utils/uploader'
 import { computed, onMounted, reactive, ref, unref, watch } from 'vue'
-import { buildPreviewUrl, getFileIcon, getFileKind, isPreviewableKind } from '@/components/BizFile/shared'
+import { buildPreviewUrl, FileKind, getFileIcon, getFileKind, isPreviewableKind } from '@/components/BizFile/shared'
 import { SpModal, useModal } from '@/components/SpModal'
 import { getApiBaseUrl } from '@/hooks/setting'
 import { file as fileApi } from '@/service/api/misc'
@@ -25,57 +25,48 @@ const emit = defineEmits([
 
 /** 进度条颜色跟随主题主色，换主题后不再残留蓝色 */
 const { primaryColor } = storeToRefs(useThemeStore())
-const getMaxNumber = computed(() => {
-  return props.maxNumber
-})
+
+const getMaxNumber = computed(() => props.maxNumber)
 
 const fileList = ref<Array<FileStorage.FileResourceModel>>([])
 
 const uploadRef = ref()
 const uploading = ref(false)
 const percentage = ref(0)
-const width = ref(`${props.width}px`)
-const height = ref(`${props.height}px`)
-
-// 计算卡片高度：如果不显示文件名，则不需要额外高度
-const cardHeight = computed(() => {
-  return props.showFileName ? `calc(${height.value} + 36px)` : height.value
-})
 
 const [videoModalRegister, videoModal] = useModal({
   title: '视频播放',
 })
 
 const playerOptions = reactive({
-  // height: 200,
-  // width: document.documentElement.clientWidth, //播放器宽度
-  playbackRates: [0.7, 1, 1.5, 2], // 播放速度
+  playbackRates: [0.7, 1, 1.5, 2],
   sources: [
     {
       src: '',
       type: '',
     },
   ],
-  autoplay: 'any', // 如果true,浏览器准备好时开始回放。
-  loop: false, // 导致视频一结束就重新开始。
-  preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+  autoplay: 'any',
+  loop: false,
+  preload: 'auto',
   language: 'zh-CN',
-  aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
-  fluid: false, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
-  notSupportedMessage: '此视频暂无法播放，请稍后再试', // 允许覆盖Video.js无法播放媒体源时显示的默认信息。
+  aspectRatio: '16:9',
+  fluid: false,
+  notSupportedMessage: '此视频暂无法播放，请稍后再试',
   controls: true,
   controlBar: {
     timeDivider: true,
     durationDisplay: true,
     remainingTimeDisplay: false,
-    fullscreenToggle: true, // 全屏按钮
+    fullscreenToggle: true,
   },
 })
 
 watch(
   () => props.value,
   (value) => {
-    fileList.value = value || []
+    // 接口偶尔会把 files 返回成非数组，这里统一兜底，避免下游 every/length 崩溃
+    fileList.value = Array.isArray(value) ? value : []
   },
   {
     immediate: true,
@@ -183,12 +174,9 @@ uploader.on('fileError', ((_rootFile: unknown, _file: unknown, message: unknown)
   catch {
     toast.error(msg)
   }
-
-  // console.log('fileError', rootFile, file, message);
 }) as (...args: unknown[]) => boolean | void)
 
 uploader.on('filesSubmitted', ((files: UploaderFile[], _fileList: UploaderFile[], _event: Event | undefined) => {
-  // console.log('filesSubmitted', files, fileList, event);
   if (files.length > 0 && !props.disabled) {
     uploader.opts.headers = {
       Authorization: `${token.get()?.token_type} ${token.get()?.access_token}`,
@@ -198,19 +186,64 @@ uploader.on('filesSubmitted', ((files: UploaderFile[], _fileList: UploaderFile[]
 }) as (...args: unknown[]) => boolean | void)
 
 uploader.on('uploadStart', () => {
-  // console.log('uploadStart');
   uploading.value = true
   percentage.value = 0
   emit('on-start')
 })
 
 uploader.on('complete', () => {
-  // console.log('complete');
   emit('on-complate')
 })
 
+// ---------------- 展示形态 ----------------
+
+/** 是否按图片墙形态渲染（仅图片 / 全部是图片时） */
+const isImageMode = computed(() => {
+  if (props.onlyImage)
+    return true
+  if (fileList.value.length === 0)
+    return false
+  return fileList.value.every(item => isImage(item))
+})
+
+const canUpload = computed(() => fileList.value.length < getMaxNumber.value && !props.disabled)
+
+/** 图片墙单元格尺寸，沿用调用方传入的 width/height */
+const thumbStyle = computed(() => ({
+  width: `${props.width}px`,
+  height: `${props.height}px`,
+}))
+
+/** 文件类别配色，用于文件行的图标底色 */
+const KIND_TONE: Record<FileKind, string> = {
+  [FileKind.Image]: '#3b82f6',
+  [FileKind.Video]: '#8b5cf6',
+  [FileKind.Pdf]: '#ef4444',
+  [FileKind.Word]: '#2563eb',
+  [FileKind.Excel]: '#16a34a',
+  [FileKind.Ppt]: '#ea580c',
+  [FileKind.Markdown]: '#64748b',
+  [FileKind.Code]: '#0891b2',
+  [FileKind.Text]: '#64748b',
+  [FileKind.Archive]: '#d97706',
+  [FileKind.Other]: '#94a3b8',
+}
+
 function kindOf(item: FileStorage.FileResourceModel) {
   return getFileKind({ name: item.name, mime: item.content_type })
+}
+
+function kindColor(kind: FileKind) {
+  return KIND_TONE[kind] ?? KIND_TONE[FileKind.Other]
+}
+
+/** 用同色低透明度做图标底板，亮暗主题都成立 */
+function kindTint(kind: FileKind) {
+  const hex = kindColor(kind).replace('#', '')
+  const r = Number.parseInt(hex.slice(0, 2), 16)
+  const g = Number.parseInt(hex.slice(2, 4), 16)
+  const b = Number.parseInt(hex.slice(4, 6), 16)
+  return `rgba(${r}, ${g}, ${b}, 0.12)`
 }
 
 function openPreview(item: FileStorage.FileResourceModel) {
@@ -220,16 +253,16 @@ function openPreview(item: FileStorage.FileResourceModel) {
 function isImage(item: FileStorage.FileResourceModel) {
   if (item.image)
     return true
-  if (item.content_type && item.content_type.toLowerCase().startsWith('image/')) {
+  if (item.content_type && item.content_type.toLowerCase().startsWith('image/'))
     return true
-  }
+
   return false
 }
 
 function isVideo(item: FileStorage.FileResourceModel) {
-  if (item.content_type && item.content_type.toLowerCase().startsWith('video/')) {
+  if (item.content_type && item.content_type.toLowerCase().startsWith('video/'))
     return true
-  }
+
   return false
 }
 
@@ -264,98 +297,192 @@ async function remove(index: number) {
 
 onMounted(async () => {
   if (!props.disabled)
-    uploader.assignBrowse(unref(uploadRef).$el)
+    uploader.assignBrowse(unref(uploadRef).$el ?? unref(uploadRef))
 })
 </script>
 
 <template>
-  <div class="upload flex" :class="{ 'justify-center': props.center }">
-    <div class="upload-card">
-      <!-- 空 -->
-      <div v-if="fileList.length === 0 && props.disabled" class="upload-card-item" />
-
-      <!-- 列表 -->
-      <n-image-group>
-        <div v-for="(item, index) in fileList" :key="`file_${index}`" class="upload-card-item">
-          <div class="upload-card-item-info">
-            <div class="img-box">
-              <n-image
-                v-if="isImage(item)"
-                :preview-src="item.url"
-                :src="getUrl(item)"
-                object-fit="cover"
-              />
-              <n-icon v-else :size="props.height - 50">
-                <Icon :icon="getFileIcon(kindOf(item))" />
-              </n-icon>
-            </div>
-            <div class="img-box-actions px-1">
-              <n-icon
-                v-if="isPreviewableKind(kindOf(item))"
-                size="18"
-                class="action-icon mx-1"
-                @click="openPreview(item)"
-              >
-                <Icon icon="ant-design:eye-outlined" />
-              </n-icon>
-              <n-icon
-                v-else-if="isVideo(item)"
-                size="18"
-                class="action-icon mx-1"
-                @click="play(item)"
-              >
-                <Icon icon="ant-design:video-camera-outlined" />
-              </n-icon>
-              <n-icon size="18" class="action-icon mx-1" @click="down(item)">
-                <Icon icon="ant-design:download-outlined" />
-              </n-icon>
-              <n-icon
-                v-if="!props.disabled"
-                size="18"
-                class="action-icon mx-1"
-                @click="remove(index)"
-              >
-                <Icon icon="ant-design:delete-outlined" />
-              </n-icon>
-            </div>
-          </div>
-          <template v-if="props.showFileName">
-            <div class="upload-card-text truncate text-center">
-              {{ item.name }}
-            </div>
-            <div class="upload-card-text truncate text-center">
-              {{ item.size }}
-            </div>
-          </template>
-        </div>
-      </n-image-group>
-
-      <!-- 上传 -->
-      <div v-show="fileList.length < getMaxNumber && !props.disabled" class="flex justify-center">
-        <n-button
-          v-show="!uploading"
-          ref="uploadRef"
-          text
-          class="upload-card-item upload-card-item-select-picture"
-        >
-          <n-icon size="18" class="m-auto">
-            <Icon icon="ant-design:plus-outlined" />
+  <div class="atlas-upload" :class="{ 'atlas-upload--center': props.center }">
+    <!-- 图片墙：图片类文件用缩略图，操作收进 hover 遮罩 -->
+    <div v-if="isImageMode" class="atlas-upload__thumbs">
+      <div
+        v-for="(item, index) in fileList"
+        :key="`file_${index}`"
+        class="atlas-upload__thumb"
+        :style="thumbStyle"
+      >
+        <n-image
+          v-if="isImage(item)"
+          class="atlas-upload__thumb-img"
+          :src="getUrl(item)"
+          :preview-src="item.url"
+          object-fit="cover"
+        />
+        <div v-else class="atlas-upload__thumb-fallback">
+          <n-icon :size="26">
+            <Icon :icon="getFileIcon(kindOf(item))" />
           </n-icon>
-          <div>{{ props.uploadTitle }}</div>
-        </n-button>
-        <div v-show="uploading" class="upload-card-item upload-card-item-select-picture">
-          <n-spin size="small" />
-          <n-progress
-            type="line"
-            :color="primaryColor"
-            rail-color="rgba(128, 128, 128, 0.25)"
-            :percentage="percentage"
-            :show-indicator="true"
-            indicator-placement="inside"
-            processing
-            class="mt-20"
-          />
         </div>
+
+        <div class="atlas-upload__thumb-mask">
+          <button
+            v-if="isPreviewableKind(kindOf(item))"
+            type="button"
+            class="atlas-upload__icon-btn"
+            title="预览"
+            @click.stop="openPreview(item)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:eye-outlined" />
+            </n-icon>
+          </button>
+          <button
+            v-else-if="isVideo(item)"
+            type="button"
+            class="atlas-upload__icon-btn"
+            title="播放"
+            @click.stop="play(item)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:video-camera-outlined" />
+            </n-icon>
+          </button>
+          <button type="button" class="atlas-upload__icon-btn" title="下载" @click.stop="down(item)">
+            <n-icon :size="16">
+              <Icon icon="ant-design:download-outlined" />
+            </n-icon>
+          </button>
+          <button
+            v-if="!props.disabled"
+            type="button"
+            class="atlas-upload__icon-btn atlas-upload__icon-btn--danger"
+            title="删除"
+            @click.stop="remove(index)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:delete-outlined" />
+            </n-icon>
+          </button>
+        </div>
+
+        <span v-if="props.showFileName && item.name" class="atlas-upload__thumb-name" :title="item.name">
+          {{ item.name }}
+        </span>
+      </div>
+
+      <button
+        v-if="canUpload && !uploading"
+        ref="uploadRef"
+        type="button"
+        class="atlas-upload__add"
+        :style="thumbStyle"
+      >
+        <n-icon :size="20">
+          <Icon icon="ant-design:plus-outlined" />
+        </n-icon>
+        <span class="atlas-upload__add-text">
+          {{ props.uploadTitle }}
+        </span>
+      </button>
+
+      <div v-if="uploading" class="atlas-upload__add atlas-upload__add--loading" :style="thumbStyle">
+        <n-progress
+          type="circle"
+          :percentage="percentage"
+          :color="primaryColor"
+          rail-color="rgba(128, 128, 128, 0.2)"
+          :stroke-width="7"
+          :width="56"
+        />
+      </div>
+    </div>
+
+    <!-- 文件列表：附件类文件走紧凑行，信息密度高、不占版面 -->
+    <div v-else class="atlas-upload__list">
+      <div v-for="(item, index) in fileList" :key="`file_${index}`" class="atlas-upload__row">
+        <span
+          class="atlas-upload__kind"
+          :style="{ color: kindColor(kindOf(item)), background: kindTint(kindOf(item)) }"
+        >
+          <n-icon :size="16">
+            <Icon :icon="getFileIcon(kindOf(item))" />
+          </n-icon>
+        </span>
+
+        <div class="atlas-upload__meta">
+          <span class="atlas-upload__name" :title="item.name">{{ item.name }}</span>
+          <span class="atlas-upload__sub">{{ item.size }}</span>
+        </div>
+
+        <div class="atlas-upload__actions">
+          <button
+            v-if="isPreviewableKind(kindOf(item))"
+            type="button"
+            class="atlas-upload__icon-btn atlas-upload__icon-btn--ghost"
+            title="预览"
+            @click.stop="openPreview(item)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:eye-outlined" />
+            </n-icon>
+          </button>
+          <button
+            v-else-if="isVideo(item)"
+            type="button"
+            class="atlas-upload__icon-btn atlas-upload__icon-btn--ghost"
+            title="播放"
+            @click.stop="play(item)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:video-camera-outlined" />
+            </n-icon>
+          </button>
+          <button
+            type="button"
+            class="atlas-upload__icon-btn atlas-upload__icon-btn--ghost"
+            title="下载"
+            @click.stop="down(item)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:download-outlined" />
+            </n-icon>
+          </button>
+          <button
+            v-if="!props.disabled"
+            type="button"
+            class="atlas-upload__icon-btn atlas-upload__icon-btn--ghost atlas-upload__icon-btn--danger"
+            title="删除"
+            @click.stop="remove(index)"
+          >
+            <n-icon :size="16">
+              <Icon icon="ant-design:delete-outlined" />
+            </n-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- 上传中：占一行显示进度，不再是空转的加载块 -->
+      <div v-if="uploading" class="atlas-upload__row atlas-upload__row--progress">
+        <n-progress
+          type="line"
+          :percentage="percentage"
+          :color="primaryColor"
+          rail-color="rgba(128, 128, 128, 0.2)"
+          :height="4"
+          :show-indicator="true"
+          processing
+        />
+      </div>
+
+      <button v-if="canUpload && !uploading" ref="uploadRef" type="button" class="atlas-upload__add-row">
+        <n-icon :size="16">
+          <Icon icon="ant-design:plus-outlined" />
+        </n-icon>
+        <span>{{ props.uploadTitle }}</span>
+      </button>
+
+      <div v-if="fileList.length === 0 && props.disabled" class="atlas-upload__empty">
+        暂无附件
       </div>
     </div>
   </div>
@@ -381,108 +508,289 @@ onMounted(async () => {
 </template>
 
 <style lang="less" scoped>
-  .upload {
+  .atlas-upload {
   width: 100%;
 
-  &-card {
-    width: auto;
-    height: auto;
-    display: flex;
-    flex-wrap: wrap;
-
-    &-item {
-      margin: 0 8px 8px 0;
-      position: relative;
-      padding: 8px;
-      border: 1px solid #d9d9d9;
-      background-color: rgba(255, 255, 255, 0.85);
-      border-radius: 2px;
-      display: flex;
+  &--center {
+    .atlas-upload__thumbs {
       justify-content: center;
-      flex-direction: column;
-      align-items: center;
-      width: v-bind(width);
-      height: v-bind(cardHeight);
-
-      &:hover {
-        background: 0 0;
-
-        .upload-card-item-info::before {
-          opacity: 1;
-        }
-      }
-
-      &-info {
-        height: 100%;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .img-box {
-          position: relative;
-          border-radius: 2px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: calc(v-bind(width) - 40px);
-          height: calc(v-bind(height) - 60px);
-        }
-
-        .img-box-actions {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          width: 100%;
-          margin-top: 10px;
-
-          .action-icon {
-            cursor: pointer;
-            color: rgba(0, 0, 0, 0.6);
-            transition: all 0.3s ease-in-out;
-
-            &:hover {
-              color: rgba(0, 0, 0, 1);
-            }
-          }
-        }
-      }
-    }
-
-    &-text {
-      padding: 0 10px;
-      width: v-bind(width);
-    }
-
-    &-item-select-picture {
-      border: 1px dashed #d9d9d9;
-      border-radius: 2px;
-      cursor: pointer;
-      background: #fafafa;
-      color: #666;
-
-      .upload-title {
-        color: #666;
-      }
     }
   }
 }
 
-html[data-vxe-ui-theme='dark'] {
-  .upload-card-item {
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    background-color: rgba(0, 0, 0, 0.5);
-  }
+/* ---------------- 图片墙 ---------------- */
+.atlas-upload__thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--atlas-gap-sm);
+}
 
-  .img-box-actions {
-    .action-icon {
-      color: rgba(255, 255, 255, 0.6);
+.atlas-upload__thumb {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--atlas-border);
+  border-radius: var(--atlas-radius-md);
+  background: var(--atlas-surface-sunken);
+  transition:
+    border-color var(--atlas-duration) var(--atlas-ease),
+    box-shadow var(--atlas-duration) var(--atlas-ease);
 
-      &:hover {
-        color: rgba(255, 255, 255, 1);
-      }
+  &:hover {
+    border-color: var(--atlas-border-strong);
+    box-shadow: var(--atlas-shadow-sm);
+
+    .atlas-upload__thumb-mask {
+      opacity: 1;
     }
   }
+}
+
+.atlas-upload__thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  :deep(.n-image) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  :deep(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.atlas-upload__thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--atlas-text-tertiary);
+}
+
+.atlas-upload__thumb-mask {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(15, 18, 23, 0.62);
+  opacity: 0;
+  transition: opacity var(--atlas-duration) var(--atlas-ease);
+}
+
+.atlas-upload__thumb-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 6px 4px;
+  font-size: 11px;
+  line-height: 1.3;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(to top, rgba(15, 18, 23, 0.72), transparent);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------- 上传入口 ---------------- */
+.atlas-upload__add {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  color: var(--atlas-text-tertiary);
+  cursor: pointer;
+  background: var(--atlas-surface-sunken);
+  border: 1px dashed var(--atlas-border-strong);
+  border-radius: var(--atlas-radius-md);
+  transition:
+    color var(--atlas-duration) var(--atlas-ease),
+    border-color var(--atlas-duration) var(--atlas-ease),
+    background var(--atlas-duration) var(--atlas-ease);
+
+  &:hover {
+    color: var(--atlas-brand);
+    background: var(--atlas-brand-soft);
+    border-color: var(--atlas-brand);
+  }
+
+  &--loading {
+    cursor: default;
+    background: var(--atlas-surface-sunken);
+    border-style: solid;
+
+    &:hover {
+      color: var(--atlas-text-tertiary);
+      background: var(--atlas-surface-sunken);
+      border-color: var(--atlas-border-strong);
+    }
+  }
+}
+
+.atlas-upload__add-text {
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* ---------------- 文件列表 ---------------- */
+.atlas-upload__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.atlas-upload__row {
+  display: flex;
+  align-items: center;
+  gap: var(--atlas-gap-sm);
+  min-height: 46px;
+  padding: 6px 10px;
+  background: var(--atlas-surface-sunken);
+  border: 1px solid var(--atlas-border);
+  border-radius: var(--atlas-radius-sm);
+  transition:
+    border-color var(--atlas-duration) var(--atlas-ease),
+    background var(--atlas-duration) var(--atlas-ease);
+
+  &:hover {
+    background: var(--atlas-surface-hover);
+    border-color: var(--atlas-border-strong);
+
+    .atlas-upload__actions {
+      opacity: 1;
+    }
+  }
+
+  &--progress {
+    padding: 10px;
+    background: transparent;
+    border-style: dashed;
+  }
+}
+
+.atlas-upload__kind {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--atlas-radius-sm);
+}
+
+.atlas-upload__meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.atlas-upload__name {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--atlas-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.atlas-upload__sub {
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--atlas-text-tertiary);
+}
+
+.atlas-upload__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--atlas-duration) var(--atlas-ease);
+}
+
+/* ---------------- 通用图标按钮 ---------------- */
+.atlas-upload__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  border-radius: var(--atlas-radius-xs);
+  transition:
+    background var(--atlas-duration) var(--atlas-ease),
+    color var(--atlas-duration) var(--atlas-ease);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  &--ghost {
+    color: var(--atlas-text-tertiary);
+
+    &:hover {
+      color: var(--atlas-text);
+      background: var(--atlas-surface);
+    }
+  }
+
+  &--danger:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.12);
+  }
+}
+
+/* ---------------- 空态与整行上传入口 ---------------- */
+.atlas-upload__add-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 38px;
+  font-size: 13px;
+  color: var(--atlas-text-tertiary);
+  cursor: pointer;
+  background: transparent;
+  border: 1px dashed var(--atlas-border-strong);
+  border-radius: var(--atlas-radius-sm);
+  transition:
+    color var(--atlas-duration) var(--atlas-ease),
+    border-color var(--atlas-duration) var(--atlas-ease),
+    background var(--atlas-duration) var(--atlas-ease);
+
+  &:hover {
+    color: var(--atlas-brand);
+    background: var(--atlas-brand-soft);
+    border-color: var(--atlas-brand);
+  }
+}
+
+.atlas-upload__empty {
+  padding: 8px 0;
+  font-size: 12px;
+  color: var(--atlas-text-tertiary);
 }
 </style>

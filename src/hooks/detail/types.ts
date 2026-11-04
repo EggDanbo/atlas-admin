@@ -221,4 +221,9 @@ export interface UseDetailFullReturn<TForm extends Recordable> {
   refresh: () => Promise<void>
   clearTabState: () => void
   updateModel: (data: TForm) => void
+  /**
+   * 审批完成后的收尾：收起详情弹窗并通知列表刷新。
+   * 配合 BizApprovalActions 的 @done 使用，避免各页面重复实现。
+   */
+  finishApproval: () => void
 }

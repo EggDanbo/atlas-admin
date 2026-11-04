@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
-import { addYears, format, subDays } from 'date-fns'
+import { addYears, subDays } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { PartnerPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { commercial as api } from '@/service/api/hr/insurance'
 
 const emit = defineEmits(['on-action'])
@@ -72,9 +72,9 @@ const {
     number: ['pcs', 'date', 'start', 'expire'],
     nullIfZero: ['outer_id'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      start: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
-      expire: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
+      start: val => toDateLabel(val),
+      expire: val => toDateLabel(val),
     },
   }),
   beforeEdit: async () => {

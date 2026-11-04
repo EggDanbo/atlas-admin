@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { social as api } from '@/service/api/hr/insurance'
 import { useEnumStore } from '@/store/modules/enums'
 
@@ -83,7 +83,7 @@ const {
     number: ['add_date', 'social_date'],
     custom: {
       add_date: val => val ? format(Number(val), 'yyyy-MM') : null,
-      social_date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      social_date: val => toDateLabel(val),
     },
     enum: {
       types: 'staff_info_types',

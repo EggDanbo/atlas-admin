@@ -1,4 +1,5 @@
 import type { RowContext } from './data/fieldValue'
+import type { Rng } from './data/random'
 /**
  * 本地 mock 引擎
  *
@@ -194,6 +195,12 @@ function buildRow(module: string, index: number): Record<string, any> {
 
   // id 最后赋值，避免被同名业务字段覆盖
   row.id = id
+  // 部分列表以 bill_id 作为详情主键（hr 系列），与 id 保持一致，否则「查看」取不到主键会退化成新增
+  if (!row.bill_id)
+    row.bill_id = id
+  // 应收/回款等 crm 列表用 project_id 打开项目详情，缺失时同样兜底，否则「查看」点了没反应
+  if (!row.project_id && /^crm\//.test(module))
+    row.project_id = id
 
   rowCache.set(`${module}:${id}`, row)
   return row
@@ -559,6 +566,136 @@ function buildAssetDetailLines(module: string, id: string): Record<string, any>[
       remark: '正常在用',
     }
   })
+}
+
+/**
+ * 审批单据：模块 → 业务分类
+ *
+ * 只给真正走审批流的单据补流程数据；主数据、台账等没有审批，
+ * 补了反而会让页面上出现不该有的审批区。
+ */
+const BILL_BIZ_CLASS: Array<[RegExp, string]> = [
+  [/^asset\//, 'Asset'],
+  [/^expense\//, 'Pense'],
+  [/^hr\/(movement|exit|relation)\//, 'Staff'],
+  [/^hr\/attendance-apply\//, 'Checkin'],
+  [/^crm\/project$/, 'Trade'],
+  [/^archive\/borrow$/, 'Paper'],
+]
+
+function resolveBizClass(module: string): string | undefined {
+  return BILL_BIZ_CLASS.find(([pattern]) => pattern.test(module))?.[1]
+}
+
+/** 单据编号前缀，按业务域区分，便于一眼认出单据类型 */
+const BILL_NO_PREFIX: Array<[RegExp, string]> = [
+  [/^asset\//, 'ZC'],
+  [/^expense\//, 'FY'],
+  [/^hr\//, 'RS'],
+  [/^crm\//, 'KH'],
+  [/^finance\//, 'PZ'],
+  [/^archive\//, 'DA'],
+]
+
+/** 审批流程节点名称 */
+const PROCESS_STEPS = ['部门主管审批', '财务复核', '分管领导审批', '归档'] as const
+
+/** 审批人 */
+const PROCESS_AUDITORS = ['王建国', '李慧敏', '张启明', '陈思远', '刘晓东', '赵文博'] as const
+
+/** 单据附件样例：名称 + MIME */
+const BILL_FILES: Array<[string, string]> = [
+  ['设备采购合同.pdf', 'application/pdf'],
+  ['供应商报价单.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  ['验收单.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  ['现场照片.jpg', 'image/jpeg'],
+  ['发票扫描件.pdf', 'application/pdf'],
+  ['项目需求说明.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+]
+
+/** 单据附件 */
+function buildBillFiles(rng: Rng): Record<string, any>[] {
+  const count = intBetween(rng, 1, 3)
+  return Array.from({ length: count }, (_, index) => {
+    const [name, mime] = pick(rng, BILL_FILES)
+    return {
+      id: `F${index + 1}`,
+      name,
+      url: '#',
+      size: `${intBetween(rng, 46, 3860)}KB`,
+      image: mime.startsWith('image/'),
+      content_type: mime,
+    }
+  })
+}
+
+/**
+ * 审批流程节点
+ *
+ * 草稿未提交时全部待处理；审批中推进到最后一步之前；已审批/已完成全部通过。
+ */
+function buildBillProcesses(rng: Rng, status: string): Record<string, any>[] {
+  const total = intBetween(rng, 2, PROCESS_STEPS.length)
+  const statusValue = Number(status)
+
+  let passed = 0
+  if (statusValue === 3)
+    passed = Math.max(1, total - 1)
+  else if (statusValue === 4 || statusValue === 5)
+    passed = total
+
+  return PROCESS_STEPS.slice(0, total).map((stepName, index) => {
+    const approved = index < passed
+    return {
+      step_name: stepName,
+      audit_name: approved ? pick(rng, PROCESS_AUDITORS) : null,
+      status: approved ? '同意' : null,
+      remark: approved && rng() > 0.6 ? '情况属实，同意办理' : null,
+      audit_time: approved
+        ? toDateTimeString(new Date(Date.now() - (passed - index) * 6 * 3600 * 1000))
+        : null,
+    }
+  })
+}
+
+/**
+ * 单据类详情补充审批元数据
+ *
+ * 详情页的印章、审批按钮、流程侧栏、附件区都依赖这些字段，
+ * 缺省时页面上这些区域整块不可见，演示时看不出完整形态。
+ * 操作权限位按单据状态给出，与后端的 opt_confirm / opt_cancel / opt_revoke 语义一致。
+ */
+function buildBillMeta(module: string, row: Record<string, any>, id: string): Record<string, any> {
+  const rng = createRng(`bill#${module}#${id}`)
+  const prefix = BILL_NO_PREFIX.find(([pattern]) => pattern.test(module))?.[1] ?? 'DJ'
+  const created = new Date(Date.now() - intBetween(rng, 0, 20) * 86400000)
+  const yearMonth = `${created.getFullYear()}${String(created.getMonth() + 1).padStart(2, '0')}`
+  const status = String(row.status ?? '2')
+
+  const meta: Record<string, any> = {
+    no: `${prefix}${yearMonth}${String(intBetween(rng, 1, 9999)).padStart(4, '0')}`,
+    opt_submit: false,
+    opt_confirm: false,
+    opt_cancel: false,
+    opt_revoke: false,
+    opt_return: false,
+    files: buildBillFiles(rng),
+    processes: buildBillProcesses(rng, status),
+  }
+
+  // 1 草稿 / 2 待审核 / 3 审批中 / 4 已审批 / 5 已完成 / 6 已作废
+  if (status === '1') {
+    meta.opt_submit = true
+  }
+  else if (status === '2' || status === '3') {
+    meta.opt_confirm = true
+    meta.opt_cancel = true
+  }
+  else if (status === '4' || status === '5') {
+    meta.opt_revoke = true
+  }
+
+  return meta
 }
 
 function buildDetailLines(module: string, id: string): Record<string, any>[] | undefined {
@@ -1046,10 +1183,24 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
     const id = String(params.id ?? params.key ?? '')
     const cached = id ? rowCache.get(`${module}:${id}`) : undefined
     const row = cached || buildRow(module, 0)
+    const rowId = String(row.id ?? id)
     // 单据类模块的详情页带有明细表格，需要随详情返回 list
-    const lines = buildDetailLines(module, String(row.id ?? id))
+    const lines = buildDetailLines(module, rowId)
     const detail = normalizeDetailRow(row)
-    return ok(lines ? { ...detail, list: lines } : detail)
+    const payload: Record<string, any> = { ...detail }
+    if (lines)
+      payload.list = lines
+    // 审批单据再补审批元数据、流程节点与附件，让审批区/流程侧栏/附件区完整呈现
+    if (resolveBizClass(module)) {
+      const meta = buildBillMeta(module, detail, rowId)
+      Object.assign(payload, meta, detail)
+      // 字段结构里 files 可能被生成为标量或留空，附件区需要数组，这里以 meta 的样例兜底
+      payload.files = detail.files?.length ? detail.files : meta.files
+      payload.processes = meta.processes
+      payload.no = detail.no || meta.no
+    }
+
+    return ok(payload)
   }
 
   // ---------- 树 ----------

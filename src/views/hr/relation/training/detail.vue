@@ -8,7 +8,7 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { StaffPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { training as api } from '@/service/api/hr/relation'
@@ -124,7 +124,7 @@ const {
     nullIfZero: ['team_id'],
     number: ['date'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
     },
   }),
   beforeEdit: async () => {

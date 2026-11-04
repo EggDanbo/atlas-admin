@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
-import { format } from 'date-fns'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { createTransformer, useDetail } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { invoice as api } from '@/service/api/crm'
 
 import toast from '@/utils/toast'
@@ -74,7 +73,7 @@ const {
     },
     number: ['date', 'totals'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
     },
   }),
   beforeView() {

@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import type { FormRules } from 'naive-ui'
-import type { ModalInst, OpenModal } from '@/components/SpModal'
+import type { OpenModal } from '@/components/SpModal'
 import type { TableInstance } from '@/components/SpTable'
-import { format } from 'date-fns'
+import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
-import { LogProcess } from '@/components/BizLogs/process'
 import { SpCascader } from '@/components/SpCascader'
 import { AssetLedgerPicker, MemberPicker } from '@/components/SpTablePicker'
-import { createTransformer, useDetail, useTableItems } from '@/hooks/detail'
+import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { disuse as api } from '@/service/api/asset'
-import { approve } from '@/service/api/workflow'
 import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -30,17 +28,11 @@ const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
 
 const logBizRef = ref<OpenModal | null>(null)
-const logProcessRef = ref<OpenModal | null>(null)
 
 const AssetInfoSelectRef = ref<OpenModal | null>(null)
 
 const isApprove = ref<boolean>(false)
 const detailMode = ref<string | null>(null)
-
-const processModalRef = ref<ModalInst | null>(null)
-const processTitle = ref<string | null>(null)
-const processTypes = ref<string | null>(null)
-const processRemark = ref<string | null>(null)
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -112,6 +104,7 @@ const {
   clearTabState,
   params,
   updateModel,
+  finishApproval,
 } = useDetail<FormModel>({
   api: {
     get() {
@@ -135,7 +128,7 @@ const {
     nullIfZero: ['team_id', 'team_in', 'user_id', 'user_in'],
     number: ['date'],
     custom: {
-      date: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
+      date: val => toDateLabel(val),
     },
   }),
   beforeEdit: async () => {
@@ -188,93 +181,6 @@ function handleItemAssetInfoSelected(options) {
       remark: null,
     })
   })
-}
-
-async function handleProcess(opt: string) {
-  processTypes.value = opt
-  processRemark.value = null
-  if (opt === '同意') {
-    processTitle.value = '审批意见'
-    await process()
-  }
-  else {
-    processTitle.value = `${opt}原因`
-    processModalRef.value?.open()
-  }
-}
-
-async function process() {
-  if (processTypes.value !== '同意' && !processRemark.value) {
-    toast.error(`请填写${processTitle.value}`)
-    return
-  }
-
-  const list = [{ id: formModel.id, biz_class: 'Asset' }]
-
-  btnLoading.value = true
-  if (processTypes.value === '撤回') {
-    const { isSuccess } = await approve.revoke({
-      list,
-      remark: processRemark.value,
-    }).finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  else if (processTypes.value === '作废') {
-    const { isSuccess } = await approve.invalid({
-      list,
-      remark: processRemark.value,
-    }).finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  else {
-    const { isSuccess } = await approve
-      .process({
-        list,
-        status: processTypes.value,
-        remark: processRemark.value,
-      })
-      .finally(() => (btnLoading.value = false))
-    if (!isSuccess)
-      return
-  }
-  toast.success('操作成功')
-  processModalRef.value?.close()
-  modalRef.value.close()
-  emit('on-action', 'EDIT')
-}
-
-async function handleCancel() {
-  toast.infoModal('确定取消审批吗？', {
-    positiveText: '确定',
-    negativeText: '取消',
-    onPositiveClick: async () => {
-      btnLoading.value = true
-      const { isSuccess } = await approve
-        .cancel({
-          list: [{
-            id: formModel.id,
-            biz_class: 'Asset',
-          }],
-        })
-        .finally(() => (btnLoading.value = false))
-      if (!isSuccess)
-        return
-      toast.success('操作成功')
-      modalRef.value.close()
-      emit('on-action', 'EDIT')
-    },
-  })
-}
-
-function handleLogs(opt?: string) {
-  if (opt === 'process') {
-    logProcessRef.value?.open({ id: formModel.id })
-  }
-  else {
-    logBizRef.value?.open({ xid: formModel.id })
-  }
 }
 
 defineExpose(exposed)
@@ -388,48 +294,7 @@ export default { name: 'AssetDisuseDetail' }
         {{ enumStore.getLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
-        <n-layout-sider
-          v-if="formModel.processes && formModel.processes.length > 0"
-          show-trigger="bar"
-          collapse-mode="transform"
-          :collapsed-width="0"
-          :width="256"
-          :native-scrollbar="false"
-        >
-          <div class="mb-2 flex flex-col items-center justify-center gap-1">
-            <n-qr-code :value="formModel.no || ''" :size="160" padding="0" />
-            <span style="font-size: 20px">{{ formModel.no }}</span>
-            <n-button
-              quaternary
-              round
-              size="large"
-              :type="formModel.opt_return ? 'warning' : 'info'"
-              @click="handleLogs('process')"
-            >
-              点击查看流程日志
-            </n-button>
-          </div>
-          <n-steps vertical class="p-2">
-            <n-step
-              v-for="item in formModel.processes"
-              :key="item"
-              :status="item.status === '不同意' ? 'error' : item.status ? 'process' : 'wait'"
-            >
-              <template #title>
-                <span>{{ item.step_name }}</span>
-              </template>
-              <template #default>
-                <p>
-                  {{ item.audit_name }}<span v-if="item.status"> / {{ item.status }}</span>
-                </p>
-                <p v-if="item.remark">
-                  {{ item.remark }}
-                </p>
-                <p>{{ item.audit_time }}</p>
-              </template>
-            </n-step>
-          </n-steps>
-        </n-layout-sider>
+        <BizProcessSider :model="formModel" />
         <n-layout class="pl-6">
           <n-grid :cols="24" :x-gap="24">
             <n-form-item-gi :span="7" label="单据日期">
@@ -469,7 +334,7 @@ export default { name: 'AssetDisuseDetail' }
         <n-button @click="modalRef?.close">
           关闭
         </n-button>
-        <n-button v-if="Number(formModel.id) !== 0" @click="handleLogs()">
+        <n-button v-if="Number(formModel.id) !== 0" @click="logBizRef?.open({ xid: formModel.id })">
           操作日志
         </n-button>
         <BizDraftBox
@@ -503,89 +368,16 @@ export default { name: 'AssetDisuseDetail' }
           保存
         </n-button>
         <!-- 审批 -->
-        <n-button
-          v-if="formModel.opt_confirm && isApprove"
-          type="primary"
-          @click="handleProcess('同意')"
-        >
-          同意
-        </n-button>
-        <n-button
-          v-if="formModel.opt_confirm && isApprove"
-          type="primary"
-          @click="handleProcess('不同意')"
-        >
-          不同意
-        </n-button>
-        <n-button
-          v-if="formModel.opt_cancel && isApprove"
-          type="primary"
-          :loading="btnLoading"
-          @click="handleCancel"
-        >
-          取消
-        </n-button>
-        <n-button
-          v-if="formModel.opt_revoke && detailMode === 'apply'"
-          type="primary"
-          :loading="btnLoading"
-          @click="handleProcess('撤回')"
-        >
-          撤回
-        </n-button>
-        <n-button
-          v-if="formModel.opt_revoke && detailMode === 'apply'"
-          type="primary"
-          :loading="btnLoading"
-          @click="handleProcess('作废')"
-        >
-          作废
-        </n-button>
+        <BizApprovalActions
+          :model="formModel"
+          biz-class="Asset"
+          :is-approve="isApprove"
+          :detail-mode="detailMode"
+          @done="finishApproval"
+        />
       </n-flex>
     </template>
   </SpModal>
 
-  <SpModal
-    ref="processModalRef"
-    width="500"
-    :title="processTitle"
-    :mask="true"
-    :draggable="true"
-  >
-    <template #default>
-      <div class="w-full flex pb-3 pt-3">
-        <n-radio-group v-if="processTypes === '同意'" v-model:value="processRemark">
-          <n-space>
-            <n-radio value="拟同意，提交">
-              拟同意，提交
-            </n-radio>
-            <n-radio value="同意">
-              同意
-            </n-radio>
-          </n-space>
-        </n-radio-group>
-        <n-input
-          v-model:value="processRemark"
-          type="textarea"
-          :rows="5"
-          clearable
-          :readonly="processTypes === '同意' ? true : false"
-        />
-      </div>
-    </template>
-
-    <template #footer>
-      <n-space justify="end">
-        <n-button @click="processModalRef?.close">
-          关闭
-        </n-button>
-        <n-button type="primary" :loading="btnLoading" @click="process">
-          提交
-        </n-button>
-      </n-space>
-    </template>
-  </SpModal>
-
   <LogBiz ref="logBizRef" />
-  <LogProcess ref="logProcessRef" />
 </template>
