@@ -3,7 +3,7 @@
 ![Vue](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
-![Naive UI](https://img.shields.io/badge/Naive%20UI-2.44-18a058)
+![Naive UI](https://img.shields.io/badge/Naive%20UI-2.45-18a058)
 ![Mock](https://img.shields.io/badge/Data-Local%20Mock-f97316)
 
 > 一体化管理系统 · 前端演示版
@@ -328,3 +328,7 @@ mock 引擎的价值在于「像真的」，而像不像真的取决于规则是
 
 演示项目统一使用免费开源图标（Ant Design Icons / Remix Icon / MingCute / Material Design Icons），
 禁止使用需署名或商业授权图标。详见 `docs/icon-license-audit.md`。
+
+## 📄 License
+
+[MIT](./LICENSE) © 2026 Dwg
