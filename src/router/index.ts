@@ -34,7 +34,9 @@ export const asyncRoutes = [...routeModuleList]
 
 // 创建路由实例
 export const router = createRouter({
-  history: createWebHistory(import.meta.env.VITE_PUBLIC_PATH || ''),
+  // BASE_URL 由 vite 的 base 决定，与资源前缀天然一致；
+  // 部署到子路径（如 GitHub Pages 的 /atlas-admin/）时不会出现路由与静态资源各走一套
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: staticRoutes,
   strict: true,
   scrollBehavior(to) {
