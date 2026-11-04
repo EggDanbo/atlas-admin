@@ -6,15 +6,13 @@ import { add } from 'xe-utils'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { receivable as api } from '@/service/api/crm'
 import { bizType } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const tableRefs = new Map()
 
@@ -121,10 +119,6 @@ const {
       indate: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      types: 'trade_project_types',
-      paymetn: 'trade_project_payment',
-    },
   }),
   beforeEdit: async () => {
     // 接口未返回 list 时下游的 forEach / 表格渲染都会崩，先兜底成数组
@@ -132,7 +126,7 @@ const {
       formModel.list = []
     formModel.list.forEach((item: any) => {
       item.transform = {}
-      item.transform.payment = enumStore.getLabel('trade_project_payment', item.payment)
+      item.transform.payment = dictLabel('trade_project_payment', item.payment)
     })
 
     await load()
@@ -150,7 +144,7 @@ const {
       data.list = []
     data.list.forEach((item: any) => {
       item.transform = {}
-      item.transform.payment = enumStore.getLabel('trade_project_payment', item.payment)
+      item.transform.payment = dictLabel('trade_project_payment', item.payment)
     })
     return true
   },
@@ -293,7 +287,7 @@ export default { name: 'CrmReceivableDetail' }
           <n-input v-model:value="formModel.team_name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="项目类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('trade_project_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="负责人">
           <n-input v-model:value="formModel.user_name" placeholder="" readonly="true" />
@@ -501,7 +495,7 @@ export default { name: 'CrmReceivableDetail' }
           <n-input v-model:value="formModel.team_name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="项目类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('trade_project_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="负责人">
           <n-input v-model:value="formModel.user_name" placeholder="" readonly="true" />

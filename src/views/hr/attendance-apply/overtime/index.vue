@@ -4,17 +4,15 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import common from '@/service/api/common'
 import { overtime as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 import { defDate, unDate } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import detail from './detail.vue'
-
-const enumStore = useEnumStore()
 
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
@@ -166,7 +164,7 @@ export default { name: 'HrApplyOvertime' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('workflow_status')"
+              :options="dictOptions('workflow_status')"
               placeholder="申请状态"
               multiple
               max-tag-count="responsive"

@@ -6,16 +6,14 @@ import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBat
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { PartnerPicker } from '@/components/SpTablePicker/index.ts'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { contract as api } from '@/service/api/expense'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import detail from './detail.vue'
-
-const enumStore = useEnumStore()
 
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
@@ -214,7 +212,7 @@ export default { name: 'ExpenseContract' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.states"
-              :options="enumStore.getEnumOptions('trade_contract_status')"
+              :options="dictOptions('trade_contract_status')"
               placeholder="合同状态"
               clearable
               @update:value="tableRef.clear()"

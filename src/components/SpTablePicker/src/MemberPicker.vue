@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { TablePickerItem } from './useTablePicker'
 import type { TableProps } from '@/components/SpTable'
+import { dictOptions } from '@/dicts'
 import { member as userApi } from '@/service/api/access'
-import { useEnumStore } from '@/store/modules/enums'
 import { isArray } from '@/utils/is'
 import { TablePickerProps } from './props'
 import { useTablePicker } from './useTablePicker'
@@ -21,8 +21,6 @@ const emit = defineEmits<{
   /** 更新 回显 值 */
   'update:options': [value: string | string[] | null | TablePickerItem[]]
 }>()
-
-const enumStore = useEnumStore()
 
 // ==================== 常量 ====================
 
@@ -439,7 +437,7 @@ defineExpose({ refresh })
               v-model:value="filterModel.types"
               style="width: 100px"
               placeholder="人员类型"
-              :options="enumStore.getEnumOptions(EnumKeys.ORGAN_USER_TYPES)"
+              :options="dictOptions(EnumKeys.ORGAN_USER_TYPES)"
               clearable
             />
           </template>

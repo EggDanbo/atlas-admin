@@ -5,15 +5,13 @@ import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { social as api } from '@/service/api/hr/insurance'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -85,11 +83,6 @@ const {
       add_date: val => val ? format(Number(val), 'yyyy-MM') : null,
       social_date: val => toDateLabel(val),
     },
-    enum: {
-      types: 'staff_info_types',
-      status: 'staff_info_status',
-      social_type: 'staff_info_social',
-    },
   }),
 })
 
@@ -136,10 +129,10 @@ export default { name: 'HrInsuranceSocialDetail' }
           <n-input v-model:value="formModel.card" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="人员类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('staff_info_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="状态">
-          <n-input :value="formModel.transform?.status" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('staff_info_status', formModel.status)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="文化程度">
           <n-input v-model:value="formModel.extent" placeholder="" readonly="true" />
@@ -171,7 +164,7 @@ export default { name: 'HrInsuranceSocialDetail' }
         <n-form-item-gi :span="8" label="参保类型" path="social_type">
           <n-select
             v-model:value="formModel.social_type"
-            :options="enumStore.getEnumOptions('staff_info_social')"
+            :options="dictOptions('staff_info_social')"
             clearable
             @update:value="handleRules"
           />
@@ -199,7 +192,7 @@ export default { name: 'HrInsuranceSocialDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_info_social', formModel.social_type) }}
+        {{ dictLabel('staff_info_social', formModel.social_type) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="12" label="单位名称">
@@ -221,10 +214,10 @@ export default { name: 'HrInsuranceSocialDetail' }
           <n-input v-model:value="formModel.card" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="人员类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('staff_info_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="状态">
-          <n-input :value="formModel.transform?.status" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('staff_info_status', formModel.status)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="文化程度">
           <n-input v-model:value="formModel.extent" placeholder="" readonly="true" />

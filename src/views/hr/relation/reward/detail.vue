@@ -9,11 +9,11 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { StaffPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { reward as api } from '@/service/api/hr/relation'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, viewGridOptions } from './columns'
@@ -22,8 +22,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -253,12 +251,12 @@ export default { name: 'HrRelationRewardDetail' }
         </template>
 
         <template #types_default="{ row }">
-          {{ enumStore.getLabel('staff_because_types', row.types) }}
+          {{ dictLabel('staff_because_types', row.types) }}
         </template>
         <template #types_edit="{ row }">
           <n-select
             v-model:value="row.types"
-            :options="enumStore.getEnumOptions('staff_because_types')"
+            :options="dictOptions('staff_because_types')"
             clearable
           />
         </template>
@@ -292,7 +290,7 @@ export default { name: 'HrRelationRewardDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -327,7 +325,7 @@ export default { name: 'HrRelationRewardDetail' }
 
           <SpTable ref="viewTableRef" v-bind="viewGridOptions" :data-source="formModel.list">
             <template #types_default="{ row }">
-              {{ enumStore.getLabel('staff_because_types', row.types) }}
+              {{ dictLabel('staff_because_types', row.types) }}
             </template>
           </SpTable>
         </n-layout>

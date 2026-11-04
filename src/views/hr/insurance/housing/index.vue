@@ -4,10 +4,10 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { housing as api } from '@/service/api/hr/insurance'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -15,8 +15,6 @@ import detail from './detail.vue'
 
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -138,7 +136,7 @@ export default { name: 'HrInsuranceHousing' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.types"
-              :options="enumStore.getEnumOptions('staff_info_house')"
+              :options="dictOptions('staff_info_house')"
               placeholder="购买状态"
               clearable
               @update:value="tableRef.clear()"

@@ -3,6 +3,7 @@ import type { ModalInst, OpenModal } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { invoice as api } from '@/service/api/crm'
 
@@ -68,9 +69,6 @@ const {
   },
   transform: createTransformer({
     string: ['source'],
-    enum: {
-      source: 'trade_invoice_source',
-    },
     number: ['date', 'totals'],
     custom: {
       date: val => toDateLabel(val),
@@ -211,7 +209,7 @@ export default { name: 'CrmInvoiceDetail' }
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="发票来源">
-          <n-input :value="formModel.transform?.source" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('trade_invoice_source', formModel.source)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="开票日期">
           <n-input :value="formModel.transform?.date" placeholder="" readonly="true" />

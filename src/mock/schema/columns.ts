@@ -4,6 +4,7 @@ import type { MockFieldSchema } from './schema.generated'
  * 由视图结构生成表格列定义（模拟服务端下发的 dataformat）
  */
 import type { DataFormatColumn } from '@/components/SpTable'
+import { resolveFieldEnum } from '../../dicts/field-enums'
 import { inferColumnType, isSummable, resolveModuleTitle, resolveTitle } from '../data/fieldValue'
 import {
   FIELD_TITLE_DICT,
@@ -274,9 +275,10 @@ export function buildColumns(name?: string | null): DataFormatColumn[] {
       }))
 
   return used.map((item, index) => {
-    // 状态类字段使用枚举，表格中直接显示中文状态
+    // 字段若登记了枚举（含状态类），表格直接显示中文
     const isStatus = /^(status|states|state)$/i.test(item.field)
-    const type: ColumnType = isStatus ? 'enums' : inferColumnType(item.field)
+    const fieldEnum = resolveFieldEnum(moduleDir, item.field) ?? (isStatus ? 'BillStatus' : null)
+    const type: ColumnType = fieldEnum ? 'enums' : inferColumnType(item.field)
     const column: DataFormatColumn = {
       column: item.field,
       title: item.title,
@@ -288,7 +290,7 @@ export function buildColumns(name?: string | null): DataFormatColumn[] {
       disablefilter: '',
       fixed: index === 0 ? 'left' : null,
       format: DISPLAY_FORMAT[type],
-      enums: isStatus ? 'BillStatus' : null,
+      enums: fieldEnum,
       enumstype: null,
       isfilter: type !== 'bool',
       isview: true,

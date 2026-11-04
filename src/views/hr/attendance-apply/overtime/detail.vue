@@ -8,15 +8,14 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { TeamPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { overtime as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
-const enumStore = useEnumStore()
 const userStore = useUserStore()
 
 const tableRef = ref<TableInstance | null>(null)
@@ -110,9 +109,6 @@ const {
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      types: 'checkin_overtime_types',
-    },
   }),
   onBeforeOpen: (params) => {
     isApprove.value = params.approve
@@ -201,7 +197,7 @@ export default { name: 'HrApplyOvertimeDetail' }
           </n-input-number>
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="加班计算" path="types">
-          <n-select v-model:value="formModel.types" :options="enumStore.getEnumOptions('checkin_overtime_types')" clearable />
+          <n-select v-model:value="formModel.types" :options="dictOptions('checkin_overtime_types')" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="派驻分队" path="outer_id">
           <TeamPicker
@@ -248,7 +244,7 @@ export default { name: 'HrApplyOvertimeDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -277,7 +273,7 @@ export default { name: 'HrApplyOvertimeDetail' }
               </n-input-number>
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="加班计算">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly />
+              <n-input :value="dictLabel('checkin_overtime_types', formModel.types)" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="16" label="派驻分队">
               <n-input v-model:value="formModel.outer_name" placeholder="" readonly />

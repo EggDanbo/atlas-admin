@@ -6,18 +6,16 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
+import { dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { customer as api } from '@/service/api/crm'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
@@ -93,9 +91,6 @@ const {
   },
   transform: createTransformer({
     string: ['types'],
-    enum: {
-      types: 'organ_outer_types',
-    },
   }),
   async beforeEdit() {
     await load()
@@ -144,7 +139,7 @@ export default { name: 'CrmCustomerDetail' }
         <n-form-item-gi :span="8" label="客户性质" path="nature">
           <n-select
             v-model:value="formModel.nature"
-            :options="enumStore.getEnumOptions('trade_custom_nature', 'label')"
+            :options="dictOptions('trade_custom_nature', 'label')"
             clearable
           />
         </n-form-item-gi>

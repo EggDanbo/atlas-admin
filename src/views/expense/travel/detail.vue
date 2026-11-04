@@ -10,12 +10,12 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { ExpenseContractPicker, MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { travel as api } from '@/service/api/expense'
 import { subject } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import { gridOptions, viewGridOptions } from './columns'
 
@@ -23,8 +23,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
@@ -172,7 +170,7 @@ const {
         item.transform = {}
         item.transform.start = item.start && Number(item.start) > 0 ? format((Number(item.start)), 'yyyy-MM-dd') : null
         item.transform.expire = item.expire && Number(item.expire) > 0 ? format((Number(item.expire)), 'yyyy-MM-dd') : null
-        item.transform.types = enumStore.getLabel('pense_travel_types', item.types)
+        item.transform.types = dictLabel('pense_travel_types', item.types)
       })
     }
     return true
@@ -284,7 +282,7 @@ export default { name: 'ExpenseRequestTravelDetail' }
           <template #types_edit="{ row }">
             <n-select
               v-model:value="row.types"
-              :options="enumStore.getEnumOptions('pense_travel_types')"
+              :options="dictOptions('pense_travel_types')"
               clearable
             />
           </template>
@@ -337,7 +335,7 @@ export default { name: 'ExpenseRequestTravelDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

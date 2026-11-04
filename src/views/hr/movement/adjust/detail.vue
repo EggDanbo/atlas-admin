@@ -9,12 +9,12 @@ import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { StaffPicker, TeamPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { roster as infoApi } from '@/service/api/hr'
 import { adjust as api } from '@/service/api/hr/movement'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, viewGridOptions } from './columns'
@@ -23,8 +23,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
@@ -393,7 +391,7 @@ export default { name: 'HrMovementAdjustDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

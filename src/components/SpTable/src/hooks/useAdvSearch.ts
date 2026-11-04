@@ -11,7 +11,7 @@ import { addDays, format } from 'date-fns'
 import { cloneDeep, startsWith } from 'lodash-es'
 import { ref, unref } from 'vue'
 
-import { normalizeEnumsType, useEnumStore } from '@/store/modules/enums'
+import { dictLabel, dictOptions, normalizeDictType } from '@/dicts'
 import * as searchCond from './searchCond'
 
 /** 筛选标签项接口 */
@@ -29,7 +29,6 @@ function useComponentCond(): AdvSearchComponentCond {
   const hasCondType = (val: string) => searchCond.CondType.includes(val)
   const hasTextType = (val: string) => searchCond.TextType.includes(val)
   const hasNumberType = (val: string) => searchCond.NumberType.includes(val)
-  const enumStore = useEnumStore()
 
   /** 根据字段类型获取对应的条件列表 */
   const getCondTypeList = (type: string) => {
@@ -80,7 +79,7 @@ function useComponentCond(): AdvSearchComponentCond {
       }))
     }
     if (item.enums) {
-      return enumStore.getEnumOptions(item.enums).map((s, i) => ({
+      return dictOptions(item.enums).map((s, i) => ({
         value: useIndexOrValue ? i : s.value,
         label: s.label,
       }))
@@ -92,7 +91,7 @@ function useComponentCond(): AdvSearchComponentCond {
   const getCondListInValue = (item: DataFormatColumn) => {
     // type=enums 忽略 format，枚举系统为唯一数据源，取值字段由 enumstype 决定
     if (item.enums && item.type === 'enums') {
-      return enumStore.getEnumOptions(item.enums, normalizeEnumsType(item.enumstype))
+      return dictOptions(item.enums, normalizeDictType(item.enumstype))
     }
     if (item.format) {
       return item.format.split(',').map((s) => {
@@ -101,7 +100,7 @@ function useComponentCond(): AdvSearchComponentCond {
       })
     }
     if (item.enums) {
-      return enumStore.getEnumOptions(item.enums)
+      return dictOptions(item.enums)
     }
     return []
   }
@@ -132,7 +131,6 @@ export function useAdvSearch(): AdvSearchInstance {
   })
 
   const componentCond = useComponentCond()
-  const enumStore = useEnumStore()
 
   /**
    * 加载网格格式
@@ -311,9 +309,9 @@ export function useAdvSearch(): AdvSearchInstance {
 
         // 处理枚举类型（type=enums 按 enumstype 匹配，其余固定按 value）
         if (enums) {
-          const matchBy = types === 'enums' ? normalizeEnumsType(enumstype) : 'value'
+          const matchBy = types === 'enums' ? normalizeDictType(enumstype) : 'value'
           labelContent = valArr
-            .map((v: string) => enumStore.getLabel(enums, v, matchBy))
+            .map((v: string) => dictLabel(enums, v, matchBy))
             .filter((v): v is string => Boolean(v))
         }
       }

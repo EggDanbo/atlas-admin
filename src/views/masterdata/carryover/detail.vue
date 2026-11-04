@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { carryover as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -61,10 +59,6 @@ const {
   },
   transform: createTransformer({
     string: ['source', 'types'],
-    enum: {
-      source: 'basic_pattern_source',
-      types: 'basic_pattern_types',
-    },
   }),
 })
 
@@ -99,7 +93,7 @@ export default { name: 'MdmCarryoverDetail' }
           <n-select
             v-model:value="formModel.source"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_pattern_source')"
+            :options="dictOptions('basic_pattern_source')"
             clearable
           />
         </n-form-item-gi>
@@ -107,7 +101,7 @@ export default { name: 'MdmCarryoverDetail' }
           <n-select
             v-model:value="formModel.types"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_pattern_types')"
+            :options="dictOptions('basic_pattern_types')"
             clearable
           />
         </n-form-item-gi>
@@ -138,10 +132,10 @@ export default { name: 'MdmCarryoverDetail' }
           <n-input v-model:value="formModel.name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label=" 数据来源">
-          <n-input :value="formModel.transform?.source" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_pattern_source', formModel.source)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="结转类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_pattern_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="16" label="转出科目">
           <n-input v-model:value="formModel.content_out" placeholder="" readonly="true" />

@@ -10,12 +10,12 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { ExpenseContractPicker, MemberPicker, ProjectPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { purchase as api } from '@/service/api/expense'
 import { subject } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import { gridOptions, viewGridOptions } from './columns'
 
@@ -23,8 +23,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
@@ -307,8 +305,8 @@ export default { name: 'ExpenseRequestPurchaseDetail' }
       :label-width="100"
       :model="formModel"
     >
-      <div v-if="enumStore.getLabel('workflow_status', formModel.status)" class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+      <div v-if="dictLabel('workflow_status', formModel.status)" class="stamp-text">
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

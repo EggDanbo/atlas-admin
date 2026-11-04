@@ -4,14 +4,12 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { dimension as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import toast from '@/utils/toast'
 import detail from './detail.vue'
-
-const enumStore = useEnumStore()
 
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
@@ -221,7 +219,7 @@ export default { name: 'MdmDimension' }
           <n-gi span="3">
             <n-select
               v-model:value="queryModel.types"
-              :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+              :options="dictOptions('basic_content_assist', 'label')"
               placeholder="核算维度"
               max-tag-count="responsive"
               multiple

@@ -1,6 +1,5 @@
-import type { DetailParams, EnumTransformItem, FieldTransformConfig, TitleConfig } from './types'
+import type { DetailParams, FieldTransformConfig, TitleConfig } from './types'
 import { format } from 'date-fns'
-import { useEnumStore } from '@/store/modules/enums'
 
 /**
  * 把接口返回的日期值格式化为展示文本
@@ -19,15 +18,6 @@ export function toDateLabel(value: unknown, pattern = 'yyyy-MM-dd'): string | nu
 
   const parsed = new Date(String(value).replace(' ', 'T'))
   return Number.isNaN(parsed.getTime()) ? null : format(parsed, pattern)
-}
-
-/**
- * 规范化枚举转换配置
- */
-function normalizeEnumConfig(config: string | EnumTransformItem): EnumTransformItem {
-  return typeof config === 'string'
-    ? { key: config, matchBy: 'value' }
-    : config
 }
 
 /**
@@ -93,20 +83,6 @@ export function createTransformer(config: FieldTransformConfig) {
         const val = getNestedValue(result, path)
         if (val !== undefined) {
           setNestedValue(result, path, (val == null || val === 0 || val === '0' || val === '') ? null : String(val))
-        }
-      }
-    }
-
-    // 枚举转换：将 value/name 转换为 label，存到 transformField
-    if (config.enum) {
-      const enumStore = useEnumStore() // 延迟调用，确保 Pinia 已初始化
-      for (const [path, enumConfig] of Object.entries(config.enum)) {
-        const val = getNestedValue(result, path)
-        if (val != null) {
-          const { key, matchBy } = normalizeEnumConfig(enumConfig)
-          const label = enumStore.getLabel(key, val, matchBy)
-          // enum 转换结果存到 transformField
-          result[transformField][path] = label
         }
       }
     }

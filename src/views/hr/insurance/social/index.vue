@@ -5,10 +5,10 @@ import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { social as api } from '@/service/api/hr/insurance'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -21,8 +21,6 @@ const batchImportDownloadRef = ref<InstanceType<typeof BatchImportDownloadModal>
 const batchImportRef = ref<InstanceType<typeof SpBatchImportModal> | null>(null)
 const checkFileUrl = ref<string | null>(null)
 const checkFileMessage = ref<string | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -178,7 +176,7 @@ export default { name: 'HrInsuranceSocial' }
           <n-gi span="2">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('staff_info_status')"
+              :options="dictOptions('staff_info_status')"
               placeholder="在职状态"
               clearable
               max-tag-count="responsive"
@@ -189,7 +187,7 @@ export default { name: 'HrInsuranceSocial' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.types"
-              :options="enumStore.getEnumOptions('staff_info_social')"
+              :options="dictOptions('staff_info_social')"
               placeholder="参保状态"
               clearable
               @update:value="tableRef.clear()"

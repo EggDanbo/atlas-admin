@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { dictOptions } from '@/dicts'
 import { overview as api } from '@/service/api/dashboard'
 import { apply, approve } from '@/service/api/workflow'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import bus from '@/utils/bus'
 import toast from '@/utils/toast'
 
 defineOptions({ name: 'DashboardOverview' })
-
-const enumStore = useEnumStore()
 
 const router = useRouter()
 
@@ -176,7 +174,7 @@ onUnmounted(() => {
     >
       <div class="tabsBox w-full" style="padding: 20px; height: auto; border-radius: 0.25rem;">
         <n-space>
-          <n-button v-for="(item, index) in enumStore.getEnumOptions('board_valid_types', 'label')" :key="index" :loading="btnLoading" @click="vaild(item.label)">
+          <n-button v-for="(item, index) in dictOptions('board_valid_types', 'label')" :key="index" :loading="btnLoading" @click="vaild(item.label)">
             {{ item.label }}
           </n-button>
         </n-space>

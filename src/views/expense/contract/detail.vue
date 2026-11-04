@@ -7,17 +7,15 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { PartnerPicker, ProjectPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { contract as api } from '@/service/api/expense'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
@@ -152,11 +150,6 @@ const {
       indate: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      types: 'pense_contract_types',
-      source: 'pense_contract_source',
-      payment: 'pense_contract_payment',
-    },
   }),
   beforeEdit: async () => {
     await load()
@@ -239,7 +232,7 @@ export default { name: 'ExpenseContractDetail' }
         <n-form-item-gi :span="8" label="合同类型" path="types">
           <n-select
             v-model:value="formModel.types"
-            :options="enumStore.getEnumOptions('pense_contract_types')"
+            :options="dictOptions('pense_contract_types')"
             clearable
           />
         </n-form-item-gi>
@@ -271,7 +264,7 @@ export default { name: 'ExpenseContractDetail' }
         <n-form-item-gi :span="8" label="支付方式" path="payment">
           <n-select
             v-model:value="formModel.payment"
-            :options="enumStore.getEnumOptions('pense_contract_payment')"
+            :options="dictOptions('pense_contract_payment')"
             clearable
           />
         </n-form-item-gi>
@@ -316,7 +309,7 @@ export default { name: 'ExpenseContractDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -329,12 +322,12 @@ export default { name: 'ExpenseContractDetail' }
               <n-input :value="formModel.transform?.date" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="合同类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('pense_contract_types', formModel.types)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="16" label="合同名称">
               <n-input v-model:value="formModel.name" placeholder="" readonly>
                 <template #suffix>
-                  {{ formModel.transform?.source }}
+                  {{ dictLabel('pense_contract_source', formModel.source) }}
                 </template>
               </n-input>
             </n-form-item-gi>
@@ -357,7 +350,7 @@ export default { name: 'ExpenseContractDetail' }
               <n-input :value="formModel.transform?.expire" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="支付方式">
-              <n-input :value="formModel.transform?.payment" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('pense_contract_payment', formModel.payment)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="合同金额">
               <n-input-number v-model:value="formModel.amount" placeholder="" :readonly="true" :show-button="false" />

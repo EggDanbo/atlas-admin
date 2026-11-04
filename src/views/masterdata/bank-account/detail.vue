@@ -4,16 +4,14 @@ import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpDict } from '@/components/SpDict'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { unit as teamApi } from '@/service/api/access'
 import { bankAccount as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamOptions = ref<any>([])
 async function loadTeamTree() {
@@ -77,9 +75,6 @@ const {
   },
   transform: createTransformer({
     string: ['types'],
-    enum: {
-      types: 'basic_account_types',
-    },
   }),
   async beforeEdit() {
     await load()
@@ -123,7 +118,7 @@ export default { name: 'MdmBankAccountDetail' }
           <n-select
             v-model:value="formModel.types"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_account_types')"
+            :options="dictOptions('basic_account_types')"
             clearable
           />
         </n-form-item-gi>
@@ -140,7 +135,7 @@ export default { name: 'MdmBankAccountDetail' }
           <n-select
             v-model:value="formModel.bank"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_account_bank', 'label')"
+            :options="dictOptions('basic_account_bank', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -168,7 +163,7 @@ export default { name: 'MdmBankAccountDetail' }
           <n-input v-model:value="formModel.team_name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="账户类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_account_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="账户代码">
           <n-input v-model:value="formModel.code" placeholder="" readonly="true" />

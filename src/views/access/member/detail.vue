@@ -5,10 +5,10 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { member as api, unit as teamApi } from '@/service/api/access'
-import { useEnumStore } from '@/store/modules/enums'
 import { validMobileNumber } from '@/utils/rules'
 
 const emit = defineEmits(['on-action'])
@@ -17,8 +17,6 @@ const logBizRef = ref<OpenModal | null>(null)
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -87,10 +85,6 @@ const {
   transform: createTransformer({
     nullIfZero: ['gender'],
     string: ['gender', 'types'],
-    enum: {
-      gender: 'organ_user_gender',
-      types: 'organ_user_types',
-    },
   }),
   async beforeEdit() {
     await load()
@@ -147,7 +141,7 @@ export default { name: 'AccessMemberDetail' }
               <n-select
                 v-model:value="formModel.types"
                 placeholder="请选择"
-                :options="enumStore.getEnumOptions('organ_user_types')"
+                :options="dictOptions('organ_user_types')"
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="工号" path="wkno">
@@ -160,7 +154,7 @@ export default { name: 'AccessMemberDetail' }
               <n-select
                 v-model:value="formModel.gender"
                 placeholder="请选择"
-                :options="enumStore.getEnumOptions('organ_user_gender')"
+                :options="dictOptions('organ_user_gender')"
                 clearable
               />
             </n-form-item-gi>
@@ -206,7 +200,7 @@ export default { name: 'AccessMemberDetail' }
               <n-input :value="formModel.name" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="人员类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('organ_user_types', formModel.types)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="工号">
               <n-input :value="formModel.wkno" placeholder="" readonly="true" />
@@ -215,7 +209,7 @@ export default { name: 'AccessMemberDetail' }
               <n-input :value="formModel.id_no" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="性别">
-              <n-input :value="formModel.transform?.gender" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('organ_user_gender', formModel.gender)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="岗位">
               <n-input :value="formModel.position" placeholder="" readonly="true" />

@@ -9,11 +9,11 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { level as api } from '@/service/api/hr/relation'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, viewGridOptions } from './columns'
@@ -33,8 +33,6 @@ const riseDataList = ref<any>([])
 const riseDataIndex = ref<number>(0)
 
 const isConfirm = ref(false)
-
-const enumStore = useEnumStore()
 
 const isApprove = ref<boolean>(false)
 const detailMode = ref<string | null>(null)
@@ -421,7 +419,7 @@ export default { name: 'HrRelationLevelDetail' }
       :model="formModel"
     >
       <div v-if="!isConfirm" class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -515,7 +513,7 @@ export default { name: 'HrRelationLevelDetail' }
                   <n-form-item-gi :span="12" label="评级" :show-feedback="false" :show-require-mark="true">
                     <n-select
                       v-model:value="item.rate"
-                      :options="enumStore.getEnumOptions('staff_scale_caste', 'label')"
+                      :options="dictOptions('staff_scale_caste', 'label')"
                       clearable
                     />
                   </n-form-item-gi>

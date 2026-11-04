@@ -6,10 +6,10 @@ import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBat
 import { SpDict } from '@/components/SpDict'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { roster as api } from '@/service/api/hr'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -31,8 +31,6 @@ const updateDateData = ref({
 
 const updateModalRef = ref<ModalInst | null>(null)
 const updateScale = ref<string | null>(null)
-
-const enumStore = useEnumStore()
 
 const querySchemas = computed(() => ({
   blacked: [
@@ -286,7 +284,7 @@ export default { name: 'HrRoster' }
           <n-gi span="2">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('staff_info_status')"
+              :options="dictOptions('staff_info_status')"
               placeholder="在职状态"
               clearable
               max-tag-count="responsive"

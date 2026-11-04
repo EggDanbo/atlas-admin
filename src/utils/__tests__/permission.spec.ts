@@ -25,7 +25,7 @@ const permissionTree = [
       { id: 'FIN_VOUCHER_ADD', name: '新增' },
     ],
   },
-] as Auth.Permission[]
+] as unknown as Auth.Permission[]
 
 describe('matchPermit', () => {
   it('未配置权限要求时默认放行', () => {

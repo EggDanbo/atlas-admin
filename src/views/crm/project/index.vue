@@ -6,10 +6,10 @@ import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBat
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { PartnerPicker } from '@/components/SpTablePicker/index.ts'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { project as api } from '@/service/api/crm'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -22,8 +22,6 @@ const batchImportDownloadRef = ref<InstanceType<typeof BatchImportDownloadModal>
 const batchImportRef = ref<InstanceType<typeof SpBatchImportModal> | null>(null)
 const checkFileUrl = ref<string | null>(null)
 const checkFileMessage = ref<string | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -214,7 +212,7 @@ export default { name: 'CrmProject' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.states"
-              :options="enumStore.getEnumOptions('workflow_status')"
+              :options="dictOptions('workflow_status')"
               placeholder="审批状态"
               clearable
               @update:value="tableRef.clear()"

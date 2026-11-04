@@ -9,6 +9,8 @@ import type { Rng } from './data/random'
  * 不发起任何网络请求，全部数据由本地确定性算法生成。
  */
 import type { DataFormatColumn } from '@/components/SpTable'
+import { DICTS, getDict } from '../dicts'
+import { resolveFieldEnum } from '../dicts/field-enums'
 import { ASSET_BRANDS, ASSET_MODELS, ASSET_NAMES, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
 import {
@@ -167,6 +169,12 @@ function buildRow(module: string, index: number): Record<string, any> {
   for (const item of fields) {
     if (item.field === 'id')
       continue
+    // 登记了枚举的字段按枚举取值，这样状态列、详情页才能翻译成中文
+    const enumItems = getDict(resolveFieldEnum(module, item.field))?.items
+    if (enumItems?.length) {
+      row[item.field] = enumItems[intBetween(ctx.rng, 0, enumItems.length - 1)]!.value
+      continue
+    }
     const type = inferColumnType(item.field)
     const title = resolveTitle(item.field, item.title, FIELD_TITLE_DICT)
     row[item.field] = generateValue(item.field, ctx, type, title)
@@ -178,9 +186,9 @@ function buildRow(module: string, index: number): Record<string, any> {
       row[column.column] = generateValue(column.column, ctx, undefined, column.title)
   }
 
-  // 统一状态字段为枚举值，便于展示中文状态
+  // 统一状态字段为枚举值，便于展示中文状态（模块登记了枚举的已在上面处理）
   for (const key of ['status', 'states', 'state']) {
-    if (key in row)
+    if (key in row && !resolveFieldEnum(module, key))
       row[key] = String(intBetween(ctx.rng, 1, STATE_LABELS.length))
   }
 
@@ -1046,7 +1054,8 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   if (/common\/appinfo$/.test(path))
     return ok(buildAppInfo())
   if (/common\/enums$/.test(path))
-    return ok(SYSTEM_ENUMS)
+    // 枚举字典与前端本地字典同源，避免两处维护出的口径差异
+    return ok({ ...SYSTEM_ENUMS, ...DICTS })
   if (/common\/time$/.test(path))
     return ok(Date.now())
   if (/common\/getip$/.test(path))

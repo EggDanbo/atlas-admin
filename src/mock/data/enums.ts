@@ -1,7 +1,7 @@
 /**
  * 系统枚举字典（演示数据）
  *
- * 供 store/modules/enums 加载，使表格中的状态列能显示中文标签。
+ * 保留给 `/common/enums` 接口用；前端展示已改用 `src/dicts` 的本地字典。
  */
 import type { SystemEnums } from '@/mock/types'
 

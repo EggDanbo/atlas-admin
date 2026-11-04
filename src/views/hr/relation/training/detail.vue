@@ -9,11 +9,11 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { StaffPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { training as api } from '@/service/api/hr/relation'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, viewGridOptions } from './columns'
@@ -22,8 +22,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -292,7 +290,7 @@ export default { name: 'HrRelationTrainingDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="申请日期">

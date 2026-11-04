@@ -6,19 +6,17 @@ import { Upload } from '@/components/BizFile'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { TeamPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { resume as api } from '@/service/api/hr'
-import { useEnumStore } from '@/store/modules/enums'
 import toast from '@/utils/toast'
 
 const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const militaryOptions = ref([
   {
@@ -266,10 +264,6 @@ const {
       card_issue: val => val ? format(Number(val), 'yyyy-MM-dd') : null,
       card_valid: val => val ? format(Number(val), 'yyyy-MM-dd') : '长期有效',
     },
-    enum: {
-      gender: 'organ_user_gender',
-      types: 'staff_info_types',
-    },
   }),
   async beforeEdit(data, params) {
     if (data.careers && data.careers.length > 0) {
@@ -385,26 +379,26 @@ export default { name: 'HrResumeEntry' }
               <n-input v-model:value="formModel.birthday" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="性别" path="gender">
-              <n-input :value="formModel.transform?.gender" placeholder="" readonly />
+              <n-input :value="dictLabel('organ_user_gender', formModel.gender)" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="人员类型" path="types">
               <n-select
                 v-model:value="formModel.types"
                 placeholder="请选择"
-                :options="enumStore.getEnumOptions('staff_info_types')"
+                :options="dictOptions('staff_info_types')"
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="民族" path="nation">
               <n-select
                 v-model:value="formModel.nation"
-                :options="enumStore.getEnumOptions('staff_info_nation', 'label')"
+                :options="dictOptions('staff_info_nation', 'label')"
                 clearable
               />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="文化程度" path="extent">
               <n-select
                 v-model:value="formModel.extent"
-                :options="enumStore.getEnumOptions('staff_info_extent', 'label')"
+                :options="dictOptions('staff_info_extent', 'label')"
                 clearable
               />
             </n-form-item-gi>
@@ -432,7 +426,7 @@ export default { name: 'HrResumeEntry' }
         <n-form-item-gi :span="8" label="政治面貌" path="politics">
           <n-select
             v-model:value="formModel.politics"
-            :options="enumStore.getEnumOptions('staff_info_politics', 'label')"
+            :options="dictOptions('staff_info_politics', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -446,14 +440,14 @@ export default { name: 'HrResumeEntry' }
         <n-form-item-gi :span="8" label="健康状况" path="health">
           <n-select
             v-model:value="formModel.health"
-            :options="enumStore.getEnumOptions('staff_info_health', 'label')"
+            :options="dictOptions('staff_info_health', 'label')"
             clearable
           />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="婚姻状况" path="marital">
           <n-select
             v-model:value="formModel.marital"
-            :options="enumStore.getEnumOptions('staff_info_marital', 'label')"
+            :options="dictOptions('staff_info_marital', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -476,7 +470,7 @@ export default { name: 'HrResumeEntry' }
         <n-form-item-gi :span="8" label="户口类型" path="census">
           <n-select
             v-model:value="formModel.census"
-            :options="enumStore.getEnumOptions('staff_info_census', 'label')"
+            :options="dictOptions('staff_info_census', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -1143,10 +1137,10 @@ export default { name: 'HrResumeEntry' }
               <n-input v-model:value="formModel.birthday" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="性别">
-              <n-input :value="formModel.transform?.gender" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('organ_user_gender', formModel.gender)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="人员类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('staff_info_types', formModel.types)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="民族">
               <n-input v-model:value="formModel.nation" placeholder="" readonly="true" />

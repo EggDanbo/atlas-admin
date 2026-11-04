@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { payrollItem as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -56,9 +54,6 @@ const {
   },
   transform: createTransformer({
     string: ['field_type'],
-    enum: {
-      field_type: 'basic_salary_types',
-    },
   }),
 })
 
@@ -93,7 +88,7 @@ export default { name: 'MdmPayrollItemDetail' }
           <n-select
             v-model:value="formModel.field_type"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_salary_types')"
+            :options="dictOptions('basic_salary_types')"
             clearable
           />
         </n-form-item-gi>
@@ -121,7 +116,7 @@ export default { name: 'MdmPayrollItemDetail' }
           <n-input v-model:value="formModel.field_name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="字段类型">
-          <n-input :value="formModel.transform?.field_type" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_salary_types', formModel.field_type)" placeholder="" readonly="true" />
         </n-form-item-gi> -->
         <n-form-item-gi :span="24" label="标题">
           <n-input v-model:value="formModel.title" placeholder="" readonly="true" />

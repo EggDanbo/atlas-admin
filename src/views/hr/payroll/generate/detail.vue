@@ -4,11 +4,11 @@ import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { generate as api } from '@/service/api/hr/payroll'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 
 const emit = defineEmits(['on-action'])
@@ -17,8 +17,6 @@ const logBizRef = ref<OpenModal | null>(null)
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -82,9 +80,6 @@ const {
       user_add: val => val ? format(Number(val), 'yyyy-MM') : null,
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
-    },
-    enum: {
-      status: 'staff_salary_status',
     },
   }),
   async beforeEdit() {
@@ -231,7 +226,7 @@ export default { name: 'HrPayrollGenerateDetail' }
           <n-select
             v-model:value="formModel.caste"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('staff_scale_caste', 'label')"
+            :options="dictOptions('staff_scale_caste', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -249,7 +244,7 @@ export default { name: 'HrPayrollGenerateDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_salary_status', formModel.status) }}
+        {{ dictLabel('staff_salary_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="16" label="单位部门">

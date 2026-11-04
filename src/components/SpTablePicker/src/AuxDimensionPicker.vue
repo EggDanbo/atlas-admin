@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { TablePickerItem } from './useTablePicker'
 import type { TableProps } from '@/components/SpTable'
+import { dictOptions } from '@/dicts'
 import { dimension } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { isArray } from '@/utils/is'
 import { TablePickerProps } from './props'
 import { useTablePicker } from './useTablePicker'
@@ -21,8 +21,6 @@ const emit = defineEmits<{
   /** 更新 回显 值 */
   'update:options': [value: string | string[] | null | TablePickerItem[]]
 }>()
-
-const enumStore = useEnumStore()
 
 const selectRef = ref<any>(null)
 const tableRef = ref<any>(null)
@@ -433,7 +431,7 @@ defineExpose({ refresh })
               v-model:value="filterModel.types"
               style="width: 160px"
               placeholder="核算维度"
-              :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+              :options="dictOptions('basic_content_assist', 'label')"
               clearable
             />
           </template>

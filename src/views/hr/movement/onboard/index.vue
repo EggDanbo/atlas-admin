@@ -6,19 +6,17 @@ import { SpDateRange } from '@/components/SpDateRange'
 import { SpDict } from '@/components/SpDict'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import common from '@/service/api/common'
 import { onboard as api } from '@/service/api/hr/movement'
-import { useEnumStore } from '@/store/modules/enums'
 import { defDate, unDate } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import entry from '@/views/hr/resume/entry.vue'
 import detail from './detail.vue'
-
-const enumStore = useEnumStore()
 
 const detailRef = ref<OpenModal | null>(null)
 const entryRef = ref<OpenModal | null>(null)
@@ -247,7 +245,7 @@ export default { name: 'HrMovementOnboard' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('workflow_status')"
+              :options="dictOptions('workflow_status')"
               placeholder="单据状态"
               clearable
               multiple

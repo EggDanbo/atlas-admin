@@ -5,10 +5,10 @@ import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { contract as api } from '@/service/api/hr/relation'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -21,8 +21,6 @@ const batchImportDownloadRef = ref<InstanceType<typeof BatchImportDownloadModal>
 const batchImportRef = ref<InstanceType<typeof SpBatchImportModal> | null>(null)
 const checkFileUrl = ref<string | null>(null)
 const checkFileMessage = ref<string | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -207,7 +205,7 @@ export default { name: 'HrRelationContract' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('staff_labor_status')"
+              :options="dictOptions('staff_labor_status')"
               placeholder="状态"
               clearable
               @update:value="tableRef.clear()"

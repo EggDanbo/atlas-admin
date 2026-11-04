@@ -11,13 +11,13 @@ import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { ExpenseContractPicker, MemberPicker, PartnerPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail, useTableItems } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { payment as api, query } from '@/service/api/expense'
 import { roster } from '@/service/api/hr'
 import { bankAccount, subject } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import { tenantStorage } from '@/utils/tenant'
 import { gridOptions, viewGridOptions } from './columns'
@@ -28,7 +28,6 @@ const { getPermission } = useTabbar()
 const tabPermName = getPermission()
 
 const userStore = useUserStore()
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -548,7 +547,7 @@ export default { name: 'ExpensePaymentDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

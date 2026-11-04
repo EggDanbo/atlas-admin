@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { subject as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const requiretOptions = ref<any>([])
 
@@ -67,10 +65,6 @@ const {
   },
   transform: createTransformer({
     string: ['criterion', 'direction', 'types'],
-    enum: {
-      direction: 'basic_content_direction',
-      types: 'basic_content_types',
-    },
     custom: {
       cashes: val => val ? '是' : '否',
       period: val => val ? '是' : '否',
@@ -96,7 +90,7 @@ const {
 
 async function handleAssist() {
   if (formModel.assist && formModel.assist.length > 0) {
-    const list = enumStore.getEnumOptions('basic_content_assist', 'label').filter((q: any) => formModel.assist?.includes(q.value))
+    const list = dictOptions('basic_content_assist', 'label').filter((q: any) => formModel.assist?.includes(q.value))
     requiretOptions.value = list
     const arr: any = formModel.require?.filter((item: any) => formModel.assist?.includes(item))
     formModel.require = arr
@@ -141,7 +135,7 @@ export default { name: 'MdmSubjectDetail' }
           <n-select
             v-model:value="formModel.direction"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_content_direction')"
+            :options="dictOptions('basic_content_direction')"
             clearable
           />
         </n-form-item-gi>
@@ -149,7 +143,7 @@ export default { name: 'MdmSubjectDetail' }
           <n-select
             v-model:value="formModel.types"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_content_types')"
+            :options="dictOptions('basic_content_types')"
             clearable
           />
         </n-form-item-gi>
@@ -167,7 +161,7 @@ export default { name: 'MdmSubjectDetail' }
           <n-select
             v-model:value="formModel.assist"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+            :options="dictOptions('basic_content_assist', 'label')"
             max-tag-count="responsive"
             multiple
             clearable
@@ -219,10 +213,10 @@ export default { name: 'MdmSubjectDetail' }
           <n-input v-model:value="formModel.name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="借贷方向">
-          <n-input :value="formModel.transform?.direction" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_content_direction', formModel.direction)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="10" label="科目分类">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_content_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="6" label="现金等价物">
           <n-input :value="formModel.transform?.cashes" placeholder="" readonly="true" />

@@ -12,13 +12,13 @@ import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { CustomerPicker, MemberPicker, TeamPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { project as api } from '@/service/api/crm'
 import { bizType, subject } from '@/service/api/masterdata'
 import { approve } from '@/service/api/workflow'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import {
@@ -33,8 +33,6 @@ import {
 } from './columns'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
@@ -390,11 +388,6 @@ const {
       indate: val => toDateLabel(val),
       insure: val => toDateLabel(val),
     },
-    enum: {
-      types: 'trade_project_types',
-      pattern: 'trade_project_pattern',
-      paymetn: 'trade_project_payment',
-    },
   }),
   beforeEdit: async () => {
     normalizeLines(formModel)
@@ -446,8 +439,8 @@ const {
     if (Array.isArray(data.incomes) && data.incomes.length !== 0) {
       data.incomes.forEach((item: any) => {
         item.transform = {}
-        item.transform.invoice = enumStore.getLabel('trade_invoice_types', item.invoice, 'name')
-        item.transform.payment = enumStore.getLabel('trade_project_payment', item.payment)
+        item.transform.invoice = dictLabel('trade_invoice_types', item.invoice, 'name')
+        item.transform.payment = dictLabel('trade_project_payment', item.payment)
         item.transform.months = item.months && item.months.length > 0 ? item.months.toString() : null
       })
     }
@@ -840,7 +833,7 @@ export default { name: 'CrmProjectDetail' }
         <n-form-item-gi :span="8" label="项目类型" path="types">
           <n-select
             v-model:value="formModel.types"
-            :options="enumStore.getEnumOptions('trade_project_types')"
+            :options="dictOptions('trade_project_types')"
             clearable
           />
         </n-form-item-gi>
@@ -877,7 +870,7 @@ export default { name: 'CrmProjectDetail' }
         <n-form-item-gi :span="8" label="业务模式" path="pattern">
           <n-select
             v-model:value="formModel.pattern"
-            :options="enumStore.getEnumOptions('trade_project_pattern')"
+            :options="dictOptions('trade_project_pattern')"
             clearable
           />
         </n-form-item-gi>
@@ -1039,7 +1032,7 @@ export default { name: 'CrmProjectDetail' }
             <template #invoice_edit="{ row }">
               <n-select
                 v-model:value="row.invoice"
-                :options="enumStore.getEnumOptions('trade_invoice_types', 'name')"
+                :options="dictOptions('trade_invoice_types', 'name')"
                 clearable
                 @update:value="(_value, options: Recordable) => row.invoice_name = options.label"
               />
@@ -1062,7 +1055,7 @@ export default { name: 'CrmProjectDetail' }
             <template #payment_edit="{ row }">
               <n-select
                 v-model:value="row.payment"
-                :options="enumStore.getEnumOptions('trade_project_payment')"
+                :options="dictOptions('trade_project_payment')"
                 clearable
                 @update:value="(_value, options) => handleIncomesPaymentSelected(row, options)"
               />
@@ -1302,7 +1295,7 @@ export default { name: 'CrmProjectDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -1315,7 +1308,7 @@ export default { name: 'CrmProjectDetail' }
               <n-input :value="formModel.transform?.date" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="项目类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('trade_project_types', formModel.types)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="合同编号">
               <n-input v-model:value="formModel.no" placeholder="" readonly="true" />
@@ -1340,7 +1333,7 @@ export default { name: 'CrmProjectDetail' }
               <n-input v-model:value="formModel.renew" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="业务模式">
-              <n-input :value="formModel.transform?.pattern" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('trade_project_pattern', formModel.pattern)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="履约保证金">
               <n-input-number v-model:value="formModel.ensure" placeholder="" :readonly="true" :show-button="false" />
@@ -1500,7 +1493,7 @@ export default { name: 'CrmProjectDetail' }
             <n-collapse-item title="收入明细" name="incomes">
               <SpTable ref="incomesViewTableRef" v-bind="incomesViewGridOptions" :data-source="formModel.incomes">
                 <template #payment_default="{ row }">
-                  {{ enumStore.getLabel('trade_project_payment', row.payment) }}
+                  {{ dictLabel('trade_project_payment', row.payment) }}
                 </template>
               </SpTable>
             </n-collapse-item>

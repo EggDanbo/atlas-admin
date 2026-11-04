@@ -6,13 +6,11 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { shift as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -100,9 +98,6 @@ const {
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      types: 'checkin_outside_types',
-    },
   }),
   onBeforeOpen: (params) => {
     isApprove.value = params.approve
@@ -165,7 +160,7 @@ export default { name: 'HrApplyShiftDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

@@ -9,12 +9,12 @@ import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { ResumePicker, TeamPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { roster as infoApi } from '@/service/api/hr'
 import { onboard as api } from '@/service/api/hr/movement'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import entry from '@/views/hr/resume/entry.vue'
@@ -24,8 +24,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
@@ -369,7 +367,7 @@ export default { name: 'HrMovementOnboardDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

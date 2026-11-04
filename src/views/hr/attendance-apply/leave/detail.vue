@@ -6,15 +6,14 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { leave as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import { gridOptions, viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
 
-const enumStore = useEnumStore()
 const userStore = useUserStore()
 
 const tableRef = ref<TableInstance | null>(null)
@@ -106,9 +105,6 @@ const {
       expire: val => toDateLabel(val),
       leave: val => val ? '是' : '否',
     },
-    enum: {
-      types: 'checkin_vacation_types',
-    },
   }),
   onBeforeOpen: (params) => {
     isApprove.value = params.approve
@@ -180,7 +176,7 @@ export default { name: 'HrApplyLeaveDetail' }
         <n-form-item-gi :span="8" label="请假类型" path="types">
           <n-select
             v-model:value="formModel.types"
-            :options="enumStore.getEnumOptions('checkin_vacation_types')"
+            :options="dictOptions('checkin_vacation_types')"
             clearable
             @update:value="handleTypesChange"
           />
@@ -259,7 +255,7 @@ export default { name: 'HrApplyLeaveDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -272,7 +268,7 @@ export default { name: 'HrApplyLeaveDetail' }
               <n-input v-model:value="formModel.user_name" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="请假类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly />
+              <n-input :value="dictLabel('checkin_vacation_types', formModel.types)" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="16" label="请假原因">
               <n-input v-model:value="formModel.digest" placeholder="" readonly />

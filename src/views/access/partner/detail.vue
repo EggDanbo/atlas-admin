@@ -5,15 +5,13 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpDict } from '@/components/SpDict'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { partner as api } from '@/service/api/access'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -75,9 +73,6 @@ const {
   },
   transform: createTransformer({
     string: ['types'],
-    enum: {
-      types: 'organ_outer_types',
-    },
   }),
 })
 
@@ -109,7 +104,7 @@ export default { name: 'AccessPartnerDetail' }
           <n-select
             v-model:value="formModel.types"
             placeholder="机构类型"
-            :options="enumStore.getEnumOptions('organ_outer_types')"
+            :options="dictOptions('organ_outer_types')"
           />
         </n-form-item-gi>
         <n-form-item-gi :span="9" label="税号" path="no">
@@ -163,7 +158,7 @@ export default { name: 'AccessPartnerDetail' }
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="7" label="机构类型">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('organ_outer_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="9" label="税号">
           <n-input v-model:value="formModel.no" placeholder="" readonly="true" />

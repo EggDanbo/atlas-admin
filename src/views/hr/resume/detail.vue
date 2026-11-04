@@ -3,9 +3,9 @@ import type { FormRules } from 'naive-ui'
 import type { ModalInst, OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { resume as api } from '@/service/api/hr'
-import { useEnumStore } from '@/store/modules/enums'
 import { rules } from '@/utils/rules'
 
 import toast from '@/utils/toast'
@@ -13,8 +13,6 @@ import toast from '@/utils/toast'
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const updateReasonModalRef = ref<ModalInst | null>(null)
 const updateReasonValue = ref<string | null>(null)
@@ -66,10 +64,6 @@ const {
   },
   transform: createTransformer({
     string: ['status', 'gender'],
-    enum: {
-      status: 'staff_resume_status',
-      gender: 'organ_user_gender',
-    },
   }),
 })
 
@@ -185,7 +179,7 @@ export default { name: 'HrResumeDetail' }
           />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="性别">
-          <n-input :value="formModel.transform?.gender" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('organ_user_gender', formModel.gender)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="年龄">
           <n-input v-model:value="formModel.age" placeholder="年龄" readonly="true" />
@@ -204,7 +198,7 @@ export default { name: 'HrResumeDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_resume_status', formModel.status) }}
+        {{ dictLabel('staff_resume_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="12" label="姓名">
@@ -217,7 +211,7 @@ export default { name: 'HrResumeDetail' }
           <n-input v-model:value="formModel.card" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="性别">
-          <n-input :value="formModel.transform?.gender" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('organ_user_gender', formModel.gender)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="年龄">
           <n-input v-model:value="formModel.age" placeholder="" readonly="true" />

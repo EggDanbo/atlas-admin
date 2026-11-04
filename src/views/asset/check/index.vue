@@ -3,14 +3,12 @@ import type { ModalInst, OpenModal } from '@/components/SpModal'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { check as api } from '@/service/api/asset'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import toast from '@/utils/toast.ts'
 import bill from './bill.vue'
-
-const enumStore = useEnumStore()
 
 const btnLoading = ref<boolean>(false)
 
@@ -178,7 +176,7 @@ export default { name: 'AssetCheck' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('asset_check_status')"
+              :options="dictOptions('asset_check_status')"
               placeholder="盘点结果"
               clearable
             />
@@ -247,7 +245,7 @@ export default { name: 'AssetCheck' }
         <div class="w-full flex p-2">
           <n-select
             v-model:value="confirmData.status"
-            :options="enumStore.getEnumOptions('asset_check_status')"
+            :options="dictOptions('asset_check_status')"
             clearable
           />
         </div>

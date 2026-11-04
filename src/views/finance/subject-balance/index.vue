@@ -4,15 +4,13 @@ import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { subjectBalance as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { getYearFirstAndLastMonthTimestamp } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import zflz from '@/views/finance/general-ledger/table.vue'
-
-const enumStore = useEnumStore()
 
 const zflzRef = ref<OpenModal | null>(null)
 
@@ -138,7 +136,7 @@ export default { name: 'FinanceBalanceSubject' }
               max-tag-count="responsive"
               multiple
               clearable
-              :options="enumStore.getEnumOptions('basic_content_types')"
+              :options="dictOptions('basic_content_types')"
               @update:value="loadContentOptions"
             />
           </n-gi>

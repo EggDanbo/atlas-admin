@@ -5,11 +5,11 @@ import { PdfSetting } from '@/components/BizPrint'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useWindowSizeFn } from '@/hooks/help/useWindowSizeFn'
 import { useListPage } from '@/hooks/list'
 import { dimensionLedger as api } from '@/service/api/finance'
 import { subject as contentApi, dimension } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import { getYearFirstAndLastMonthTimestamp } from '@/utils/dateUtil'
 import { getViewportOffset } from '@/utils/domUtils'
@@ -20,7 +20,6 @@ import toast from '@/utils/toast'
 import detail from '@/views/finance/voucher/detail.vue'
 
 const userStore = useUserStore()
-const enumStore = useEnumStore()
 
 /**
  * 深拷贝工具函数
@@ -296,7 +295,7 @@ export default { name: 'FinanceLedgerDimension' }
                 <n-input-group>
                   <n-select
                     v-model:value="queryModel.assist_type"
-                    :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+                    :options="dictOptions('basic_content_assist', 'label')"
                     :style="{ width: '210px' }"
                     @update:value="() => {
                       loadAssistTreeOptions()

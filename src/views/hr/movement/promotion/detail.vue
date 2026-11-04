@@ -9,12 +9,12 @@ import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { StaffPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { roster as infoApi } from '@/service/api/hr'
 import { promotion as api } from '@/service/api/hr/movement'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, viewGridOptions } from './columns'
@@ -23,8 +23,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const tableRef = ref<TableInstance | null>(null)
 const viewTableRef = ref<TableInstance | null>(null)
@@ -160,9 +158,6 @@ const {
     custom: {
       date: val => toDateLabel(val),
       predict: val => toDateLabel(val),
-    },
-    enum: {
-      pattern: 'staff_grade_types',
     },
   }),
   beforeEdit: async () => {
@@ -302,7 +297,7 @@ export default { name: 'HrMovementPromotionDetail' }
         <n-form-item-gi :span="8" label="晋级类型" path="pattern">
           <n-select
             v-model:value="formModel.pattern"
-            :options="enumStore.getEnumOptions('staff_grade_types')"
+            :options="dictOptions('staff_grade_types')"
             clearable
           />
         </n-form-item-gi>
@@ -386,7 +381,7 @@ export default { name: 'HrMovementPromotionDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -399,7 +394,7 @@ export default { name: 'HrMovementPromotionDetail' }
               <n-input :value="formModel.transform?.predict" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="8" label="晋级类型">
-              <n-input :value="formModel.transform?.pattern" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('staff_grade_types', formModel.pattern)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="24" label="申请单位">
               <n-input v-model:value="formModel.team_name" placeholder="" readonly />

@@ -5,10 +5,10 @@ import { PdfSetting } from '@/components/BizPrint'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SalaryGroupPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { generate as api, group as groupApi } from '@/service/api/hr/payroll'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -17,8 +17,6 @@ import detail from './detail.vue'
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
 const battchModalRef = ref<ModalInst | null>(null)
-
-const enumStore = useEnumStore()
 
 const btnLoading = ref<boolean>(false)
 
@@ -317,7 +315,7 @@ export default { name: 'HrPayrollGenerate' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.status"
-              :options="enumStore.getEnumOptions('staff_salary_status')"
+              :options="dictOptions('staff_salary_status')"
               placeholder="工资状态"
               clearable
               @update:value="tableRef.clear()"

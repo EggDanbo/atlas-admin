@@ -7,11 +7,11 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
+import { dictLabel } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { document as api } from '@/service/api/archive'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 
@@ -21,8 +21,6 @@ const logBizRef = ref<OpenModal | null>(null)
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -182,7 +180,7 @@ export default { name: 'ArchiveDocumentDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('paper_info_status', formModel.status) }}
+        {{ dictLabel('paper_info_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="20">
         <n-form-item-gi :span="24" label="所属单位">

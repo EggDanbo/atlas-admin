@@ -4,15 +4,13 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { commercial as api } from '@/service/api/hr/insurance'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import toast from '@/utils/toast'
 import detail from './detail.vue'
 import list from './table.vue'
-
-const enumStore = useEnumStore()
 
 const detailRef = ref<OpenModal | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
@@ -287,7 +285,7 @@ export default { name: 'HrInsuranceCommercial' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.types"
-              :options="enumStore.getEnumOptions('staff_insure_status')"
+              :options="dictOptions('staff_insure_status')"
               placeholder="保单状态"
               clearable
               @update:value="tableRef.clear()"

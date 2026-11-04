@@ -3,16 +3,14 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { unit as teamApi } from '@/service/api/access'
 import { dimension as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 const teamOptions = ref<any>([])
 async function loadTeamTree() {
@@ -129,7 +127,7 @@ export default { name: 'MdmDimensionDetail' }
             v-model:value="formModel.types"
             placeholder="请选择"
             clearable
-            :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+            :options="dictOptions('basic_content_assist', 'label')"
             @update:value="handleRules"
           />
         </n-form-item-gi>

@@ -8,11 +8,11 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { borrow as api, document } from '@/service/api/archive'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 
@@ -20,8 +20,6 @@ const emit = defineEmits(['on-action'])
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -139,9 +137,6 @@ const {
     number: ['date'],
     custom: {
       date: val => toDateLabel(val),
-    },
-    enum: {
-      types: 'paper_borrow_types',
     },
   }),
   beforeEdit: async () => {
@@ -275,7 +270,7 @@ export default { name: 'ArchiveBorrowDetail' }
           <n-date-picker v-model:value="formModel.date" type="date" fast-month-select clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="借阅类型" path="types">
-          <n-select v-model:value="formModel.types" :options="enumStore.getEnumOptions('paper_borrow_types')" clearable />
+          <n-select v-model:value="formModel.types" :options="dictOptions('paper_borrow_types')" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="借阅档案" path="team_id">
           <n-select v-model:value="formModel.paper_id" :options="paperListOptions" clearable />
@@ -303,7 +298,7 @@ export default { name: 'ArchiveBorrowDetail' }
       :model="formModel"
     >
       <div v-if="formModel.status" class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -319,7 +314,7 @@ export default { name: 'ArchiveBorrowDetail' }
               <n-input :value="formModel.transform?.date" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="16" label="借阅类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly />
+              <n-input :value="dictLabel('paper_borrow_types', formModel.types)" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="24" label="借阅档案">
               <n-input v-model:value="formModel.paper_name" placeholder="" readonly />
@@ -459,7 +454,7 @@ export default { name: 'ArchiveBorrowDetail' }
         <div class="w-full">
           <n-select
             v-model:value="confirmStates"
-            :options="enumStore.getEnumOptions('paper_borrow_states')"
+            :options="dictOptions('paper_borrow_states')"
             placeholder="归还状态"
             @update:value="confirmRemark = null"
           />

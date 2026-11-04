@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { cashflowItem as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -61,10 +59,6 @@ const {
   },
   transform: createTransformer({
     string: ['direction', 'types'],
-    enum: {
-      direction: 'basic_cashflow_direction',
-      types: 'basic_cashflow_types',
-    },
   }),
 })
 
@@ -96,7 +90,7 @@ export default { name: 'MdmCashflowItemDetail' }
           <n-select
             v-model:value="formModel.title"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_cashflow_group', 'label')"
+            :options="dictOptions('basic_cashflow_group', 'label')"
             clearable
           />
         </n-form-item-gi>
@@ -110,7 +104,7 @@ export default { name: 'MdmCashflowItemDetail' }
           <n-select
             v-model:value="formModel.direction"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_cashflow_direction')"
+            :options="dictOptions('basic_cashflow_direction')"
             clearable
           />
         </n-form-item-gi>
@@ -147,7 +141,7 @@ export default { name: 'MdmCashflowItemDetail' }
           <n-input v-model:value="formModel.name" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="现金流方向">
-          <n-input :value="formModel.transform?.direction" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_cashflow_direction', formModel.direction)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="24" label="对应借方科目">
           <n-input v-model:value="formModel.content_debit" placeholder="" readonly="true" />

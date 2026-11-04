@@ -5,15 +5,13 @@ import { format } from 'date-fns'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { housing as api } from '@/service/api/hr/insurance'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -87,9 +85,6 @@ const {
       add_date: val => val ? format(Number(val), 'yyyy-MM') : null,
       house_date: val => toDateLabel(val),
     },
-    enum: {
-      house_buy: 'staff_info_house',
-    },
   }),
 })
 
@@ -141,7 +136,7 @@ export default { name: 'HrInsuranceHousingDetail' }
         <n-form-item-gi :span="12" label="是否购买" path="house_buy">
           <n-select
             v-model:value="formModel.house_buy"
-            :options="enumStore.getEnumOptions('staff_info_house')"
+            :options="dictOptions('staff_info_house')"
             clearable
             @update:value="handleRules"
           />
@@ -178,7 +173,7 @@ export default { name: 'HrInsuranceHousingDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_info_house', formModel.house_buy) }}
+        {{ dictLabel('staff_info_house', formModel.house_buy) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="24" label="单位名称">
@@ -203,7 +198,7 @@ export default { name: 'HrInsuranceHousingDetail' }
           <n-input :value="formModel.transform?.add_date" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="是否购买">
-          <n-input :value="formModel.transform?.house_buy" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('staff_info_house', formModel.house_buy)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="购买日期">
           <n-input :value="formModel.transform?.house_date" placeholder="" readonly="true" />

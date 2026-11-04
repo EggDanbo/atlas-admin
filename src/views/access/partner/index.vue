@@ -4,9 +4,9 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { partner as api } from '@/service/api/access'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import toast from '@/utils/toast'
 import detail from './detail.vue'
@@ -18,8 +18,6 @@ const batchImportDownloadRef = ref<InstanceType<typeof BatchImportDownloadModal>
 const batchImportRef = ref<InstanceType<typeof SpBatchImportModal> | null>(null)
 const checkFileUrl = ref<string | null>(null)
 const checkFileMessage = ref<string | null>(null)
-
-const enumStore = useEnumStore()
 
 const querySchemas = computed(() => ({
   status: [
@@ -192,7 +190,7 @@ export default { name: 'AccessPartner' }
             <n-select v-model:value="queryModel.stoped" :options="querySchemas.status" placeholder="是否停用" clearable @update:value="tableRef.clear()" />
           </n-gi>
           <n-gi span="1">
-            <n-select v-model:value="queryModel.types" :options="enumStore.getEnumOptions('organ_outer_types')" placeholder="机构类型" clearable @update:value="tableRef.clear()" />
+            <n-select v-model:value="queryModel.types" :options="dictOptions('organ_outer_types')" placeholder="机构类型" clearable @update:value="tableRef.clear()" />
           </n-gi>
           <n-gi span="3">
             <n-input v-model:value="queryModel.filter" placeholder="编码、名称等" type="text" clearable />

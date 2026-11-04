@@ -5,13 +5,11 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { field as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -98,9 +96,6 @@ const {
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      types: 'checkin_outside_types',
-    },
   }),
   onBeforeOpen: (params) => {
     isApprove.value = params.approve
@@ -140,7 +135,7 @@ export default { name: 'HrApplyFieldDetail' }
           <n-date-picker v-model:value="formModel.expire" type="date" fast-month-select clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="外出类型" path="types">
-          <n-select v-model:value="formModel.types" :options="enumStore.getEnumOptions('checkin_outside_types')" clearable />
+          <n-select v-model:value="formModel.types" :options="dictOptions('checkin_outside_types')" clearable />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="打卡地点" path="title">
           <n-input v-model:value="formModel.title" clearable />
@@ -162,7 +157,7 @@ export default { name: 'HrApplyFieldDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />
@@ -184,7 +179,7 @@ export default { name: 'HrApplyFieldDetail' }
               <n-input :value="formModel.transform?.expire" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="外出类型">
-              <n-input :value="formModel.transform?.types" placeholder="" readonly />
+              <n-input :value="dictLabel('checkin_outside_types', formModel.types)" placeholder="" readonly />
             </n-form-item-gi>
             <n-form-item-gi :span="12" label="打卡地点">
               <n-input v-model:value="formModel.title" placeholder="" readonly />

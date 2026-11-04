@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { itemCategory as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -102,7 +100,7 @@ export default { name: 'BasicArticleDetail' }
         <n-form-item-gi :span="12" label="分类属性" path="types">
           <n-select
             v-model:value="formModel.types"
-            :options="enumStore.getEnumOptions('basic_article_types', 'label')"
+            :options="dictOptions('basic_article_types', 'label')"
             max-tag-count="responsive"
             multiple
             clearable

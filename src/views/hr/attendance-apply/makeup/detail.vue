@@ -6,14 +6,12 @@ import { BizApprovalActions, BizProcessSider } from '@/components/BizApproval'
 import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { makeup as api } from '@/service/api/hr/attendance-apply'
-import { useEnumStore } from '@/store/modules/enums'
 import { viewGridOptions } from './columns'
 
 const emit = defineEmits(['on-action'])
-
-const enumStore = useEnumStore()
 
 const viewTableRef = ref<TableInstance | null>(null)
 
@@ -100,7 +98,7 @@ export default { name: 'HrApplyMakeupDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

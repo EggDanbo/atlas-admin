@@ -5,16 +5,14 @@ import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { AuxDimensionPicker } from '@/components/SpTablePicker'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { dimensionBalance as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { getYearFirstAndLastMonthTimestamp } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import wdmxz from '@/views/finance/dimension-ledger/table.vue'
-
-const enumStore = useEnumStore()
 
 const wdmxzRef = ref<OpenModal | null>(null)
 
@@ -135,7 +133,7 @@ export default { name: 'FinanceBalanceDimension' }
             <n-input-group>
               <n-select
                 v-model:value="queryModel.assist_type"
-                :options="enumStore.getEnumOptions('basic_content_assist', 'label')"
+                :options="dictOptions('basic_content_assist', 'label')"
                 placeholder="维度分类"
                 :style="{ width: '210px' }"
                 @update:value="tableRef.clear()"

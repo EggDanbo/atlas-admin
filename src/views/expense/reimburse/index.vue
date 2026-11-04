@@ -7,12 +7,12 @@ import { SpCascader } from '@/components/SpCascader'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import common from '@/service/api/common'
 import { reimburse as api } from '@/service/api/expense'
 import { subject } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { defDate, unDate } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
@@ -32,8 +32,6 @@ const vouchModalRef = ref<ModalInst | null>(null)
 const vouchDetailRef = ref<OpenModal | null>(null)
 
 const btnLoading = ref<boolean>(false)
-
-const enumStore = useEnumStore()
 
 const querySchemas = computed(() => ({
   status: [
@@ -310,7 +308,7 @@ export default { name: 'ExpenseClaimReimburse' }
           <n-gi span="1">
             <n-select
               v-model:value="queryModel.types"
-              :options="enumStore.getEnumOptions('pense_bill_types')"
+              :options="dictOptions('pense_bill_types')"
               placeholder="单据类型"
               max-tag-count="responsive"
               multiple

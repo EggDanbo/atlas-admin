@@ -17,7 +17,6 @@ const allStoreIds = [
   'config-store',
   'user-store',
   'async-route-store',
-  'enums-store',
 ]
 
 /**

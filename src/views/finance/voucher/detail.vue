@@ -10,10 +10,10 @@ import { BizLogChanges, LogBiz } from '@/components/BizLogs/Biz'
 import { BizTableOperate } from '@/components/BizTableOperate'
 import { SpCascader } from '@/components/SpCascader'
 import { AuxDimensionPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { voucher as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 import { gridOptions, updateDataTableCount, viewGridOptions } from './columns'
@@ -31,8 +31,6 @@ const modalMode = ref<string | null>(null)
 
 const updateNoValue = ref<string | null>(null)
 const updateNoModalRef = ref<ModalInst | null>(null)
-
-const enumStore = useEnumStore()
 
 const tenantId = ref<any>(null)
 const disabledOptions = ref<any>({
@@ -165,9 +163,6 @@ const {
   transform: createTransformer({
     string: ['source'],
     number: ['date'],
-    enum: {
-      source: 'vouch_entry_source',
-    },
     custom: {
       date: val => val ? format(Number(val), 'yyyy-MM') : null,
     },
@@ -489,7 +484,7 @@ export default { name: 'FinanceVoucherCreateDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('vouch_entry_status', formModel.status) }}
+        {{ dictLabel('vouch_entry_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="8" label="凭证日期">

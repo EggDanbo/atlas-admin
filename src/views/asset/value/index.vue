@@ -4,15 +4,13 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
+import { dictOptions } from '@/dicts'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { value as api } from '@/service/api/asset'
-import { useEnumStore } from '@/store/modules/enums'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
-
-const enumStore = useEnumStore()
 
 const dateModalRef = ref<ModalInst | null>(null)
 const logBizRef = ref<OpenModal | null>(null)
@@ -189,7 +187,7 @@ export default { name: 'AssetValue' }
           <n-gi span="2">
             <n-select
               v-model:value="queryModel.methods"
-              :options="enumStore.getEnumOptions('asset_info_method')"
+              :options="dictOptions('asset_info_method')"
               placeholder="折旧方法"
               max-tag-count="responsive"
               multiple

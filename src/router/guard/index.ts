@@ -11,7 +11,6 @@ import { useLoadingBar } from '@/hooks/naiveui/useLoadingBar'
 import { errorRoute } from '@/router/base'
 import { useAsyncRouteStore } from '@/store/modules/async-route'
 import { useConfigStore } from '@/store/modules/config'
-import { useEnumStore } from '@/store/modules/enums'
 import { useTabbarStore } from '@/store/modules/tabbar'
 import { useUserStore } from '@/store/modules/user'
 import userNet from '@/utils/net/user'
@@ -74,8 +73,6 @@ export function createRouterGuards(router: Router) {
       }
       return redirectData
     }
-
-    await useEnumStore().asyncEnums()
 
     // 获取用户信息
     const userStore = useUserStore()

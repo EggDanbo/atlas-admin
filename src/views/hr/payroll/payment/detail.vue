@@ -2,15 +2,13 @@
 import type { OpenModal } from '@/components/SpModal'
 import { format } from 'date-fns'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { payment as api } from '@/service/api/hr/payroll'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -48,9 +46,6 @@ const {
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
     },
-    enum: {
-      status: 'staff_salary_status',
-    },
   }),
 })
 
@@ -74,7 +69,7 @@ export default { name: 'HrPayrollPaymentDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_salary_status', formModel.status) }}
+        {{ dictLabel('staff_salary_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="16" label="单位部门">

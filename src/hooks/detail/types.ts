@@ -11,14 +11,6 @@ export interface DetailParams {
   [key: string]: any
 }
 
-/** 枚举转换配置 */
-export interface EnumTransformItem {
-  /** 枚举 key */
-  key: string
-  /** 匹配方式，默认 'value' */
-  matchBy?: 'value' | 'name'
-}
-
 /** 字段转换配置 */
 export interface FieldTransformConfig {
   /** 转为数字的字段（null/空字符串 → null） */
@@ -27,16 +19,6 @@ export interface FieldTransformConfig {
   string?: string[]
   /** 0 转 null 的字段 */
   nullIfZero?: string[]
-  /**
-   * 枚举转换配置
-   * 将字段值转换为枚举标签
-   * @example
-   * enum: {
-   *   status: 'UserStatus',                          // 使用 value 匹配
-   *   type: { key: 'UserType', matchBy: 'name' },    // 使用 name 匹配
-   * }
-   */
-  enum?: Record<string, string | EnumTransformItem>
   /**
    * 自定义转换函数
    * @example

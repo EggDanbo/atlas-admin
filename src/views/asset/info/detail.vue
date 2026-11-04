@@ -8,12 +8,12 @@ import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { info as api } from '@/service/api/asset'
 import { assetCategory as assetApi } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 
 const emit = defineEmits(['on-action'])
@@ -22,8 +22,6 @@ const logBizRef = ref<OpenModal | null>(null)
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -129,10 +127,6 @@ const {
       disuse: val => toDateLabel(val),
       date: val => val ? format(Number(val), 'yyyy-MM') : null,
     },
-    enum: {
-      source: 'asset_info_source',
-      methods: 'asset_info_method',
-    },
   }),
   async beforeEdit() {
     await load()
@@ -214,7 +208,7 @@ export default { name: 'AssetInfoDetail' }
               <n-select
                 v-model:value="formModel.source"
                 placeholder="请选择"
-                :options="enumStore.getEnumOptions('asset_info_source')"
+                :options="dictOptions('asset_info_source')"
                 clearable
               />
             </n-form-item-gi>
@@ -279,7 +273,7 @@ export default { name: 'AssetInfoDetail' }
           <n-select
             v-model:value="formModel.methods"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('asset_info_method')"
+            :options="dictOptions('asset_info_method')"
             :disabled="formModel.opt_renew"
             clearable
           />
@@ -352,7 +346,7 @@ export default { name: 'AssetInfoDetail' }
               <n-input v-model:value="formModel.unit" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="14" label="取得方式">
-              <n-input :value="formModel.transform?.source" placeholder="" readonly="true" />
+              <n-input :value="dictLabel('asset_info_source', formModel.source)" placeholder="" readonly="true" />
             </n-form-item-gi>
             <n-form-item-gi :span="10" label="序列号">
               <n-input v-model:value="formModel.serial" placeholder="" readonly="true" />
@@ -394,7 +388,7 @@ export default { name: 'AssetInfoDetail' }
           <n-input-number v-model:value="formModel.amount" placeholder="" :precision="2" :show-button="false" :readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="折旧方式">
-          <n-input :value="formModel.transform?.methods" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('asset_info_method', formModel.methods)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="折旧月数">
           <n-input-number v-model:value="formModel.durable" placeholder="" :show-button="false" :readonly="true" />

@@ -6,11 +6,11 @@ import BizDraftBox from '@/components/BizDraftBox'
 import { Upload } from '@/components/BizFile'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { contract as api } from '@/service/api/hr/relation'
-import { useEnumStore } from '@/store/modules/enums'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
 
@@ -20,8 +20,6 @@ const logBizRef = ref<OpenModal | null>(null)
 
 const { getPermission } = useTabbar()
 const tabPermName = getPermission()
-
-const enumStore = useEnumStore()
 
 const updateRenewModalRef = ref<ModalInst | null>(null)
 const updateRenewInfo = ref({
@@ -121,9 +119,6 @@ const {
       date: val => val ? format(Number(val), 'yyyy-MM') : null,
       start: val => toDateLabel(val),
       expire: val => toDateLabel(val),
-    },
-    enum: {
-      status: 'staff_labor_status',
     },
   }),
   async beforeEdit() {
@@ -336,7 +331,7 @@ export default { name: 'HrRelationContractDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('staff_labor_status', formModel.status) }}
+        {{ dictLabel('staff_labor_status', formModel.status) }}
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="12" label="签订人">

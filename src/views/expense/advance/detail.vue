@@ -8,13 +8,13 @@ import { LogBiz } from '@/components/BizLogs/Biz'
 import { SpCascader } from '@/components/SpCascader'
 import { SpDict } from '@/components/SpDict'
 import { ExpenseContractPicker, MemberPicker } from '@/components/SpTablePicker'
+import { dictLabel } from '@/dicts'
 import { createTransformer, toDateLabel, useDetail } from '@/hooks/detail'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { unit as teamApi } from '@/service/api/access'
 import { advance as api, query } from '@/service/api/expense'
 import { roster } from '@/service/api/hr'
 import { bankAccount, subject } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 import { useUserStore } from '@/store/modules/user'
 import { tenantStorage } from '@/utils/tenant'
 
@@ -24,7 +24,6 @@ const { getPermission } = useTabbar()
 const tabPermName = getPermission()
 
 const userStore = useUserStore()
-const enumStore = useEnumStore()
 
 const logBizRef = ref<OpenModal | null>(null)
 
@@ -332,7 +331,7 @@ export default { name: 'ExpenseClaimAdvanceDetail' }
       :model="formModel"
     >
       <div class="stamp-text">
-        {{ enumStore.getLabel('workflow_status', formModel.status) }}
+        {{ dictLabel('workflow_status', formModel.status) }}
       </div>
       <n-layout has-sider>
         <BizProcessSider :model="formModel" />

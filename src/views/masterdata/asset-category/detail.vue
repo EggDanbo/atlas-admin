@@ -3,15 +3,13 @@ import type { FormRules } from 'naive-ui'
 import type { OpenModal } from '@/components/SpModal'
 import BizDraftBox from '@/components/BizDraftBox'
 import { LogBiz } from '@/components/BizLogs/Biz'
+import { dictLabel, dictOptions } from '@/dicts'
 import { createTransformer, useDetail } from '@/hooks/detail'
 import { assetCategory as api } from '@/service/api/masterdata'
-import { useEnumStore } from '@/store/modules/enums'
 
 const emit = defineEmits(['on-action'])
 
 const logBizRef = ref<OpenModal | null>(null)
-
-const enumStore = useEnumStore()
 
 function createFormModel() {
   return {
@@ -62,10 +60,6 @@ const {
   },
   transform: createTransformer({
     string: ['types', 'methods'],
-    enum: {
-      types: 'basic_asset_types',
-      methods: 'basic_asset_method',
-    },
   }),
 })
 
@@ -97,7 +91,7 @@ export default { name: 'MdmAssetCategoryDetail' }
           <n-select
             v-model:value="formModel.types"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_asset_types')"
+            :options="dictOptions('basic_asset_types')"
             clearable
           />
         </n-form-item-gi>
@@ -125,7 +119,7 @@ export default { name: 'MdmAssetCategoryDetail' }
           <n-select
             v-model:value="formModel.methods"
             placeholder="请选择"
-            :options="enumStore.getEnumOptions('basic_asset_method')"
+            :options="dictOptions('basic_asset_method')"
             clearable
           />
         </n-form-item-gi>
@@ -164,7 +158,7 @@ export default { name: 'MdmAssetCategoryDetail' }
       </div>
       <n-grid :cols="24" :x-gap="24">
         <n-form-item-gi :span="12" label="分类属性">
-          <n-input :value="formModel.transform?.types" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_asset_types', formModel.types)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="12" label="分类编码">
           <n-input v-model:value="formModel.code" placeholder="" readonly="true" />
@@ -182,7 +176,7 @@ export default { name: 'MdmAssetCategoryDetail' }
           <n-input-number v-model:value="formModel.life" placeholder="" :readonly="true" :show-button="false" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="折旧方法">
-          <n-input :value="formModel.transform?.methods" placeholder="" readonly="true" />
+          <n-input :value="dictLabel('basic_asset_method', formModel.methods)" placeholder="" readonly="true" />
         </n-form-item-gi>
         <n-form-item-gi :span="8" label="折旧月数">
           <n-input-number v-model:value="formModel.durable" placeholder="" :readonly="true" :show-button="false" />

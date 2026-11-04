@@ -1,11 +1,9 @@
 import type { DataFormatColumn, TableColumn } from './types/table'
 import { format, isValid, parse } from 'date-fns'
-import { normalizeEnumsType, useEnumStoreWithOut } from '@/store/modules/enums'
+import { dictLabel, hasDict, normalizeDictType } from '@/dicts'
 
 import fmtMoney from '@/utils/fmtMoney'
 import { isNumber } from '@/utils/is'
-
-const enumStore = useEnumStoreWithOut()
 
 // 格式化内容
 export function formatter(col: TableColumn, dataFmt: DataFormatColumn) {
@@ -140,7 +138,7 @@ function listFormatter(col: TableColumn, dataFmt: DataFormatColumn) {
     col.formatter = ({ cellValue }) => kv[cellValue] || ''
   }
   else if (enums) {
-    col.formatter = ({ cellValue }) => enumStore.getLabel(enums, cellValue) || ''
+    col.formatter = ({ cellValue }) => dictLabel(enums, cellValue) || ''
   }
 }
 
@@ -163,7 +161,7 @@ function listFormatVal(cellValue: any, dataFmt: DataFormatColumn) {
     return kv[cellValue] || ''
   }
   else if (enums) {
-    return enumStore.getLabel(enums, cellValue) || ''
+    return dictLabel(enums, cellValue) || ''
   }
   else {
     return cellValue
@@ -175,20 +173,20 @@ function listFormatVal(cellValue: any, dataFmt: DataFormatColumn) {
 function enumFormatter(col: TableColumn, dataFmt: DataFormatColumn) {
   const { enums } = dataFmt
 
-  if (!enums || !enumStore.getEnum(enums)) {
+  if (!enums || !hasDict(enums)) {
     return
   }
-  const matchBy = normalizeEnumsType(dataFmt.enumstype)
-  col.formatter = ({ cellValue }) => enumStore.getLabel(enums, cellValue as string, matchBy) || ''
+  const matchBy = normalizeDictType(dataFmt.enumstype)
+  col.formatter = ({ cellValue }) => dictLabel(enums, cellValue as string, matchBy) || ''
 }
 
 function enumFormatVal(cellValue: any, dataFmt: DataFormatColumn) {
   const { enums } = dataFmt
 
-  if (!enums || !enumStore.getEnum(enums)) {
+  if (!enums || !hasDict(enums)) {
     return cellValue
   }
-  return enumStore.getLabel(enums, cellValue, normalizeEnumsType(dataFmt.enumstype)) || ''
+  return dictLabel(enums, cellValue, normalizeDictType(dataFmt.enumstype)) || ''
 }
 
 // 金额格式化
