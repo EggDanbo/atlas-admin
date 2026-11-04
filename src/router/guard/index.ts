@@ -1,4 +1,4 @@
-import type { Router, RouteRecordRaw } from 'vue-router'
+import type { RouteLocationNormalized, Router, RouteRecordRaw } from 'vue-router'
 import { projectConfig } from '@/config'
 import {
   ERROR_ROUTE_NAME,
@@ -19,6 +19,29 @@ import token from '@/utils/token'
 
 const $loadingBar = useLoadingBar()
 const whitePathList = [LOGIN_ROUTE_PATH, '/login-v2', '/login-v3'] // no redirect whitelist
+
+/**
+ * 找出目录型路由下第一个真正能渲染的页面
+ *
+ * 侧栏里的「财务核算 / 凭证」「人力资源 / 人事变动」这类节点只负责分组，
+ * 自己没有组件。直接访问（手输地址、收藏夹、刷新、别人发来的链接）会匹配到
+ * 这个空节点，页面渲染成一片空白。
+ */
+function resolveDirectoryRedirect(router: Router, to: RouteLocationNormalized): string | null {
+  const last = to.matched.at(-1)
+  // 有 component 说明是真实页面，不需要处理
+  if (!last || last.components?.default)
+    return null
+
+  // 取第一个可渲染的叶子路由，顺序即路由表声明顺序（= 侧栏菜单顺序），
+  // 这样直接访问 /hr 会落到「员工名册」，而不是按字典序挑出的「团队」。
+  const prefix = `${to.path.replace(/\/+$/, '')}/`
+  const leaf = router
+    .getRoutes()
+    .find(item => item.path.startsWith(prefix) && item.components?.default && !item.children?.length)
+
+  return leaf && leaf.path !== to.path ? leaf.path : null
+}
 
 // 全局定时器引用，用于清理
 let loadingTimer: number | null = null
@@ -91,6 +114,12 @@ export function createRouterGuards(router: Router) {
         return
       }
     }
+
+    // 目录型路由（只做菜单分组、没有自己的组件）直接访问会白屏，先落到它下面的第一个页面。
+    // 放在这里而不是 afterEach：此时动态路由可能已经就绪，命中后直接结束本次导航。
+    const dirTarget = resolveDirectoryRedirect(router, to)
+    if (dirTarget)
+      return { path: dirTarget, replace: true }
 
     // 判断是否已经动态创建了路由
     if (routeStore.getIsAddedRoute) {
