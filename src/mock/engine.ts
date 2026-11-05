@@ -14,6 +14,7 @@ import { resolveFieldEnum } from '../dicts/field-enums'
 import { resolveCrmMock } from './data/crm'
 import { ASSET_BRANDS, ASSET_MODELS, ASSET_NAMES, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
+import { resolveExpenseMock } from './data/expense'
 import {
   createRowContext,
   generateValue,
@@ -794,9 +795,9 @@ const WORKFLOW_BIZ = [
   { label: '资产调拨', key: 'asset_allot', module: 'asset/allot' },
   { label: '资产领用', key: 'asset_apply', module: 'asset/apply' },
   { label: '资产采购', key: 'asset_order', module: 'asset/order' },
-  { label: '费用报销', key: 'pense_apply', module: 'expense/payment' },
-  { label: '借款申请', key: 'pense_borrow', module: 'expense/advance' },
-  { label: '合同签订', key: 'pense_contract', module: 'expense/contract' },
+  { label: '费用报销', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
+  { label: '借款申请', key: 'pense_borrow', module: 'expense/claim/list', no_field: 'claim_no' },
+  { label: '合同签订', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
   { label: '档案借阅', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
@@ -807,7 +808,7 @@ function buildWorkflowItems(kind: string, count = 9) {
     const biz = WORKFLOW_BIZ[index % WORKFLOW_BIZ.length]!
     // 复用该模块的确定性行数据：id / 单号与详情页打开的是同一条记录
     const row = buildRow(biz.module, index)
-    const no = String(row.no ?? row.code ?? row.id)
+    const no = String(row[biz.no_field as string] ?? row.no ?? row.code ?? row.id)
     return {
       id: `${kind === 'apply' ? 'A' : 'P'}${index + 1}`,
       biz_name: biz.label,
@@ -826,10 +827,10 @@ function buildWorkflowItems(kind: string, count = 9) {
 
 /** 工作台：最新动态（同样带上业务键，点击可打开对应详情） */
 const WORKFLOW_DYNAMIC = [
-  { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/payment' },
+  { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
   { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/allot' },
   { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/apply' },
-  { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract' },
+  { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
   { title: '档案借阅已归还', types: '资', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
@@ -845,7 +846,7 @@ function buildWorkplaceDynamic() {
       biz_name: item.title,
       biz_key: item.key,
       biz_id: String(row.id),
-      biz_no: String(row.no ?? row.code ?? row.id),
+      biz_no: String(row[item.no_field] ?? row.no ?? row.code ?? row.id),
       content: `${ctx.team.name} · ${ctx.person.name}`,
       ctime: toDateTimeString(new Date(Date.now() - index * 7200 * 1000)),
     }
@@ -864,7 +865,7 @@ interface MonitorModule {
 const MONITOR_MODULES: MonitorModule[] = [
   { code: 'crm', name: '客户与项目', children: ['客户', '商机', '项目', '开票'] },
   { code: 'hr', name: '人力资源', children: ['花名册', '异动', '考勤', '薪酬'] },
-  { code: 'expense', name: '费用管理', children: ['费用申请', '事前申请', '费用支付', '预算额度'] },
+  { code: 'expense', name: '费用管理', children: ['预算', '费用申请', '合同', '支付'] },
   { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
   { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
 ]
@@ -1064,6 +1065,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // ---------- 运营监控 ----------
   if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
     return ok(buildMonitorOverview())
+
+  // ---------- 费用管理 ----------
+  // 预算/申请/合同/支付共用一份单据数据，支出合计才对得上
+  if (/^expense\//.test(module)) {
+    const payload = resolveExpenseMock(module, params)
+    if (payload)
+      return ok(payload)
+  }
 
   // ---------- 人力资源 ----------
   // 编制、考勤、工资表都由同一份员工主数据派生，人数与工资成本才对得上

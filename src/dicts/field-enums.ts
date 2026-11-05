@@ -10,12 +10,6 @@
  */
 
 export const FIELD_ENUMS: Record<string, Record<string, string>> = {
-  // ---------------- 费用 ----------------
-  'expense/contract': {
-    types: 'pense_contract_types',
-    source: 'pense_contract_source',
-    payment: 'pense_contract_payment',
-  },
 
   // ---------------- 资产 ----------------
   'asset/info': {

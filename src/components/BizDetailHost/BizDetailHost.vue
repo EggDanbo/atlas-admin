@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { OpenModal } from '@/components/SpModal'
+import { useRouter } from 'vue-router'
 import bus from '@/utils/bus'
 import toast from '@/utils/toast'
 
@@ -28,17 +29,20 @@ const BIZ_DETAIL_MAP: Record<string, ReturnType<typeof defineAsyncComponent>> = 
   asset_resume: createAsyncComponent(() => import('@/views/asset/resume/detail.vue')),
   asset_disuse: createAsyncComponent(() => import('@/views/asset/disuse/detail.vue')),
   asset_repair: createAsyncComponent(() => import('@/views/asset/repair/detail.vue')),
-  pense_contract: createAsyncComponent(() => import('@/views/expense/contract/detail.vue')),
-  pense_order: createAsyncComponent(() => import('@/views/expense/purchase/detail.vue')),
-  pense_travel: createAsyncComponent(() => import('@/views/expense/travel/detail.vue')),
-  pense_serve: createAsyncComponent(() => import('@/views/expense/entertain/detail.vue')),
-  pense_apply: createAsyncComponent(() => import('@/views/expense/payment/detail.vue')),
-  pense_ansure: createAsyncComponent(() => import('@/views/expense/deposit/detail.vue')),
-  pense_borrow: createAsyncComponent(() => import('@/views/expense/advance/detail.vue')),
-  pense_payer: createAsyncComponent(() => import('@/views/expense/tax/detail.vue')),
   paper_borrow: createAsyncComponent(() => import('@/views/archive/borrow/detail.vue')),
 }
 
+/**
+ * 没有独立详情弹窗的业务类型，点开时跳到对应列表页。
+ * 重建后的模块只保留列表与分析，不再为每种单据维护详情表单。
+ */
+const BIZ_ROUTE_FALLBACK: Record<string, string> = {
+  pense_apply: '/expense/claim/list',
+  pense_borrow: '/expense/claim/list',
+  pense_contract: '/expense/contract/list',
+}
+
+const router = useRouter()
 const currentBiz = ref<string | null>(null)
 const pendingOpen = ref<Recordable | null>(null)
 const componentRef = ref<OpenModal | null>(null)
@@ -64,6 +68,12 @@ function handleOpen(data: unknown) {
   const { biz_name, biz_id, ...rest } = options
 
   if (!BIZ_DETAIL_MAP[biz_name]) {
+    const fallback = BIZ_ROUTE_FALLBACK[biz_name]
+    if (fallback) {
+      toast.info('该单据已并入列表页，正在跳转')
+      router.push(fallback)
+      return
+    }
     toast.warning(`不支持的业务类型: ${biz_name}`)
     return
   }

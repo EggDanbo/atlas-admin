@@ -161,7 +161,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "wkno",
@@ -217,7 +217,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "account",
@@ -241,7 +241,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": "用餐地点"
+        "title": ""
       }
     ]
   },
@@ -345,7 +345,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": "用餐地点"
+        "title": ""
       },
       {
         "field": "parent_id",
@@ -389,7 +389,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": "用餐地点"
+        "title": ""
       },
       {
         "field": "wechat_work_dept",
@@ -433,11 +433,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       },
       {
         "field": "paper_id",
@@ -493,7 +493,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "content",
@@ -602,7 +602,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -671,7 +671,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "predict",
-        "title": "需求日期"
+        "title": ""
       },
       {
         "field": "require",
@@ -679,7 +679,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -894,7 +894,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -962,7 +962,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "amount",
-        "title": "金额"
+        "title": "支付金额"
       },
       {
         "field": "realize",
@@ -994,7 +994,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": "用餐地点"
+        "title": ""
       },
       {
         "field": "lead_id",
@@ -1087,7 +1087,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -1176,7 +1176,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -1374,7 +1374,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "摘要"
+        "title": ""
       }
     ]
   },
@@ -1893,931 +1893,278 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "columnFields": [],
     "fields": []
   },
-  "expense/advance": {
+  "expense/budget/quota": {
     "formats": [
-      "atlas/expense/payment"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "contract_id",
-        "title": ""
-      },
-      {
-        "field": "apply_id",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "payee_id",
-        "title": ""
-      },
-      {
-        "field": "payee_name",
-        "title": ""
-      },
-      {
-        "field": "payee_bank",
-        "title": ""
-      },
-      {
-        "field": "payee_open",
-        "title": ""
-      },
-      {
-        "field": "payee_link",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
-      }
-    ]
-  },
-  "expense/budget": {
-    "formats": [
-      "atlas/expense/budget"
+      "atlas/expense/budget/quota"
     ],
     "columnFields": [
       {
-        "field": "content_name",
-        "title": "费用分类"
+        "field": "expense_type",
+        "title": "费用类别"
       },
       {
-        "field": "indate",
-        "title": "有效期"
+        "field": "year",
+        "title": "年度"
       },
       {
-        "field": "amount",
-        "title": "金额"
+        "field": "budget_amount",
+        "title": "年度预算"
+      },
+      {
+        "field": "used_amount",
+        "title": "已使用"
+      },
+      {
+        "field": "remain_amount",
+        "title": "剩余额度"
+      },
+      {
+        "field": "execution_rate",
+        "title": "执行率(%)"
       }
     ],
     "fields": [
       {
-        "field": "content_name",
-        "title": "费用分类"
+        "field": "expense_type",
+        "title": "费用类别"
       },
       {
-        "field": "indate",
-        "title": "有效期"
+        "field": "year",
+        "title": "年度"
       },
       {
-        "field": "amount",
-        "title": "金额"
+        "field": "budget_amount",
+        "title": "年度预算"
       },
       {
-        "field": "content_id",
-        "title": "费用分类"
+        "field": "used_amount",
+        "title": "已使用"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "remain_amount",
+        "title": "剩余额度"
       },
       {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
+        "field": "execution_rate",
+        "title": "执行率(%)"
       }
     ]
   },
-  "expense/contract": {
+  "expense/claim/list": {
     "formats": [
-      "atlas/expense/contract"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "link_id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "outer_id",
-        "title": "维保单位"
-      },
-      {
-        "field": "outer_name",
-        "title": "维保单位"
-      },
-      {
-        "field": "project_id",
-        "title": ""
-      },
-      {
-        "field": "project_name",
-        "title": "项目名称"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "types",
-        "title": "出行方式"
-      },
-      {
-        "field": "source",
-        "title": "源"
-      },
-      {
-        "field": "payment",
-        "title": ""
-      },
-      {
-        "field": "indate",
-        "title": "有效期"
-      },
-      {
-        "field": "revise",
-        "title": ""
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "ensure",
-        "title": ""
-      },
-      {
-        "field": "content",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "states",
-        "title": ""
-      }
-    ]
-  },
-  "expense/deposit": {
-    "formats": [
-      "atlas/expense/payment"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "contract_id",
-        "title": ""
-      },
-      {
-        "field": "apply_id",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "payee_id",
-        "title": ""
-      },
-      {
-        "field": "payee_name",
-        "title": ""
-      },
-      {
-        "field": "payee_bank",
-        "title": ""
-      },
-      {
-        "field": "payee_open",
-        "title": ""
-      },
-      {
-        "field": "payee_link",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
-      }
-    ]
-  },
-  "expense/entertain": {
-    "formats": [
-      "atlas/expense/entertain"
+      "atlas/expense/claim/list"
     ],
     "columnFields": [
       {
-        "field": "address",
-        "title": "用餐地点"
+        "field": "claim_no",
+        "title": "申请单号"
       },
       {
-        "field": "pcs",
-        "title": "用餐人数"
+        "field": "expense_type",
+        "title": "费用类型"
       },
       {
-        "field": "guests",
-        "title": "招待对象"
+        "field": "applicant",
+        "title": "申请人"
       },
       {
-        "field": "content_name",
-        "title": "费用科目"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
         "field": "amount",
         "title": "金额"
       },
       {
-        "field": "quotas",
-        "title": "预算标准"
+        "field": "apply_date",
+        "title": "申请日期"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "claim_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "address",
-        "title": "用餐地点"
+        "field": "claim_no",
+        "title": "申请单号"
       },
       {
-        "field": "pcs",
-        "title": "用餐人数"
+        "field": "expense_type",
+        "title": "费用类型"
       },
       {
-        "field": "guests",
-        "title": "招待对象"
+        "field": "applicant",
+        "title": "申请人"
       },
       {
-        "field": "content_name",
-        "title": "费用科目"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
         "field": "amount",
         "title": "金额"
       },
       {
-        "field": "quotas",
-        "title": "预算标准"
+        "field": "apply_date",
+        "title": "申请日期"
       },
       {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "content_id",
-        "title": "费用科目"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "require",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
+        "field": "claim_state",
+        "title": "状态"
       }
     ]
   },
-  "expense/payment": {
+  "expense/contract/list": {
     "formats": [
-      "atlas/expense/payment"
+      "atlas/expense/contract/list"
     ],
     "columnFields": [
       {
-        "field": "digest",
-        "title": "摘要"
+        "field": "contract_no",
+        "title": "合同编号"
       },
       {
-        "field": "expense_name",
-        "title": "费用分类"
-      },
-      {
-        "field": "invoice",
-        "title": "发票"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      }
-    ],
-    "fields": [
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "expense_name",
-        "title": "费用分类"
-      },
-      {
-        "field": "invoice",
-        "title": "发票"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "content_id",
-        "title": "费用分类"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "contract_id",
-        "title": ""
-      },
-      {
-        "field": "apply_id",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "payee_type",
-        "title": ""
-      },
-      {
-        "field": "payee_id",
-        "title": ""
-      },
-      {
-        "field": "payee_name",
-        "title": ""
-      },
-      {
-        "field": "payee_bank",
-        "title": ""
-      },
-      {
-        "field": "payee_open",
-        "title": ""
-      },
-      {
-        "field": "payee_link",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
-      }
-    ]
-  },
-  "expense/purchase": {
-    "formats": [
-      "atlas/expense/purchase"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
+        "field": "contract_name",
+        "title": "合同名称"
       },
       {
         "field": "supplier",
         "title": "供应商"
       },
       {
-        "field": "price",
-        "title": "单价"
+        "field": "amount",
+        "title": "合同金额"
       },
       {
-        "field": "content_name",
-        "title": "费用科目"
+        "field": "paid_amount",
+        "title": "已付款"
       },
       {
-        "field": "quotas",
-        "title": "预算标准"
+        "field": "payment_rate",
+        "title": "付款进度(%)"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "expire_date",
+        "title": "到期日"
+      },
+      {
+        "field": "contract_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "name",
-        "title": "姓名"
+        "field": "contract_no",
+        "title": "合同编号"
       },
       {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
+        "field": "contract_name",
+        "title": "合同名称"
       },
       {
         "field": "supplier",
         "title": "供应商"
       },
       {
-        "field": "price",
-        "title": "单价"
+        "field": "amount",
+        "title": "合同金额"
       },
       {
-        "field": "content_name",
-        "title": "费用科目"
+        "field": "paid_amount",
+        "title": "已付款"
       },
       {
-        "field": "quotas",
-        "title": "预算标准"
+        "field": "payment_rate",
+        "title": "付款进度(%)"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "expire_date",
+        "title": "到期日"
       },
       {
-        "field": "content_id",
-        "title": "费用科目"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "require",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
+        "field": "contract_state",
+        "title": "状态"
       }
     ]
   },
-  "expense/query": {
+  "expense/payment/list": {
     "formats": [
-      "atlas/expense/query"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
-      }
-    ]
-  },
-  "expense/reimburse": {
-    "formats": [
-      "atlas/expense/reimburse"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
-      }
-    ]
-  },
-  "expense/tax": {
-    "formats": [
-      "atlas/expense/payment"
+      "atlas/expense/payment/list"
     ],
     "columnFields": [
       {
-        "field": "digest",
-        "title": "摘要"
+        "field": "payment_no",
+        "title": "支付单号"
       },
       {
-        "field": "expense_name",
-        "title": "费用分类"
+        "field": "claim_no",
+        "title": "关联申请单"
+      },
+      {
+        "field": "applicant",
+        "title": "收款人"
+      },
+      {
+        "field": "dept_name",
+        "title": "部门"
       },
       {
         "field": "amount",
-        "title": "金额"
+        "title": "支付金额"
+      },
+      {
+        "field": "pay_method",
+        "title": "支付方式"
+      },
+      {
+        "field": "pay_date",
+        "title": "支付日期"
+      },
+      {
+        "field": "pay_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "digest",
-        "title": "摘要"
+        "field": "payment_no",
+        "title": "支付单号"
       },
       {
-        "field": "expense_name",
-        "title": "费用分类"
+        "field": "claim_no",
+        "title": "关联申请单"
+      },
+      {
+        "field": "applicant",
+        "title": "收款人"
+      },
+      {
+        "field": "dept_name",
+        "title": "部门"
       },
       {
         "field": "amount",
-        "title": "金额"
+        "title": "支付金额"
       },
       {
-        "field": "content_id",
-        "title": "费用分类"
+        "field": "pay_method",
+        "title": "支付方式"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "pay_date",
+        "title": "支付日期"
       },
       {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "contract_id",
-        "title": ""
-      },
-      {
-        "field": "apply_id",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "payee_id",
-        "title": ""
-      },
-      {
-        "field": "payee_name",
-        "title": ""
-      },
-      {
-        "field": "payee_bank",
-        "title": ""
-      },
-      {
-        "field": "payee_open",
-        "title": ""
-      },
-      {
-        "field": "payee_link",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "printed",
-        "title": ""
+        "field": "pay_state",
+        "title": "状态"
       }
     ]
   },
-  "expense/travel": {
-    "formats": [
-      "atlas/expense/travel"
-    ],
-    "columnFields": [
-      {
-        "field": "start",
-        "title": "出发日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "types",
-        "title": "出行方式"
-      },
-      {
-        "field": "depart",
-        "title": "出发地"
-      },
-      {
-        "field": "bourn",
-        "title": "目的地"
-      },
-      {
-        "field": "content_name",
-        "title": "费用科目"
-      },
-      {
-        "field": "quotas",
-        "title": "预算标准"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "start",
-        "title": "出发日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "types",
-        "title": "出行方式"
-      },
-      {
-        "field": "depart",
-        "title": "出发地"
-      },
-      {
-        "field": "bourn",
-        "title": "目的地"
-      },
-      {
-        "field": "content_name",
-        "title": "费用科目"
-      },
-      {
-        "field": "quotas",
-        "title": "预算标准"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "content_id",
-        "title": "费用科目"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "require",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
+  "expense/report/dashboard": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
   },
   "finance/analysis/dashboard": {
     "formats": [],
@@ -3620,7 +2967,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "unit",
@@ -3676,7 +3023,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "no",
@@ -3756,7 +3103,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "source",
@@ -3840,7 +3187,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "code",
@@ -3936,7 +3283,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "unit",
@@ -4104,7 +3451,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "出行方式"
+        "title": ""
       },
       {
         "field": "cashes",
@@ -4168,7 +3515,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": "用餐地点"
+        "title": ""
       },
       {
         "field": "user_list",
@@ -4591,14 +3938,10 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/crm/delivery/milestone": "crm/delivery/milestone",
   "atlas/crm/delivery/project": "crm/delivery/project",
   "atlas/crm/opportunity/list": "crm/opportunity/list",
-  "atlas/expense/payment": "expense/advance",
-  "atlas/expense/budget": "expense/budget",
-  "atlas/expense/contract": "expense/contract",
-  "atlas/expense/entertain": "expense/entertain",
-  "atlas/expense/purchase": "expense/purchase",
-  "atlas/expense/query": "expense/query",
-  "atlas/expense/reimburse": "expense/reimburse",
-  "atlas/expense/travel": "expense/travel",
+  "atlas/expense/budget/quota": "expense/budget/quota",
+  "atlas/expense/claim/list": "expense/claim/list",
+  "atlas/expense/contract/list": "expense/contract/list",
+  "atlas/expense/payment/list": "expense/payment/list",
   "atlas/finance/analysis/indicator": "finance/analysis/indicator",
   "atlas/finance/arap/payable": "finance/arap/payable",
   "atlas/finance/arap/receivable": "finance/arap/receivable",
@@ -4645,7 +3988,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "pcs": "申领数量",
   "unit": "计量单位",
   "article_id": "资产分类",
-  "amount": "金额",
+  "amount": "支付金额",
   "enroll": "购置日期",
   "source": "源",
   "article_name": "资产分类",
@@ -4662,7 +4005,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "invoice_date": "开票日期",
   "invoice_state": "认证状态",
   "receipt_amount": "回款金额",
-  "pay_method": "回款方式",
+  "pay_method": "支付方式",
   "receipt_date": "到账日期",
   "receipt_state": "认领状态",
   "customer_level": "客户分级",
@@ -4692,22 +4035,27 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "opp_stage": "阶段",
   "win_rate": "赢单率(%)",
   "expect_date": "预计成交",
-  "content_id": "费用科目",
-  "indate": "有效期",
-  "content_name": "费用科目",
-  "address": "用餐地点",
-  "guests": "招待对象",
-  "quotas": "预算标准",
-  "digest": "摘要",
-  "invoice": "发票",
-  "expense_name": "费用分类",
-  "predict": "需求日期",
+  "expense_type": "费用类型",
+  "year": "年度",
+  "budget_amount": "年度预算",
+  "used_amount": "已使用",
+  "remain_amount": "剩余",
+  "execution_rate": "执行率(%)",
+  "claim_no": "关联申请单",
+  "applicant": "收款人",
+  "dept_name": "部门",
+  "apply_date": "申请日期",
+  "claim_state": "状态",
+  "contract_no": "合同编号",
+  "contract_name": "合同名称",
   "supplier": "供应商",
-  "start": "出发日期",
-  "expire": "结束日期",
-  "types": "出行方式",
-  "depart": "出发地",
-  "bourn": "目的地",
+  "paid_amount": "已付款",
+  "payment_rate": "付款进度(%)",
+  "expire_date": "到期日",
+  "contract_state": "状态",
+  "payment_no": "支付单号",
+  "pay_date": "支付日期",
+  "pay_state": "发放状态",
   "indicator": "指标",
   "current_value": "本期",
   "previous_value": "上期",
@@ -4727,11 +4075,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "bad_debt_amount": "坏账准备",
   "overdue_days": "最长逾期(天)",
   "dept": "部门",
-  "year": "年度",
-  "budget_amount": "年度预算",
-  "used_amount": "已使用",
-  "remain_amount": "剩余",
-  "execution_rate": "执行率(%)",
   "warning": "预警",
   "project": "项目",
   "labor_cost": "人工成本",
@@ -4756,7 +4099,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "diff_amount": "净额差异",
   "work_date": "日期",
   "employee_name": "员工",
-  "dept_name": "部门",
   "check_in": "上班打卡",
   "check_out": "下班打卡",
   "work_hours": "工时(小时)",
@@ -4791,7 +4133,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "fund_amount": "公积金",
   "tax_amount": "个税",
   "net_amount": "实发工资",
-  "pay_state": "发放状态",
   "kind": "固定",
   "depth": "深度",
   "max_depth": "最大深度",
@@ -4848,17 +4189,11 @@ export const ROUTE_PERMISSIONS: string[] = [
   "DASH_MONITOR",
   "DOC_BORROW",
   "DOC_DOCUMENT",
-  "EXP_BUDGET",
-  "EXP_CLAIM_ADVANCE",
-  "EXP_CLAIM_DEPOSIT",
-  "EXP_CLAIM_REIMBURSE",
-  "EXP_CLAIM_TAX",
-  "EXP_CONTRACT",
-  "EXP_PAYMENT",
-  "EXP_QUERY",
-  "EXP_REQUEST_ENTERTAIN",
-  "EXP_REQUEST_PURCHASE",
-  "EXP_REQUEST_TRAVEL",
+  "EXP_BUDGET_QUOTA",
+  "EXP_CLAIM_LIST",
+  "EXP_CONTRACT_LIST",
+  "EXP_PAYMENT_LIST",
+  "EXP_REPORT_DASHBOARD",
   "FIN_ANALYSIS_DASHBOARD",
   "FIN_ANALYSIS_INDICATOR",
   "FIN_ARAP_PAYABLE",
