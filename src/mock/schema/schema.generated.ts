@@ -205,7 +205,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -229,7 +229,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "contact",
-        "title": "联系人"
+        "title": ""
       },
       {
         "field": "mobile",
@@ -337,7 +337,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -369,7 +369,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "organ_code",
@@ -449,7 +449,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       },
       {
         "field": "status",
@@ -505,7 +505,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       },
       {
         "field": "stoped",
@@ -513,892 +513,352 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       }
     ]
   },
-  "asset/allot": {
+  "asset/check/list": {
     "formats": [
-      "atlas/asset/bill"
+      "atlas/asset/check/list"
     ],
     "columnFields": [
       {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "team_in",
-        "title": ""
-      },
-      {
-        "field": "team_in_name",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "check_id",
-        "title": ""
+        "field": "check_no",
+        "title": "盘点单号"
       },
       {
         "field": "check_name",
-        "title": ""
+        "title": "盘点任务"
       },
       {
-        "field": "date",
-        "title": ""
+        "field": "scope",
+        "title": "盘点范围"
       },
       {
-        "field": "digest",
-        "title": ""
-      }
-    ]
-  },
-  "asset/apply": {
-    "formats": [
-      "atlas/asset/apply"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
+        "field": "checker",
+        "title": "盘点人"
       },
       {
-        "field": "pcs",
-        "title": "申领数量"
+        "field": "plan_date",
+        "title": "计划日期"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "should_count",
+        "title": "应盘"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "actual_count",
+        "title": "实盘"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "loss_count",
+        "title": "盘亏"
+      },
+      {
+        "field": "check_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "name",
-        "title": "姓名"
+        "field": "check_no",
+        "title": "盘点单号"
       },
       {
-        "field": "pcs",
-        "title": "申领数量"
+        "field": "check_name",
+        "title": "盘点任务"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "scope",
+        "title": "盘点范围"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "checker",
+        "title": "盘点人"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "plan_date",
+        "title": "计划日期"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "should_count",
+        "title": "应盘"
       },
       {
-        "field": "team_id",
-        "title": ""
+        "field": "actual_count",
+        "title": "实盘"
       },
       {
-        "field": "team_name",
-        "title": "所属单位"
+        "field": "loss_count",
+        "title": "盘亏"
       },
       {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": ""
-      },
-      {
-        "field": "require",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": ""
+        "field": "check_state",
+        "title": "状态"
       }
     ]
   },
-  "asset/batch": {
+  "asset/flow/list": {
     "formats": [
-      "atlas/asset/bill"
+      "atlas/asset/flow/list"
     ],
     "columnFields": [
       {
-        "field": "article_name",
-        "title": "资产分类"
+        "field": "flow_no",
+        "title": "流水号"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "flow_type",
+        "title": "类型"
       },
       {
-        "field": "name",
-        "title": "资产名称"
+        "field": "asset_name",
+        "title": "资产"
       },
       {
-        "field": "brand",
-        "title": "品牌"
+        "field": "handler",
+        "title": "经办人"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "from_dept",
+        "title": "原部门"
       },
       {
-        "field": "pcs",
-        "title": "数量"
+        "field": "to_dept",
+        "title": "新部门"
       },
       {
-        "field": "amount",
-        "title": "购置金额"
+        "field": "flow_date",
+        "title": "发生日期"
       },
       {
-        "field": "enroll",
-        "title": "购置日期"
-      },
-      {
-        "field": "source",
-        "title": "取得方式"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
+        "field": "flow_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "article_name",
-        "title": "资产分类"
+        "field": "flow_no",
+        "title": "流水号"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "flow_type",
+        "title": "类型"
       },
       {
-        "field": "name",
-        "title": "资产名称"
+        "field": "asset_name",
+        "title": "资产"
       },
       {
-        "field": "brand",
-        "title": "品牌"
+        "field": "handler",
+        "title": "经办人"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "from_dept",
+        "title": "原部门"
       },
       {
-        "field": "pcs",
-        "title": "数量"
+        "field": "to_dept",
+        "title": "新部门"
       },
       {
-        "field": "amount",
-        "title": "购置金额"
+        "field": "flow_date",
+        "title": "发生日期"
       },
       {
-        "field": "enroll",
-        "title": "购置日期"
-      },
-      {
-        "field": "source",
-        "title": "取得方式"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "article_id",
-        "title": "资产分类"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
+        "field": "flow_state",
+        "title": "状态"
       }
     ]
   },
-  "asset/check": {
+  "asset/ledger/list": {
     "formats": [
-      "atlas/asset/check/bill",
-      "atlas/asset/check"
+      "atlas/asset/ledger/list"
+    ],
+    "columnFields": [
+      {
+        "field": "asset_no",
+        "title": "资产编号"
+      },
+      {
+        "field": "asset_name",
+        "title": "资产名称"
+      },
+      {
+        "field": "asset_category",
+        "title": "资产类别"
+      },
+      {
+        "field": "dept_name",
+        "title": "使用部门"
+      },
+      {
+        "field": "keeper",
+        "title": "使用人"
+      },
+      {
+        "field": "asset_state",
+        "title": "状态"
+      },
+      {
+        "field": "purchase_date",
+        "title": "购置日期"
+      },
+      {
+        "field": "price_amount",
+        "title": "原值"
+      },
+      {
+        "field": "net_amount",
+        "title": "净值"
+      }
+    ],
+    "fields": [
+      {
+        "field": "asset_no",
+        "title": "资产编号"
+      },
+      {
+        "field": "asset_name",
+        "title": "资产名称"
+      },
+      {
+        "field": "asset_category",
+        "title": "资产类别"
+      },
+      {
+        "field": "dept_name",
+        "title": "使用部门"
+      },
+      {
+        "field": "keeper",
+        "title": "使用人"
+      },
+      {
+        "field": "asset_state",
+        "title": "状态"
+      },
+      {
+        "field": "purchase_date",
+        "title": "购置日期"
+      },
+      {
+        "field": "price_amount",
+        "title": "原值"
+      },
+      {
+        "field": "net_amount",
+        "title": "净值"
+      }
+    ]
+  },
+  "asset/maintain/list": {
+    "formats": [
+      "atlas/asset/maintain/list"
+    ],
+    "columnFields": [
+      {
+        "field": "maintain_no",
+        "title": "维保单号"
+      },
+      {
+        "field": "asset_name",
+        "title": "资产名称"
+      },
+      {
+        "field": "maintain_type",
+        "title": "维保类型"
+      },
+      {
+        "field": "plan_date",
+        "title": "计划日期"
+      },
+      {
+        "field": "last_date",
+        "title": "上次维保"
+      },
+      {
+        "field": "cost_amount",
+        "title": "费用"
+      },
+      {
+        "field": "maintain_state",
+        "title": "状态"
+      }
+    ],
+    "fields": [
+      {
+        "field": "maintain_no",
+        "title": "维保单号"
+      },
+      {
+        "field": "asset_name",
+        "title": "资产名称"
+      },
+      {
+        "field": "maintain_type",
+        "title": "维保类型"
+      },
+      {
+        "field": "plan_date",
+        "title": "计划日期"
+      },
+      {
+        "field": "last_date",
+        "title": "上次维保"
+      },
+      {
+        "field": "cost_amount",
+        "title": "费用"
+      },
+      {
+        "field": "maintain_state",
+        "title": "状态"
+      }
+    ]
+  },
+  "asset/report/dashboard": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
+  },
+  "asset/value/depreciation": {
+    "formats": [
+      "atlas/asset/value/depreciation"
     ],
     "columnFields": [],
     "fields": [
       {
-        "field": "status",
-        "title": ""
+        "field": "dep_month",
+        "title": "计提月份"
       },
       {
-        "field": "bill_id",
-        "title": ""
+        "field": "asset_no",
+        "title": "资产编号"
       },
       {
-        "field": "bill_no",
-        "title": ""
-      }
-    ]
-  },
-  "asset/disuse": {
-    "formats": [
-      "atlas/asset/bill"
-    ],
-    "columnFields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
+        "field": "asset_name",
         "title": "资产名称"
       },
       {
-        "field": "brand",
-        "title": "品牌"
+        "field": "dept_name",
+        "title": "使用部门"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "original_amount",
+        "title": "原值"
       },
       {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "user_in",
-        "title": ""
-      },
-      {
-        "field": "user_in_name",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": ""
-      }
-    ]
-  },
-  "asset/info": {
-    "formats": [
-      "atlas/asset/info"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "stoped",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "article_id",
-        "title": "资产分类"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "supplier",
-        "title": "供应商"
-      },
-      {
-        "field": "serial",
-        "title": ""
-      },
-      {
-        "field": "source",
-        "title": "源"
-      },
-      {
-        "field": "enroll",
-        "title": "购置日期"
-      },
-      {
-        "field": "disuse",
-        "title": ""
-      },
-      {
-        "field": "amount",
-        "title": "支付金额"
-      },
-      {
-        "field": "realize",
-        "title": ""
-      },
-      {
-        "field": "methods",
-        "title": ""
-      },
-      {
-        "field": "durable",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "periods",
-        "title": ""
-      },
-      {
-        "field": "compute",
-        "title": ""
-      },
-      {
-        "field": "accrual",
-        "title": ""
-      },
-      {
-        "field": "address",
-        "title": ""
-      },
-      {
-        "field": "lead_id",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "pic_id",
-        "title": ""
-      }
-    ]
-  },
-  "asset/lease": {
-    "formats": [
-      "atlas/asset/bill"
-    ],
-    "columnFields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "lend_name",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": ""
-      }
-    ]
-  },
-  "asset/order": {
-    "formats": [
-      "atlas/asset/order"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "outer_id",
-        "title": "供应商"
-      },
-      {
-        "field": "price",
-        "title": "单价"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "outer_id",
-        "title": "供应商"
-      },
-      {
-        "field": "price",
-        "title": "单价"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "require",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": ""
-      }
-    ]
-  },
-  "asset/repair": {
-    "formats": [
-      "atlas/asset/bill"
-    ],
-    "columnFields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "outer_name",
-        "title": "维保单位"
-      },
-      {
-        "field": "contact",
-        "title": "联系人"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "explain",
-        "title": "维保内容"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "outer_name",
-        "title": "维保单位"
-      },
-      {
-        "field": "contact",
-        "title": "联系人"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "explain",
-        "title": "维保内容"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "outer_id",
-        "title": "维保单位"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "user_in",
-        "title": ""
-      },
-      {
-        "field": "user_in_name",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      }
-    ]
-  },
-  "asset/resume": {
-    "formats": [
-      "atlas/asset/bill"
-    ],
-    "columnFields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "资产名称"
-      },
-      {
-        "field": "brand",
-        "title": "品牌"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": ""
-      }
-    ]
-  },
-  "asset/value": {
-    "formats": [
-      "atlas/asset/value"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "team_id",
-        "title": ""
+        "field": "monthly_amount",
+        "title": "本月折旧"
       },
       {
-        "field": "methods",
-        "title": ""
+        "field": "accumulated_amount",
+        "title": "累计折旧"
       },
       {
-        "field": "period",
-        "title": ""
+        "field": "net_amount",
+        "title": "净值"
       },
       {
-        "field": "name",
-        "title": "格式名称"
+        "field": "dep_method",
+        "title": "折旧方法"
       }
     ]
   },
@@ -2955,7 +2415,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -2971,7 +2431,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "unit",
-        "title": "计量单位"
+        "title": ""
       },
       {
         "field": "life",
@@ -3015,7 +2475,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3051,7 +2511,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3059,11 +2519,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "model",
-        "title": "规格型号"
+        "title": ""
       },
       {
         "field": "unit",
-        "title": "计量单位"
+        "title": ""
       },
       {
         "field": "rate",
@@ -3119,7 +2579,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       }
     ]
   },
@@ -3139,7 +2599,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3159,7 +2619,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       }
     ]
   },
@@ -3191,7 +2651,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3215,7 +2675,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3239,7 +2699,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3255,7 +2715,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       }
     ]
   },
@@ -3275,7 +2735,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3287,7 +2747,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "unit",
-        "title": "计量单位"
+        "title": ""
       },
       {
         "field": "life",
@@ -3311,11 +2771,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "article_id",
-        "title": "资产分类"
+        "title": ""
       },
       {
         "field": "article_name",
-        "title": "资产分类"
+        "title": ""
       },
       {
         "field": "name",
@@ -3323,15 +2783,15 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "brand",
-        "title": "品牌"
+        "title": ""
       },
       {
         "field": "model",
-        "title": "规格型号"
+        "title": ""
       },
       {
         "field": "unit",
-        "title": "计量单位"
+        "title": ""
       },
       {
         "field": "least",
@@ -3355,7 +2815,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       }
     ]
   },
@@ -3383,7 +2843,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3439,7 +2899,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3479,7 +2939,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "remark",
-        "title": "备注"
+        "title": ""
       }
     ]
   },
@@ -3507,7 +2967,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "资产编码"
+        "title": "账号"
       },
       {
         "field": "name",
@@ -3924,13 +3384,11 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/access/unit": "access/unit",
   "atlas/archive/borrow": "archive/borrow",
   "atlas/archive/document": "archive/document",
-  "atlas/asset/bill": "asset/allot",
-  "atlas/asset/apply": "asset/apply",
-  "atlas/asset/check/bill": "asset/check",
-  "atlas/asset/check": "asset/check",
-  "atlas/asset/info": "asset/info",
-  "atlas/asset/order": "asset/order",
-  "atlas/asset/value": "asset/value",
+  "atlas/asset/check/list": "asset/check/list",
+  "atlas/asset/flow/list": "asset/flow/list",
+  "atlas/asset/ledger/list": "asset/ledger/list",
+  "atlas/asset/maintain/list": "asset/maintain/list",
+  "atlas/asset/value/depreciation": "asset/value/depreciation",
   "atlas/crm/billing/invoice": "crm/billing/invoice",
   "atlas/crm/billing/receipt": "crm/billing/receipt",
   "atlas/crm/customer/archive": "crm/customer/archive",
@@ -3977,29 +3435,50 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "ctime": "操作时间",
   "utime": "更新时间",
   "name": "格式名称",
-  "code": "资产编码",
+  "code": "账号",
   "mobile": "手机号",
   "team_name": "所属单位",
   "working": "工作中",
   "sort": "排序",
-  "brand": "品牌",
-  "model": "规格型号",
-  "remark": "备注",
-  "pcs": "申领数量",
-  "unit": "计量单位",
-  "article_id": "资产分类",
-  "amount": "支付金额",
-  "enroll": "购置日期",
-  "source": "源",
-  "article_name": "资产分类",
-  "outer_id": "维保单位",
-  "price": "单价",
-  "contact": "联系人",
-  "explain": "维保内容",
-  "outer_name": "维保单位",
+  "check_no": "盘点单号",
+  "check_name": "盘点任务",
+  "scope": "盘点范围",
+  "checker": "盘点人",
+  "plan_date": "计划完成",
+  "should_count": "应盘",
+  "actual_count": "实盘",
+  "loss_count": "盘亏",
+  "check_state": "状态",
+  "flow_no": "流水号",
+  "flow_type": "类型",
+  "asset_name": "资产名称",
+  "handler": "经办人",
+  "from_dept": "原部门",
+  "to_dept": "新部门",
+  "flow_date": "发生日期",
+  "flow_state": "状态",
+  "asset_no": "资产编号",
+  "asset_category": "资产类别",
+  "dept_name": "部门",
+  "keeper": "使用人",
+  "asset_state": "状态",
+  "purchase_date": "购置日期",
+  "price_amount": "原值",
+  "net_amount": "实发工资",
+  "maintain_no": "维保单号",
+  "maintain_type": "维保类型",
+  "last_date": "上次维保",
+  "cost_amount": "费用",
+  "maintain_state": "状态",
+  "dep_month": "计提月份",
+  "original_amount": "原值",
+  "monthly_amount": "本月折旧",
+  "accumulated_amount": "累计折旧",
+  "dep_method": "折旧方法",
   "invoice_no": "对应发票",
   "customer_name": "客户",
   "project_name": "项目名称",
+  "amount": "支付金额",
   "tax_rate": "税率(%)",
   "invoice_type": "发票类型",
   "invoice_date": "开票日期",
@@ -4020,7 +3499,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "email": "邮箱",
   "decision_role": "决策角色",
   "milestone_node": "里程碑",
-  "plan_date": "计划完成",
   "actual_date": "实际完成",
   "delay_days": "延期(天)",
   "node_state": "状态",
@@ -4043,7 +3521,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "execution_rate": "执行率(%)",
   "claim_no": "关联申请单",
   "applicant": "收款人",
-  "dept_name": "部门",
   "apply_date": "申请日期",
   "claim_state": "状态",
   "contract_no": "合同编号",
@@ -4111,8 +3588,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "exception_count": "异常(次)",
   "employee_no": "工号",
   "movement_type": "异动类型",
-  "from_dept": "原部门",
-  "to_dept": "新部门",
   "effect_date": "生效日期",
   "reason": "异动原因",
   "operator": "经办人",
@@ -4132,7 +3607,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "social_amount": "社保",
   "fund_amount": "公积金",
   "tax_amount": "个税",
-  "net_amount": "实发工资",
   "kind": "固定",
   "depth": "深度",
   "max_depth": "最大深度",
@@ -4160,23 +3634,19 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "time": "时间",
   "message": "消息",
   "appname": "应用名称",
+  "source": "源",
   "mark": "操作描述",
   "ref_count": "关联数"
 }
 
 /** 路由中声明过的权限码（用于给演示账号授予完整权限） */
 export const ROUTE_PERMISSIONS: string[] = [
-  "AST_ALLOT",
-  "AST_APPLY",
-  "AST_BATCH",
-  "AST_CHECK",
-  "AST_DISUSE",
-  "AST_INFO",
-  "AST_LEASE",
-  "AST_ORDER",
-  "AST_REPAIR",
-  "AST_RESUME",
-  "AST_VALUE",
+  "AST_CHECK_LIST",
+  "AST_FLOW_LIST",
+  "AST_LEDGER_LIST",
+  "AST_MAINTAIN_LIST",
+  "AST_REPORT_DASHBOARD",
+  "AST_VALUE_DEPRECIATION",
   "CRM_BILLING_INVOICE",
   "CRM_BILLING_RECEIPT",
   "CRM_BILLING_REVENUE",

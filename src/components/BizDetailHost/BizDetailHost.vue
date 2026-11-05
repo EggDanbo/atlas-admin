@@ -20,15 +20,6 @@ const BIZ_DETAIL_MAP: Record<string, ReturnType<typeof defineAsyncComponent>> = 
   organ_team: createAsyncComponent(() => import('@/views/access/unit/detail.vue')),
   organ_user: createAsyncComponent(() => import('@/views/access/member/detail.vue')),
   organ_outer: createAsyncComponent(() => import('@/views/access/partner/detail.vue')),
-  asset_info: createAsyncComponent(() => import('@/views/asset/info/detail.vue')),
-  asset_apply: createAsyncComponent(() => import('@/views/asset/apply/detail.vue')),
-  asset_order: createAsyncComponent(() => import('@/views/asset/order/detail.vue')),
-  asset_batch: createAsyncComponent(() => import('@/views/asset/batch/detail.vue')),
-  asset_allot: createAsyncComponent(() => import('@/views/asset/allot/detail.vue')),
-  asset_lease: createAsyncComponent(() => import('@/views/asset/lease/detail.vue')),
-  asset_resume: createAsyncComponent(() => import('@/views/asset/resume/detail.vue')),
-  asset_disuse: createAsyncComponent(() => import('@/views/asset/disuse/detail.vue')),
-  asset_repair: createAsyncComponent(() => import('@/views/asset/repair/detail.vue')),
   paper_borrow: createAsyncComponent(() => import('@/views/archive/borrow/detail.vue')),
 }
 
@@ -37,6 +28,15 @@ const BIZ_DETAIL_MAP: Record<string, ReturnType<typeof defineAsyncComponent>> = 
  * 重建后的模块只保留列表与分析，不再为每种单据维护详情表单。
  */
 const BIZ_ROUTE_FALLBACK: Record<string, string> = {
+  asset_info: '/asset/ledger/list',
+  asset_apply: '/asset/flow/list',
+  asset_order: '/asset/flow/list',
+  asset_batch: '/asset/flow/list',
+  asset_allot: '/asset/flow/list',
+  asset_lease: '/asset/flow/list',
+  asset_resume: '/asset/flow/list',
+  asset_disuse: '/asset/flow/list',
+  asset_repair: '/asset/maintain/list',
   pense_apply: '/expense/claim/list',
   pense_borrow: '/expense/claim/list',
   pense_contract: '/expense/contract/list',

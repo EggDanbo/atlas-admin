@@ -1,8 +1,4 @@
 export { default as AuxDimensionPicker } from './src/AuxDimensionPicker.vue'
-export { default as AssetLedgerPicker } from './src/AssetLedgerPicker.vue'
-export { default as AssetApplyPicker } from './src/AssetApplyPicker.vue'
-export { default as AssetBatchPicker } from './src/AssetBatchPicker.vue'
-export { default as AssetLeasePicker } from './src/AssetLeasePicker.vue'
 export { default as PartnerPicker } from './src/PartnerPicker.vue'
 export { default as MemberPicker } from './src/MemberPicker.vue'
 export { default as ProjectPicker } from './src/ProjectPicker.vue'

@@ -11,6 +11,7 @@ import type { Rng } from './data/random'
 import type { DataFormatColumn } from '@/components/SpTable'
 import { DICTS, getDict } from '../dicts'
 import { resolveFieldEnum } from '../dicts/field-enums'
+import { resolveAssetMock } from './data/asset'
 import { resolveCrmMock } from './data/crm'
 import { ASSET_BRANDS, ASSET_MODELS, ASSET_NAMES, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
@@ -792,9 +793,9 @@ th{background:#f5f6f8}</style></head><body><h2>业务单据打印预览（演示
  * - `module` 业务模块目录，用于取一条真实行数据的 id，保证详情能回填到同一单据
  */
 const WORKFLOW_BIZ = [
-  { label: '资产调拨', key: 'asset_allot', module: 'asset/allot' },
-  { label: '资产领用', key: 'asset_apply', module: 'asset/apply' },
-  { label: '资产采购', key: 'asset_order', module: 'asset/order' },
+  { label: '资产调拨', key: 'asset_allot', module: 'asset/flow/list', no_field: 'flow_no' },
+  { label: '资产领用', key: 'asset_apply', module: 'asset/flow/list', no_field: 'flow_no' },
+  { label: '资产采购', key: 'asset_order', module: 'asset/flow/list', no_field: 'flow_no' },
   { label: '费用报销', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
   { label: '借款申请', key: 'pense_borrow', module: 'expense/claim/list', no_field: 'claim_no' },
   { label: '合同签订', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
@@ -828,8 +829,8 @@ function buildWorkflowItems(kind: string, count = 9) {
 /** 工作台：最新动态（同样带上业务键，点击可打开对应详情） */
 const WORKFLOW_DYNAMIC = [
   { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
-  { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/allot' },
-  { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/apply' },
+  { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/flow/list', no_field: 'flow_no' },
+  { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/flow/list', no_field: 'flow_no' },
   { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
   { title: '档案借阅已归还', types: '资', key: 'paper_borrow', module: 'archive/borrow' },
 ]
@@ -866,7 +867,7 @@ const MONITOR_MODULES: MonitorModule[] = [
   { code: 'crm', name: '客户与项目', children: ['客户', '商机', '项目', '开票'] },
   { code: 'hr', name: '人力资源', children: ['花名册', '异动', '考勤', '薪酬'] },
   { code: 'expense', name: '费用管理', children: ['预算', '费用申请', '合同', '支付'] },
-  { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
+  { code: 'asset', name: '资产管理', children: ['台账', '流转', '折旧', '盘点'] },
   { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
 ]
 
@@ -1086,6 +1087,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // 合同额、开票、回款、应收之间要能对上，因此由共享数据集派生，不走通用随机
   if (/^crm\//.test(module)) {
     const payload = resolveCrmMock(module, params)
+    if (payload)
+      return ok(payload)
+  }
+
+  // ---------- 资产管理 ----------
+  // 台账、流转、折旧、盘点、维保共用一份资产主数据，净值与折旧才对得上
+  if (/^asset\//.test(module)) {
+    const payload = resolveAssetMock(module, params)
     if (payload)
       return ok(payload)
   }

@@ -9,7 +9,7 @@ import { buildColumns, resolveModuleDir } from '../columns'
  */
 describe('resolveModuleDir', () => {
   it('完整格式名直接命中模块', () => {
-    expect(resolveModuleDir('asset/info')).toBe('asset/info')
+    expect(resolveModuleDir('asset/ledger/list')).toBe('asset/ledger/list')
     expect(resolveModuleDir('access/role')).toBe('access/role')
   })
 

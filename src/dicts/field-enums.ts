@@ -11,12 +11,6 @@
 
 export const FIELD_ENUMS: Record<string, Record<string, string>> = {
 
-  // ---------------- 资产 ----------------
-  'asset/info': {
-    source: 'asset_info_source',
-    methods: 'asset_info_method',
-  },
-
   // ---------------- 档案 ----------------
   'archive/borrow': {
     types: 'paper_borrow_types',
