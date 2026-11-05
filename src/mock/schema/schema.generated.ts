@@ -161,7 +161,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "wkno",
@@ -177,7 +177,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "position",
-        "title": "岗位"
+        "title": ""
       },
       {
         "field": "user_pic",
@@ -217,7 +217,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "account",
@@ -229,7 +229,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "contact",
-        "title": "证明人"
+        "title": "联系人"
       },
       {
         "field": "mobile",
@@ -433,7 +433,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "digest",
@@ -493,11 +493,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "content",
-        "title": "培训内容"
+        "title": ""
       },
       {
         "field": "location",
@@ -2098,7 +2098,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "source",
@@ -2130,7 +2130,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "content",
-        "title": "培训内容"
+        "title": ""
       },
       {
         "field": "remark",
@@ -3139,2733 +3139,448 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       }
     ]
   },
-  "hr/attendance-apply/field": {
+  "hr/attendance/record": {
     "formats": [
-      "atlas/hr/attendance-apply/field"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "team_in",
-        "title": ""
-      },
-      {
-        "field": "team_in_name",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "check_id",
-        "title": ""
-      },
-      {
-        "field": "check_name",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance-apply/leave": {
-    "formats": [
-      "atlas/hr/attendance-apply/leave"
+      "atlas/hr/attendance/record"
     ],
     "columnFields": [
       {
-        "field": "day",
-        "title": "请假日期"
+        "field": "work_date",
+        "title": "日期"
       },
       {
-        "field": "leave_time_fmt",
-        "title": "请假时长"
+        "field": "employee_name",
+        "title": "员工"
+      },
+      {
+        "field": "dept_name",
+        "title": "部门"
+      },
+      {
+        "field": "check_in",
+        "title": "上班打卡"
+      },
+      {
+        "field": "check_out",
+        "title": "下班打卡"
+      },
+      {
+        "field": "work_hours",
+        "title": "工时(小时)"
+      },
+      {
+        "field": "attendance_state",
+        "title": "状态"
       }
     ],
     "fields": [
       {
-        "field": "day",
-        "title": "请假日期"
+        "field": "work_date",
+        "title": "日期"
       },
       {
-        "field": "leave_time_fmt",
-        "title": "请假时长"
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "user_id",
-        "title": "用户ID"
+        "field": "check_in",
+        "title": "上班打卡"
       },
       {
-        "field": "user_name",
-        "title": "操作人"
+        "field": "check_out",
+        "title": "下班打卡"
       },
       {
-        "field": "date",
-        "title": ""
+        "field": "work_hours",
+        "title": "工时(小时)"
       },
       {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "days",
-        "title": ""
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "leave",
-        "title": ""
-      },
-      {
-        "field": "address",
-        "title": "用餐地点"
-      },
-      {
-        "field": "contacts",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
+        "field": "attendance_state",
+        "title": "状态"
       }
     ]
   },
-  "hr/attendance-apply/makeup": {
+  "hr/attendance/summary": {
     "formats": [
-      "atlas/hr/attendance-apply/makeup"
+      "atlas/hr/attendance/summary"
     ],
     "columnFields": [
       {
-        "field": "day",
-        "title": "补卡日期"
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "checkin_time",
-        "title": "补卡时间"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "should_days",
+        "title": "应出勤(天)"
+      },
+      {
+        "field": "actual_days",
+        "title": "实出勤(天)"
+      },
+      {
+        "field": "late_count",
+        "title": "迟到(次)"
+      },
+      {
+        "field": "leave_days",
+        "title": "请假(天)"
+      },
+      {
+        "field": "overtime_hours",
+        "title": "加班(小时)"
+      },
+      {
+        "field": "exception_count",
+        "title": "异常(次)"
       }
     ],
     "fields": [
       {
-        "field": "day",
-        "title": "补卡日期"
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "checkin_time",
-        "title": "补卡时间"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "should_days",
+        "title": "应出勤(天)"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "actual_days",
+        "title": "实出勤(天)"
       },
       {
-        "field": "team_id",
-        "title": ""
+        "field": "late_count",
+        "title": "迟到(次)"
       },
       {
-        "field": "team_name",
-        "title": "所属单位"
+        "field": "leave_days",
+        "title": "请假(天)"
       },
       {
-        "field": "date",
-        "title": ""
+        "field": "overtime_hours",
+        "title": "加班(小时)"
       },
       {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "progress",
-        "title": "进程地址"
+        "field": "exception_count",
+        "title": "异常(次)"
       }
     ]
   },
-  "hr/attendance-apply/overtime": {
+  "hr/employee/movement": {
     "formats": [
-      "atlas/hr/attendance-apply/overtime"
+      "atlas/hr/employee/movement"
     ],
     "columnFields": [
       {
-        "field": "day",
-        "title": "加班日期"
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "over_time",
-        "title": "加班时长（小时）"
-      }
-    ],
-    "fields": [
-      {
-        "field": "day",
-        "title": "加班日期"
-      },
-      {
-        "field": "over_time",
-        "title": "加班时长（小时）"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "outer_id",
-        "title": "维保单位"
-      },
-      {
-        "field": "outer_name",
-        "title": "维保单位"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance-apply/shift": {
-    "formats": [
-      "atlas/hr/attendance-apply/shift"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "swap_id",
-        "title": ""
-      },
-      {
-        "field": "swap_name",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "checkin_date",
-        "title": ""
-      },
-      {
-        "field": "checkin_back",
-        "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/daily": {
-    "formats": [
-      "atlas/hr/attendance/daily"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/daily-summary": {
-    "formats": [
-      "atlas/hr/attendance/daily-summary"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/holiday": {
-    "formats": [],
-    "columnFields": [],
-    "fields": []
-  },
-  "hr/attendance/leave-rule": {
-    "formats": [
-      "atlas/hr/attendance/leave-rule"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "add_date",
-        "title": ""
-      },
-      {
-        "field": "vacation",
-        "title": ""
-      },
-      {
-        "field": "leave_max",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/monthly": {
-    "formats": [
-      "atlas/hr/attendance/monthly"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/punch": {
-    "formats": [
-      "atlas/hr/attendance/punch"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/attendance/rule": {
-    "formats": [
-      "atlas/hr/attendance/rule"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "group_name",
-        "title": ""
-      },
-      {
-        "field": "checkin_date",
-        "title": ""
-      },
-      {
-        "field": "checkin_spe_workdays",
-        "title": ""
+        "field": "employee_no",
+        "title": "工号"
       },
-      {
-        "field": "checkin_spe_offdays",
-        "title": ""
-      },
-      {
-        "field": "checkin_location",
-        "title": ""
-      },
-      {
-        "field": "checkin_wifimac",
-        "title": ""
-      },
-      {
-        "field": "checkin_method_type",
-        "title": ""
-      },
-      {
-        "field": "offwork_interval_time",
-        "title": ""
-      },
-      {
-        "field": "use_face_detect",
-        "title": ""
-      },
-      {
-        "field": "option_out_range",
-        "title": ""
-      },
-      {
-        "field": "remind_work",
-        "title": ""
-      },
-      {
-        "field": "remind_off_work",
-        "title": ""
-      },
-      {
-        "field": "reissue",
-        "title": ""
-      },
-      {
-        "field": "sync_holidays",
-        "title": ""
-      },
-      {
-        "field": "period_date",
-        "title": ""
-      },
-      {
-        "field": "workdays",
-        "title": ""
-      },
-      {
-        "field": "standard_work_duration",
-        "title": ""
-      },
-      {
-        "field": "span_day_time",
-        "title": ""
-      },
-      {
-        "field": "cuser",
-        "title": ""
-      },
-      {
-        "field": "allow_select_schedule",
-        "title": ""
-      }
-    ]
-  },
-  "hr/deduction/housing": {
-    "formats": [
-      "atlas/hr/deduction/housing"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      }
-    ]
-  },
-  "hr/deduction/social": {
-    "formats": [
-      "atlas/hr/deduction/social"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      }
-    ]
-  },
-  "hr/exit/absent": {
-    "formats": [
-      "atlas/hr/exit/absent"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/exit/dismiss": {
-    "formats": [
-      "atlas/hr/exit/dismiss"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/exit/resign": {
-    "formats": [
-      "atlas/hr/exit/resign"
-    ],
-    "columnFields": [
       {
-        "field": "name",
-        "title": "姓名"
+        "field": "movement_type",
+        "title": "异动类型"
       },
       {
-        "field": "ranks",
-        "title": "职务"
+        "field": "from_dept",
+        "title": "原部门"
       },
       {
-        "field": "position",
-        "title": "岗位"
+        "field": "to_dept",
+        "title": "新部门"
       },
       {
-        "field": "branch_name",
-        "title": "派驻分队"
+        "field": "effect_date",
+        "title": "生效日期"
       },
       {
         "field": "reason",
-        "title": "原因"
+        "title": "异动原因"
       },
       {
-        "field": "remark",
-        "title": "备注"
+        "field": "operator",
+        "title": "经办人"
       }
     ],
     "fields": [
       {
-        "field": "name",
-        "title": "姓名"
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "ranks",
-        "title": "职务"
+        "field": "employee_no",
+        "title": "工号"
       },
       {
-        "field": "position",
-        "title": "岗位"
+        "field": "movement_type",
+        "title": "异动类型"
       },
       {
-        "field": "branch_name",
-        "title": "派驻分队"
+        "field": "from_dept",
+        "title": "原部门"
+      },
+      {
+        "field": "to_dept",
+        "title": "新部门"
+      },
+      {
+        "field": "effect_date",
+        "title": "生效日期"
       },
       {
         "field": "reason",
-        "title": "原因"
+        "title": "异动原因"
       },
       {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
+        "field": "operator",
+        "title": "经办人"
       }
     ]
   },
-  "hr/insurance/commercial": {
+  "hr/employee/roster": {
     "formats": [
-      "atlas/hr/insurance/commercial",
-      "atlas/hr/insurance/commercial/list"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "outer_id",
-        "title": "维保单位"
-      },
-      {
-        "field": "outer_name",
-        "title": "维保单位"
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      }
-    ]
-  },
-  "hr/insurance/housing": {
-    "formats": [
-      "atlas/hr/insurance/housing"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "add_date",
-        "title": ""
-      },
-      {
-        "field": "house_buy",
-        "title": ""
-      },
-      {
-        "field": "house_date",
-        "title": ""
-      },
-      {
-        "field": "house_code",
-        "title": ""
-      },
-      {
-        "field": "house_base",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/insurance/social": {
-    "formats": [
-      "atlas/hr/insurance/social"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "add_date",
-        "title": ""
-      },
-      {
-        "field": "census",
-        "title": ""
-      },
-      {
-        "field": "social_type",
-        "title": ""
-      },
-      {
-        "field": "social_date",
-        "title": ""
-      },
-      {
-        "field": "social_code",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/movement/adjust": {
-    "formats": [
-      "atlas/hr/movement/adjust"
+      "atlas/hr/employee/roster"
     ],
     "columnFields": [
       {
-        "field": "name",
+        "field": "employee_no",
+        "title": "工号"
+      },
+      {
+        "field": "employee_name",
         "title": "姓名"
       },
       {
-        "field": "user_pre_rank",
-        "title": "原职务"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
+        "field": "position_name",
         "title": "岗位"
       },
       {
-        "field": "scale",
-        "title": "工资级别"
+        "field": "job_grade",
+        "title": "职级"
       },
       {
-        "field": "salary",
-        "title": "工资金额"
+        "field": "staff_state",
+        "title": "状态"
       },
       {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "user_pre_rank",
-        "title": "原职务"
-      },
-      {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "branch_id",
-        "title": "派驻分队"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/movement/onboard": {
-    "formats": [
-      "atlas/hr/movement/onboard"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "branch_id",
-        "title": "派驻分队"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/movement/promotion": {
-    "formats": [
-      "atlas/hr/movement/promotion"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "user_pre_rank",
-        "title": "原职务"
-      },
-      {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "user_pre_rank",
-        "title": "原职务"
-      },
-      {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/movement/transfer": {
-    "formats": [
-      "atlas/hr/movement/transfer"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "user_pre_rank",
-        "title": "原职务"
-      },
-      {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "user_pre_rank",
-        "title": "原职务"
-      },
-      {
-        "field": "user_pre_position",
-        "title": "原岗位"
-      },
-      {
-        "field": "user_pre_scale",
-        "title": "原工资级别"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "salary",
-        "title": "工资金额"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "branch_id",
-        "title": "派驻分队"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "team_in",
-        "title": ""
-      },
-      {
-        "field": "team_in_name",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/payroll/generate": {
-    "formats": [
-      "atlas/hr/payroll/generate"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "group_id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "states",
-        "title": ""
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      }
-    ]
-  },
-  "hr/payroll/group": {
-    "formats": [
-      "atlas/hr/payroll/group",
-      "atlas/hr/payroll/group/item",
-      "atlas/masterdata/payroll-item"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "conditions",
-        "title": "条件内容"
-      },
-      {
-        "field": "content",
-        "title": "公式内容"
-      },
-      {
-        "field": "describe",
-        "title": "公式说明"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      },
-      {
-        "field": "group_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/payroll/payment": {
-    "formats": [
-      "atlas/hr/payroll/generate"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "group_id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "states",
-        "title": ""
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      }
-    ]
-  },
-  "hr/relation/contract": {
-    "formats": [
-      "atlas/hr/relation/contract"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "current",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "pcs",
-        "title": "申领数量"
-      },
-      {
-        "field": "year",
-        "title": "年度"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "files_ldht",
-        "title": ""
-      },
-      {
-        "field": "files_bcxy",
-        "title": ""
-      },
-      {
-        "field": "files_zrz",
-        "title": ""
-      },
-      {
-        "field": "files_bmxy",
-        "title": ""
-      },
-      {
-        "field": "files_ygsc",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/relation/level": {
-    "formats": [
-      "atlas/hr/relation/level"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "级别名称"
-      },
-      {
-        "field": "salary",
-        "title": "合同约定工资"
-      },
-      {
-        "field": "bases",
-        "title": "基本工资"
-      },
-      {
-        "field": "grade",
-        "title": "综合补贴"
-      },
-      {
-        "field": "posts",
-        "title": "岗位补贴"
-      },
-      {
-        "field": "dine_fix",
-        "title": "每月伙食补助"
-      },
-      {
-        "field": "dine_day",
-        "title": "每日伙食补助"
-      },
-      {
-        "field": "heats",
-        "title": "高温补贴"
-      },
-      {
-        "field": "rise_fix",
-        "title": "固定绩效工资"
-      },
-      {
-        "field": "rise_var",
-        "title": "浮动绩效工资"
-      },
-      {
-        "field": "hour_on",
-        "title": "工作日时薪"
-      },
-      {
-        "field": "hour_off",
-        "title": "休息日时薪"
-      },
-      {
-        "field": "hour_ext",
-        "title": "节假日时薪"
-      },
-      {
-        "field": "hour_add",
-        "title": "年假加班时薪"
-      },
-      {
-        "field": "hour_fix",
-        "title": "约定时薪"
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "extra",
-        "title": "约定加班工资"
-      },
-      {
-        "field": "skill",
-        "title": "分队长管理员"
-      },
-      {
-        "field": "other",
-        "title": "其他补贴"
-      },
-      {
-        "field": "insure",
-        "title": "扣残障金"
-      },
-      {
-        "field": "social",
-        "title": "扣社保"
-      },
-      {
-        "field": "house",
-        "title": "扣公积金"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "级别名称"
-      },
-      {
-        "field": "salary",
-        "title": "合同约定工资"
-      },
-      {
-        "field": "bases",
-        "title": "基本工资"
-      },
-      {
-        "field": "grade",
-        "title": "综合补贴"
-      },
-      {
-        "field": "posts",
-        "title": "岗位补贴"
-      },
-      {
-        "field": "dine_fix",
-        "title": "每月伙食补助"
-      },
-      {
-        "field": "dine_day",
-        "title": "每日伙食补助"
-      },
-      {
-        "field": "heats",
-        "title": "高温补贴"
-      },
-      {
-        "field": "rise_fix",
-        "title": "固定绩效工资"
-      },
-      {
-        "field": "rise_var",
-        "title": "浮动绩效工资"
-      },
-      {
-        "field": "hour_on",
-        "title": "工作日时薪"
-      },
-      {
-        "field": "hour_off",
-        "title": "休息日时薪"
-      },
-      {
-        "field": "hour_ext",
-        "title": "节假日时薪"
-      },
-      {
-        "field": "hour_add",
-        "title": "年假加班时薪"
-      },
-      {
-        "field": "hour_fix",
-        "title": "约定时薪"
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "extra",
-        "title": "约定加班工资"
-      },
-      {
-        "field": "skill",
-        "title": "分队长管理员"
-      },
-      {
-        "field": "other",
-        "title": "其他补贴"
-      },
-      {
-        "field": "insure",
-        "title": "扣残障金"
-      },
-      {
-        "field": "social",
-        "title": "扣社保"
-      },
-      {
-        "field": "house",
-        "title": "扣公积金"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/relation/reward": {
-    "formats": [
-      "atlas/hr/relation/reward"
-    ],
-    "columnFields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "content",
-        "title": "奖惩内容"
-      }
-    ],
-    "fields": [
-      {
-        "field": "name",
-        "title": "姓名"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
-      },
-      {
-        "field": "content",
-        "title": "奖惩内容"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "predict",
-        "title": "需求日期"
-      },
-      {
-        "field": "digest",
-        "title": "摘要"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/relation/training": {
-    "formats": [
-      "atlas/hr/relation/training"
-    ],
-    "columnFields": [
-      {
-        "field": "user_name",
-        "title": "人员信息"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "content",
-        "title": "培训内容"
-      },
-      {
-        "field": "branch",
-        "title": "培训机构"
-      },
-      {
-        "field": "outcome",
-        "title": "培训成果"
-      },
-      {
-        "field": "contact",
-        "title": "证明人"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      }
-    ],
-    "fields": [
-      {
-        "field": "user_name",
-        "title": "人员信息"
-      },
-      {
-        "field": "start",
-        "title": "开始日期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "content",
-        "title": "培训内容"
-      },
-      {
-        "field": "branch",
-        "title": "培训机构"
-      },
-      {
-        "field": "outcome",
-        "title": "培训成果"
-      },
-      {
-        "field": "contact",
-        "title": "证明人"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "hr/report/structure": {
-    "formats": [
-      "atlas/hr/report/structure"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/report/summary": {
-    "formats": [
-      "atlas/hr/report/summary"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": ""
-      }
-    ]
-  },
-  "hr/resume": {
-    "formats": [
-      "atlas/hr/resume"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "states",
-        "title": ""
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
+        "field": "entry_date",
+        "title": "入职日期"
       },
       {
-        "field": "birthday",
-        "title": ""
+        "field": "education",
+        "title": "学历"
       },
       {
         "field": "age",
-        "title": ""
+        "title": "年龄"
       },
       {
-        "field": "gender",
-        "title": ""
+        "field": "base_salary",
+        "title": "基本工资"
+      }
+    ],
+    "fields": [
+      {
+        "field": "employee_no",
+        "title": "工号"
       },
       {
-        "field": "mobile",
-        "title": "手机号"
+        "field": "employee_name",
+        "title": "姓名"
       },
       {
-        "field": "reason",
-        "title": "原因"
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "team_id",
-        "title": ""
-      },
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "branch_id",
-        "title": "派驻分队"
-      },
-      {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "card_issue",
-        "title": ""
-      },
-      {
-        "field": "card_valid",
-        "title": ""
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "nation",
-        "title": ""
-      },
-      {
-        "field": "politics",
-        "title": ""
-      },
-      {
-        "field": "military",
-        "title": ""
-      },
-      {
-        "field": "marital",
-        "title": ""
-      },
-      {
-        "field": "children",
-        "title": ""
-      },
-      {
-        "field": "health",
-        "title": ""
-      },
-      {
-        "field": "stature",
-        "title": ""
-      },
-      {
-        "field": "extent",
-        "title": ""
-      },
-      {
-        "field": "school",
-        "title": ""
-      },
-      {
-        "field": "subject",
-        "title": ""
-      },
-      {
-        "field": "feature",
-        "title": ""
-      },
-      {
-        "field": "cases",
-        "title": ""
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "position",
+        "field": "position_name",
         "title": "岗位"
       },
       {
-        "field": "license",
-        "title": ""
+        "field": "job_grade",
+        "title": "职级"
       },
       {
-        "field": "bank_code",
-        "title": ""
+        "field": "staff_state",
+        "title": "状态"
       },
       {
-        "field": "bank_open",
-        "title": ""
+        "field": "entry_date",
+        "title": "入职日期"
       },
       {
-        "field": "native",
-        "title": ""
+        "field": "education",
+        "title": "学历"
       },
       {
-        "field": "polices",
-        "title": ""
+        "field": "age",
+        "title": "年龄"
       },
       {
-        "field": "location",
-        "title": ""
-      },
-      {
-        "field": "address",
-        "title": "用餐地点"
-      },
-      {
-        "field": "crime",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "user_pic",
-        "title": ""
-      },
-      {
-        "field": "files_gwxqb",
-        "title": ""
-      },
-      {
-        "field": "files_msdjb",
-        "title": ""
-      },
-      {
-        "field": "files_zpdjb",
-        "title": ""
-      },
-      {
-        "field": "files_sfz",
-        "title": ""
-      },
-      {
-        "field": "files_hkb",
-        "title": ""
-      },
-      {
-        "field": "files_xlzs",
-        "title": ""
-      },
-      {
-        "field": "files_zyzbz",
-        "title": ""
-      },
-      {
-        "field": "files_wfzzm",
-        "title": ""
-      },
-      {
-        "field": "files_jkbg",
-        "title": ""
-      },
-      {
-        "field": "files_yhk",
-        "title": ""
-      },
-      {
-        "field": "files_ldht",
-        "title": ""
-      },
-      {
-        "field": "files_bcxy",
-        "title": ""
-      },
-      {
-        "field": "files_zrz",
-        "title": ""
-      },
-      {
-        "field": "files_bmxy",
-        "title": ""
-      },
-      {
-        "field": "files_ygsc",
-        "title": ""
-      },
-      {
-        "field": "files_ygczx",
-        "title": ""
-      },
-      {
-        "field": "files_lzspb",
-        "title": ""
-      },
-      {
-        "field": "careers",
-        "title": ""
-      },
-      {
-        "field": "familys",
-        "title": ""
-      },
-      {
-        "field": "relates",
-        "title": ""
-      },
-      {
-        "field": "ability",
-        "title": ""
-      },
-      {
-        "field": "achieve",
-        "title": ""
-      },
-      {
-        "field": "blacked",
-        "title": ""
+        "field": "base_salary",
+        "title": "基本工资"
       }
     ]
   },
-  "hr/roster": {
+  "hr/org/team": {
     "formats": [
-      "atlas/hr/roster"
+      "atlas/hr/org/team"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "dept_name",
+        "title": "部门"
+      },
+      {
+        "field": "manager",
+        "title": "负责人"
+      },
+      {
+        "field": "headcount",
+        "title": "编制人数"
+      },
+      {
+        "field": "on_job",
+        "title": "在职人数"
+      },
+      {
+        "field": "vacancy",
+        "title": "空缺"
+      },
+      {
+        "field": "avg_tenure",
+        "title": "平均司龄(年)"
+      }
+    ],
     "fields": [
       {
-        "field": "id",
-        "title": ""
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "stoped",
-        "title": ""
+        "field": "manager",
+        "title": "负责人"
       },
       {
-        "field": "team_id",
-        "title": ""
+        "field": "headcount",
+        "title": "编制人数"
       },
       {
-        "field": "team_name",
-        "title": "所属单位"
+        "field": "on_job",
+        "title": "在职人数"
       },
       {
-        "field": "branch_id",
-        "title": "派驻分队"
+        "field": "vacancy",
+        "title": "空缺"
       },
       {
-        "field": "branch_name",
-        "title": "派驻分队"
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "card",
-        "title": "身份证号"
-      },
-      {
-        "field": "card_issue",
-        "title": ""
-      },
-      {
-        "field": "card_valid",
-        "title": ""
-      },
-      {
-        "field": "birthday",
-        "title": ""
-      },
-      {
-        "field": "gender",
-        "title": ""
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "nation",
-        "title": ""
-      },
-      {
-        "field": "politics",
-        "title": ""
-      },
-      {
-        "field": "military",
-        "title": ""
-      },
-      {
-        "field": "marital",
-        "title": ""
-      },
-      {
-        "field": "children",
-        "title": ""
-      },
-      {
-        "field": "health",
-        "title": ""
-      },
-      {
-        "field": "stature",
-        "title": ""
-      },
-      {
-        "field": "extent",
-        "title": ""
-      },
-      {
-        "field": "school",
-        "title": ""
-      },
-      {
-        "field": "subject",
-        "title": ""
-      },
-      {
-        "field": "feature",
-        "title": ""
-      },
-      {
-        "field": "cases",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "ranks",
-        "title": "职务"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "license",
-        "title": ""
-      },
-      {
-        "field": "social",
-        "title": "扣社保"
-      },
-      {
-        "field": "house",
-        "title": "扣公积金"
-      },
-      {
-        "field": "archive",
-        "title": ""
-      },
-      {
-        "field": "add_date",
-        "title": ""
-      },
-      {
-        "field": "act_date",
-        "title": ""
-      },
-      {
-        "field": "end_date",
-        "title": ""
-      },
-      {
-        "field": "salary_bank",
-        "title": ""
-      },
-      {
-        "field": "salary_open",
-        "title": ""
-      },
-      {
-        "field": "bank_code",
-        "title": ""
-      },
-      {
-        "field": "bank_open",
-        "title": ""
-      },
-      {
-        "field": "native",
-        "title": ""
-      },
-      {
-        "field": "polices",
-        "title": ""
-      },
-      {
-        "field": "location",
-        "title": ""
-      },
-      {
-        "field": "address",
-        "title": "用餐地点"
-      },
-      {
-        "field": "career",
-        "title": ""
-      },
-      {
-        "field": "family",
-        "title": ""
-      },
-      {
-        "field": "relate",
-        "title": ""
-      },
-      {
-        "field": "contract",
-        "title": ""
-      },
-      {
-        "field": "educate",
-        "title": ""
-      },
-      {
-        "field": "promote",
-        "title": ""
-      },
-      {
-        "field": "because",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "user_pic",
-        "title": ""
-      },
-      {
-        "field": "files_gwxqb",
-        "title": ""
-      },
-      {
-        "field": "files_msdjb",
-        "title": ""
-      },
-      {
-        "field": "files_zpdjb",
-        "title": ""
-      },
-      {
-        "field": "files_sfz",
-        "title": ""
-      },
-      {
-        "field": "files_hkb",
-        "title": ""
-      },
-      {
-        "field": "files_xlzs",
-        "title": ""
-      },
-      {
-        "field": "files_zyzbz",
-        "title": ""
-      },
-      {
-        "field": "files_wfzzm",
-        "title": ""
-      },
-      {
-        "field": "files_jkbg",
-        "title": ""
-      },
-      {
-        "field": "files_yhk",
-        "title": ""
-      },
-      {
-        "field": "files_ldht",
-        "title": ""
-      },
-      {
-        "field": "files_bcxy",
-        "title": ""
-      },
-      {
-        "field": "files_zrz",
-        "title": ""
-      },
-      {
-        "field": "files_bmxy",
-        "title": ""
-      },
-      {
-        "field": "files_ygsc",
-        "title": ""
-      },
-      {
-        "field": "files_ygczx",
-        "title": ""
-      },
-      {
-        "field": "files_lzspb",
-        "title": ""
-      },
-      {
-        "field": "careers",
-        "title": ""
-      },
-      {
-        "field": "familys",
-        "title": ""
-      },
-      {
-        "field": "relates",
-        "title": ""
-      },
-      {
-        "field": "ability",
-        "title": ""
-      },
-      {
-        "field": "achieve",
-        "title": ""
-      },
-      {
-        "field": "blacked",
-        "title": ""
+        "field": "avg_tenure",
+        "title": "平均司龄(年)"
       }
     ]
   },
-  "hr/team": {
+  "hr/payroll/sheet": {
     "formats": [
-      "atlas/hr/team"
+      "atlas/hr/payroll/sheet"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "pay_month",
+        "title": "月份"
+      },
+      {
+        "field": "employee_name",
+        "title": "员工"
+      },
+      {
+        "field": "dept_name",
+        "title": "部门"
+      },
+      {
+        "field": "gross_amount",
+        "title": "应发工资"
+      },
+      {
+        "field": "social_amount",
+        "title": "社保"
+      },
+      {
+        "field": "fund_amount",
+        "title": "公积金"
+      },
+      {
+        "field": "tax_amount",
+        "title": "个税"
+      },
+      {
+        "field": "net_amount",
+        "title": "实发工资"
+      },
+      {
+        "field": "pay_state",
+        "title": "发放状态"
+      }
+    ],
     "fields": [
       {
-        "field": "id",
-        "title": ""
+        "field": "pay_month",
+        "title": "月份"
       },
       {
-        "field": "stoped",
-        "title": ""
+        "field": "employee_name",
+        "title": "员工"
       },
       {
-        "field": "team_id",
-        "title": ""
+        "field": "dept_name",
+        "title": "部门"
       },
       {
-        "field": "team_name",
-        "title": "所属单位"
+        "field": "gross_amount",
+        "title": "应发工资"
       },
       {
-        "field": "code",
-        "title": "资产编码"
+        "field": "social_amount",
+        "title": "社保"
       },
       {
-        "field": "name",
-        "title": "格式名称"
+        "field": "fund_amount",
+        "title": "公积金"
       },
       {
-        "field": "address",
-        "title": "用餐地点"
+        "field": "tax_amount",
+        "title": "个税"
+      },
+      {
+        "field": "net_amount",
+        "title": "实发工资"
+      },
+      {
+        "field": "pay_state",
+        "title": "发放状态"
       }
     ]
+  },
+  "hr/report/dashboard": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
   },
   "login": {
     "formats": [],
@@ -5905,7 +3620,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "unit",
@@ -5961,7 +3676,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "no",
@@ -6041,7 +3756,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "source",
@@ -6125,7 +3840,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "code",
@@ -6221,7 +3936,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "unit",
@@ -6389,7 +4104,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "types",
-        "title": "奖惩类型"
+        "title": "出行方式"
       },
       {
         "field": "cashes",
@@ -6891,43 +4606,12 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/finance/budget/project-cost": "finance/budget/project-cost",
   "atlas/finance/treasury/account": "finance/treasury/account",
   "atlas/finance/treasury/plan": "finance/treasury/plan",
-  "atlas/hr/attendance-apply/field": "hr/attendance-apply/field",
-  "atlas/hr/attendance-apply/leave": "hr/attendance-apply/leave",
-  "atlas/hr/attendance-apply/makeup": "hr/attendance-apply/makeup",
-  "atlas/hr/attendance-apply/overtime": "hr/attendance-apply/overtime",
-  "atlas/hr/attendance-apply/shift": "hr/attendance-apply/shift",
-  "atlas/hr/attendance/daily": "hr/attendance/daily",
-  "atlas/hr/attendance/daily-summary": "hr/attendance/daily-summary",
-  "atlas/hr/attendance/leave-rule": "hr/attendance/leave-rule",
-  "atlas/hr/attendance/monthly": "hr/attendance/monthly",
-  "atlas/hr/attendance/punch": "hr/attendance/punch",
-  "atlas/hr/attendance/rule": "hr/attendance/rule",
-  "atlas/hr/deduction/housing": "hr/deduction/housing",
-  "atlas/hr/deduction/social": "hr/deduction/social",
-  "atlas/hr/exit/absent": "hr/exit/absent",
-  "atlas/hr/exit/dismiss": "hr/exit/dismiss",
-  "atlas/hr/exit/resign": "hr/exit/resign",
-  "atlas/hr/insurance/commercial": "hr/insurance/commercial",
-  "atlas/hr/insurance/commercial/list": "hr/insurance/commercial",
-  "atlas/hr/insurance/housing": "hr/insurance/housing",
-  "atlas/hr/insurance/social": "hr/insurance/social",
-  "atlas/hr/movement/adjust": "hr/movement/adjust",
-  "atlas/hr/movement/onboard": "hr/movement/onboard",
-  "atlas/hr/movement/promotion": "hr/movement/promotion",
-  "atlas/hr/movement/transfer": "hr/movement/transfer",
-  "atlas/hr/payroll/generate": "hr/payroll/generate",
-  "atlas/hr/payroll/group": "hr/payroll/group",
-  "atlas/hr/payroll/group/item": "hr/payroll/group",
-  "atlas/masterdata/payroll-item": "hr/payroll/group",
-  "atlas/hr/relation/contract": "hr/relation/contract",
-  "atlas/hr/relation/level": "hr/relation/level",
-  "atlas/hr/relation/reward": "hr/relation/reward",
-  "atlas/hr/relation/training": "hr/relation/training",
-  "atlas/hr/report/structure": "hr/report/structure",
-  "atlas/hr/report/summary": "hr/report/summary",
-  "atlas/hr/resume": "hr/resume",
-  "atlas/hr/roster": "hr/roster",
-  "atlas/hr/team": "hr/team",
+  "atlas/hr/attendance/record": "hr/attendance/record",
+  "atlas/hr/attendance/summary": "hr/attendance/summary",
+  "atlas/hr/employee/movement": "hr/employee/movement",
+  "atlas/hr/employee/roster": "hr/employee/roster",
+  "atlas/hr/org/team": "hr/org/team",
+  "atlas/hr/payroll/sheet": "hr/payroll/sheet",
   "atlas/masterdata/asset-category": "masterdata/asset-category",
   "atlas/masterdata/bank-account": "masterdata/bank-account",
   "atlas/masterdata/biz-type": "masterdata/biz-type",
@@ -6939,6 +4623,7 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/masterdata/item-category": "masterdata/item-category",
   "atlas/masterdata/item-code": "masterdata/item-code",
   "atlas/masterdata/location": "masterdata/location",
+  "atlas/masterdata/payroll-item": "masterdata/payroll-item",
   "atlas/masterdata/subject": "masterdata/subject",
   "atlas/masterdata/warehouse": "masterdata/warehouse"
 }
@@ -6966,7 +4651,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "article_name": "资产分类",
   "outer_id": "维保单位",
   "price": "单价",
-  "contact": "证明人",
+  "contact": "联系人",
   "explain": "维保内容",
   "outer_name": "维保单位",
   "invoice_no": "对应发票",
@@ -6996,7 +4681,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "actual_date": "实际完成",
   "delay_days": "延期(天)",
   "node_state": "状态",
-  "manager": "项目经理",
+  "manager": "负责人",
   "project_no": "项目编号",
   "contract_amount": "合同金额",
   "progress": "进程地址",
@@ -7018,9 +4703,9 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "expense_name": "费用分类",
   "predict": "需求日期",
   "supplier": "供应商",
-  "start": "开始日期",
+  "start": "出发日期",
   "expire": "结束日期",
-  "types": "奖惩类型",
+  "types": "出行方式",
   "depart": "出发地",
   "bourn": "目的地",
   "indicator": "指标",
@@ -7069,51 +4754,49 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "actual_in_amount": "实际流入",
   "actual_out_amount": "实际流出",
   "diff_amount": "净额差异",
-  "day": "加班日期",
-  "leave_time_fmt": "请假时长",
-  "checkin_time": "补卡时间",
-  "over_time": "加班时长（小时）",
-  "ranks": "职务",
-  "position": "岗位",
-  "branch_name": "派驻分队",
-  "reason": "原因",
-  "user_pre_rank": "原职务",
-  "user_pre_position": "原岗位",
-  "user_pre_scale": "原工资级别",
-  "branch_id": "派驻分队",
-  "scale": "工资级别",
-  "salary": "合同约定工资",
-  "card": "身份证号",
-  "conditions": "条件内容",
-  "content": "培训内容",
-  "describe": "公式说明",
-  "bases": "基本工资",
-  "grade": "综合补贴",
-  "posts": "岗位补贴",
-  "dine_fix": "每月伙食补助",
-  "dine_day": "每日伙食补助",
-  "heats": "高温补贴",
-  "rise_fix": "固定绩效工资",
-  "rise_var": "浮动绩效工资",
-  "hour_on": "工作日时薪",
-  "hour_off": "休息日时薪",
-  "hour_ext": "节假日时薪",
-  "hour_add": "年假加班时薪",
-  "hour_fix": "约定时薪",
-  "times": "约定加班时长",
-  "extra": "约定加班工资",
-  "skill": "分队长管理员",
-  "other": "其他补贴",
-  "insure": "扣残障金",
-  "social": "扣社保",
-  "house": "扣公积金",
-  "user_name": "操作人",
-  "branch": "培训机构",
-  "outcome": "培训成果",
+  "work_date": "日期",
+  "employee_name": "员工",
+  "dept_name": "部门",
+  "check_in": "上班打卡",
+  "check_out": "下班打卡",
+  "work_hours": "工时(小时)",
+  "attendance_state": "状态",
+  "should_days": "应出勤(天)",
+  "actual_days": "实出勤(天)",
+  "late_count": "迟到(次)",
+  "leave_days": "请假(天)",
+  "overtime_hours": "加班(小时)",
+  "exception_count": "异常(次)",
+  "employee_no": "工号",
+  "movement_type": "异动类型",
+  "from_dept": "原部门",
+  "to_dept": "新部门",
+  "effect_date": "生效日期",
+  "reason": "异动原因",
+  "operator": "经办人",
+  "position_name": "岗位",
+  "job_grade": "职级",
+  "staff_state": "状态",
+  "entry_date": "入职日期",
+  "education": "学历",
+  "age": "年龄",
+  "base_salary": "基本工资",
+  "headcount": "编制人数",
+  "on_job": "在职人数",
+  "vacancy": "空缺",
+  "avg_tenure": "平均司龄(年)",
+  "pay_month": "月份",
+  "gross_amount": "应发工资",
+  "social_amount": "社保",
+  "fund_amount": "公积金",
+  "tax_amount": "个税",
+  "net_amount": "实发工资",
+  "pay_state": "发放状态",
   "kind": "固定",
   "depth": "深度",
   "max_depth": "最大深度",
   "user_id": "用户ID",
+  "user_name": "操作人",
   "mobile_number": "手机号码",
   "requesttime": "访问时间",
   "host": "主机头",
@@ -7185,42 +4868,13 @@ export const ROUTE_PERMISSIONS: string[] = [
   "FIN_TREASURY_ACCOUNT",
   "FIN_TREASURY_OVERVIEW",
   "FIN_TREASURY_PLAN",
-  "HR_APPLY_FIELD",
-  "HR_APPLY_LEAVE",
-  "HR_APPLY_MAKEUP",
-  "HR_APPLY_OVERTIME",
-  "HR_APPLY_SHIFT",
-  "HR_ATTENDANCE_DAILY",
-  "HR_ATTENDANCE_HOLIDAY",
-  "HR_ATTENDANCE_LEAVE",
-  "HR_ATTENDANCE_MONTHLY",
-  "HR_ATTENDANCE_PUNCH",
-  "HR_ATTENDANCE_RULE",
+  "HR_ATTENDANCE_RECORD",
   "HR_ATTENDANCE_SUMMARY",
-  "HR_DEDUCTION_HOUSING",
-  "HR_DEDUCTION_SOCIAL",
-  "HR_EXIT_ABSENT",
-  "HR_EXIT_DISMISS",
-  "HR_EXIT_RESIGN",
-  "HR_INSURANCE_COMMERCIAL",
-  "HR_INSURANCE_HOUSING",
-  "HR_INSURANCE_SOCIAL",
-  "HR_MOVEMENT_ADJUST",
-  "HR_MOVEMENT_ONBOARD",
-  "HR_MOVEMENT_PROMOTION",
-  "HR_MOVEMENT_TRANSFER",
-  "HR_PAYROLL_GENERATE",
-  "HR_PAYROLL_GROUP",
-  "HR_PAYROLL_PAYMENT",
-  "HR_RELATION_CONTRACT",
-  "HR_RELATION_LEVEL",
-  "HR_RELATION_REWARD",
-  "HR_RELATION_TRAINING",
-  "HR_REPORT_STRUCTURE",
-  "HR_REPORT_SUMMARY",
-  "HR_RESUME",
-  "HR_ROSTER",
-  "HR_TEAM",
+  "HR_EMPLOYEE_MOVEMENT",
+  "HR_EMPLOYEE_ROSTER",
+  "HR_ORG_TEAM",
+  "HR_PAYROLL_SHEET",
+  "HR_REPORT_DASHBOARD",
   "IAM_GRANT",
   "IAM_GROUP",
   "IAM_MEMBER",

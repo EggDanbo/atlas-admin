@@ -15,7 +15,7 @@ describe('resolveModuleDir', () => {
 
   it('带命名空间前缀的格式名能按后缀解析', () => {
     expect(resolveModuleDir('atlas/crm/billing/invoice')).toBe('crm/billing/invoice')
-    expect(resolveModuleDir('atlas/hr/roster')).toBe('hr/roster')
+    expect(resolveModuleDir('atlas/hr/employee/roster')).toBe('hr/employee/roster')
   })
 
   it('日志类前缀别名指向统一的日志模块', () => {

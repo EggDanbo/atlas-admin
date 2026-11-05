@@ -38,58 +38,6 @@ export const FIELD_ENUMS: Record<string, Record<string, string>> = {
     types: 'organ_outer_types',
   },
 
-  // ---------------- 人力 ----------------
-  'hr/roster': {
-    status: 'staff_info_status',
-    types: 'staff_info_types',
-    gender: 'organ_user_gender',
-    nation: 'staff_info_nation',
-    extent: 'staff_info_extent',
-    politics: 'staff_info_politics',
-    marital: 'staff_info_marital',
-    census: 'staff_info_census',
-    health: 'staff_info_health',
-    house: 'staff_info_house',
-    social: 'staff_info_social',
-  },
-  'hr/resume': {
-    status: 'staff_resume_status',
-    gender: 'organ_user_gender',
-    types: 'staff_info_types',
-  },
-  'hr/relation/contract': {
-    status: 'staff_labor_status',
-  },
-  'hr/movement/promotion': {
-    pattern: 'staff_grade_types',
-  },
-  'hr/payroll/payment': {
-    status: 'staff_salary_status',
-  },
-  'hr/payroll/generate': {
-    status: 'staff_salary_status',
-  },
-  'hr/insurance/housing': {
-    house_buy: 'staff_info_house',
-  },
-  'hr/insurance/social': {
-    types: 'staff_info_types',
-    status: 'staff_info_status',
-    social_type: 'staff_info_social',
-  },
-  'hr/attendance-apply/shift': {
-    types: 'checkin_outside_types',
-  },
-  'hr/attendance-apply/field': {
-    types: 'checkin_outside_types',
-  },
-  'hr/attendance-apply/overtime': {
-    types: 'checkin_overtime_types',
-  },
-  'hr/attendance-apply/leave': {
-    types: 'checkin_vacation_types',
-  },
-
   // ---------------- 主数据 ----------------
   'masterdata/subject': {
     direction: 'basic_content_direction',

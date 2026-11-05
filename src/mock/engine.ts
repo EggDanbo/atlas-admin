@@ -22,6 +22,7 @@ import {
   resolveTitle,
 } from './data/fieldValue'
 import { resolveFinanceMock } from './data/finance'
+import { resolveHrMock } from './data/hr'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
@@ -392,39 +393,6 @@ function buildModuleTree(path: string) {
       },
     ],
   }))
-}
-
-/** 法定节假日排期（演示数据，按当年生成） */
-function buildHolidayRows() {
-  const year = new Date().getFullYear()
-  const plan: Array<[string, number, number, number]> = [
-    ['元旦', 1, 1, 3],
-    ['春节', 2, 10, 7],
-    ['清明节', 4, 4, 3],
-    ['劳动节', 5, 1, 5],
-    ['端午节', 6, 10, 3],
-    ['中秋节', 9, 17, 3],
-    ['国庆节', 10, 1, 7],
-  ]
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return plan.map(([name, month, start, count], index) => {
-    const days = Array.from({ length: count }, (_, offset) => {
-      const d = new Date(year, month - 1, start + offset)
-      return {
-        day: `${year}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-        // 1 法定假日、2 调休补班
-        day_type: offset === count - 1 && count >= 5 ? 2 : 1,
-      }
-    })
-    return {
-      id: 100 + index,
-      year,
-      name,
-      notes: count >= 5 ? '含调休补班' : '',
-      sort: index + 1,
-      days,
-    }
-  })
 }
 
 /** 字典下拉的候选值：按字典名关键字挑选语义相近的中文选项 */
@@ -895,7 +863,7 @@ interface MonitorModule {
 /** 统计口径：与左侧一级导航一一对应，二级名称取自各模块真实菜单 */
 const MONITOR_MODULES: MonitorModule[] = [
   { code: 'crm', name: '客户与项目', children: ['客户', '商机', '项目', '开票'] },
-  { code: 'hr', name: '人力资源', children: ['员工名册', '异动管理', '考勤记录', '薪酬管理'] },
+  { code: 'hr', name: '人力资源', children: ['花名册', '异动', '考勤', '薪酬'] },
   { code: 'expense', name: '费用管理', children: ['费用申请', '事前申请', '费用支付', '预算额度'] },
   { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
   { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
@@ -1097,6 +1065,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
     return ok(buildMonitorOverview())
 
+  // ---------- 人力资源 ----------
+  // 编制、考勤、工资表都由同一份员工主数据派生，人数与工资成本才对得上
+  if (/^hr\//.test(module)) {
+    const payload = resolveHrMock(module, action, params)
+    if (payload)
+      return ok(payload)
+  }
+
   // ---------- 客户与项目 ----------
   // 合同额、开票、回款、应收之间要能对上，因此由共享数据集派生，不走通用随机
   if (/^crm\//.test(module)) {
@@ -1172,11 +1148,6 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // ---------- 通用列表 ----------
   if (LIST_ACTIONS.has(action))
     return ok(buildPage(module, params))
-
-  // ---------- 假期安排：按年度返回列表 ----------
-  // 该接口虽名为 get，语义是「取某年度的全部节假日」，页面按数组消费
-  if (/hr\/attendance\/holiday\/get$/.test(path))
-    return ok(buildHolidayRows())
 
   // ---------- 通用详情 ----------
   if (DETAIL_ACTIONS.has(action)) {
