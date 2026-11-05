@@ -20,6 +20,7 @@ import {
   isSummable,
   resolveTitle,
 } from './data/fieldValue'
+import { resolveFinanceMock } from './data/finance'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
@@ -1097,6 +1098,15 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // ---------- 运营监控 ----------
   if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
     return ok(buildMonitorOverview())
+
+  // ---------- 财务管理 ----------
+  // 资金/账龄/预算用的是按业务口径构造的数据：预算不能小于已用，
+  // 账龄各段要能加总回总额，资金头寸要和账户余额对得上，通用随机生成不了
+  if (/^finance\//.test(module)) {
+    const payload = resolveFinanceMock(module, params)
+    if (payload)
+      return ok(payload)
+  }
 
   // ---------- 消息通知 ----------
   if (/message\/.*unread/i.test(path)) {

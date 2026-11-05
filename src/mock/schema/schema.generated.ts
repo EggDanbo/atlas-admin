@@ -2261,7 +2261,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "team_id",
@@ -2277,7 +2277,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "team_id",
@@ -3225,6 +3225,326 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       }
     ]
   },
+  "finance/analysis/dashboard": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
+  },
+  "finance/analysis/indicator": {
+    "formats": [
+      "atlas/finance/analysis/indicator"
+    ],
+    "columnFields": [
+      {
+        "field": "indicator",
+        "title": "指标"
+      },
+      {
+        "field": "current_value",
+        "title": "本期"
+      },
+      {
+        "field": "previous_value",
+        "title": "上期"
+      },
+      {
+        "field": "industry_value",
+        "title": "行业均值"
+      },
+      {
+        "field": "rating",
+        "title": "评价"
+      }
+    ],
+    "fields": [
+      {
+        "field": "indicator",
+        "title": "指标"
+      },
+      {
+        "field": "current_value",
+        "title": "本期"
+      },
+      {
+        "field": "previous_value",
+        "title": "上期"
+      },
+      {
+        "field": "industry_value",
+        "title": "行业均值"
+      },
+      {
+        "field": "rating",
+        "title": "评价"
+      }
+    ]
+  },
+  "finance/arap/payable": {
+    "formats": [
+      "atlas/finance/arap/payable"
+    ],
+    "columnFields": [],
+    "fields": [
+      {
+        "field": "supplier",
+        "title": "供应商"
+      },
+      {
+        "field": "total_amount",
+        "title": "应付总额"
+      },
+      {
+        "field": "due_month_amount",
+        "title": "本月到期"
+      },
+      {
+        "field": "overdue_amount",
+        "title": "逾期未付"
+      },
+      {
+        "field": "credit_days",
+        "title": "信用账期(天)"
+      },
+      {
+        "field": "credit_level",
+        "title": "信用等级"
+      }
+    ]
+  },
+  "finance/arap/receivable": {
+    "formats": [
+      "atlas/finance/arap/receivable"
+    ],
+    "columnFields": [],
+    "fields": [
+      {
+        "field": "customer",
+        "title": "客户"
+      },
+      {
+        "field": "total_amount",
+        "title": "应收总额"
+      },
+      {
+        "field": "not_due_amount",
+        "title": "未到期"
+      },
+      {
+        "field": "overdue_m1_amount",
+        "title": "逾期 30 天内"
+      },
+      {
+        "field": "overdue_m2_amount",
+        "title": "逾期 31-60 天"
+      },
+      {
+        "field": "overdue_m3_amount",
+        "title": "逾期 61-90 天"
+      },
+      {
+        "field": "overdue_over_amount",
+        "title": "逾期 90 天以上"
+      },
+      {
+        "field": "bad_debt_amount",
+        "title": "坏账准备"
+      },
+      {
+        "field": "overdue_days",
+        "title": "最长逾期(天)"
+      }
+    ]
+  },
+  "finance/budget/execution": {
+    "formats": [
+      "atlas/finance/budget/execution"
+    ],
+    "columnFields": [
+      {
+        "field": "dept",
+        "title": "部门"
+      },
+      {
+        "field": "year",
+        "title": "年度"
+      },
+      {
+        "field": "budget_amount",
+        "title": "年度预算"
+      },
+      {
+        "field": "used_amount",
+        "title": "已使用"
+      },
+      {
+        "field": "remain_amount",
+        "title": "剩余"
+      },
+      {
+        "field": "execution_rate",
+        "title": "执行率(%)"
+      },
+      {
+        "field": "warning",
+        "title": "预警"
+      }
+    ],
+    "fields": [
+      {
+        "field": "dept",
+        "title": "部门"
+      },
+      {
+        "field": "year",
+        "title": "年度"
+      },
+      {
+        "field": "budget_amount",
+        "title": "年度预算"
+      },
+      {
+        "field": "used_amount",
+        "title": "已使用"
+      },
+      {
+        "field": "remain_amount",
+        "title": "剩余"
+      },
+      {
+        "field": "execution_rate",
+        "title": "执行率(%)"
+      },
+      {
+        "field": "warning",
+        "title": "预警"
+      }
+    ]
+  },
+  "finance/budget/project-cost": {
+    "formats": [
+      "atlas/finance/budget/project-cost"
+    ],
+    "columnFields": [],
+    "fields": [
+      {
+        "field": "project",
+        "title": "项目"
+      },
+      {
+        "field": "contract_amount",
+        "title": "合同金额"
+      },
+      {
+        "field": "labor_cost",
+        "title": "人工成本"
+      },
+      {
+        "field": "purchase_cost",
+        "title": "采购成本"
+      },
+      {
+        "field": "other_total_amount",
+        "title": "其他成本"
+      },
+      {
+        "field": "profit_amount",
+        "title": "毛利"
+      },
+      {
+        "field": "gross_rate",
+        "title": "毛利率(%)"
+      }
+    ]
+  },
+  "finance/treasury/account": {
+    "formats": [
+      "atlas/finance/treasury/account"
+    ],
+    "columnFields": [],
+    "fields": [
+      {
+        "field": "account_name",
+        "title": "账户名称"
+      },
+      {
+        "field": "bank_name",
+        "title": "开户行"
+      },
+      {
+        "field": "account_no",
+        "title": "账号"
+      },
+      {
+        "field": "currency",
+        "title": "币种"
+      },
+      {
+        "field": "account_type",
+        "title": "账户类型"
+      },
+      {
+        "field": "balance",
+        "title": "账户余额"
+      },
+      {
+        "field": "inflow_amount",
+        "title": "本月流入"
+      },
+      {
+        "field": "outflow_amount",
+        "title": "本月流出"
+      },
+      {
+        "field": "account_state_label",
+        "title": "状态"
+      }
+    ]
+  },
+  "finance/treasury/overview": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
+  },
+  "finance/treasury/plan": {
+    "formats": [
+      "atlas/finance/treasury/plan"
+    ],
+    "columnFields": [],
+    "fields": [
+      {
+        "field": "year",
+        "title": "年度"
+      },
+      {
+        "field": "month",
+        "title": "月份"
+      },
+      {
+        "field": "plan_in_amount",
+        "title": "计划流入"
+      },
+      {
+        "field": "plan_out_amount",
+        "title": "计划流出"
+      },
+      {
+        "field": "actual_in_amount",
+        "title": "实际流入"
+      },
+      {
+        "field": "actual_out_amount",
+        "title": "实际流出"
+      },
+      {
+        "field": "diff_amount",
+        "title": "净额差异"
+      },
+      {
+        "field": "execution_rate",
+        "title": "执行率(%)"
+      }
+    ]
+  },
   "hr/attendance-apply/field": {
     "formats": [
       "atlas/hr/attendance-apply/field"
@@ -3813,7 +4133,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -3829,7 +4149,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -4740,7 +5060,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -4774,7 +5094,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       },
       {
         "field": "group_id",
@@ -4826,7 +5146,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -4862,7 +5182,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "start",
@@ -6970,6 +7290,13 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/expense/query": "expense/query",
   "atlas/expense/reimburse": "expense/reimburse",
   "atlas/expense/travel": "expense/travel",
+  "atlas/finance/analysis/indicator": "finance/analysis/indicator",
+  "atlas/finance/arap/payable": "finance/arap/payable",
+  "atlas/finance/arap/receivable": "finance/arap/receivable",
+  "atlas/finance/budget/execution": "finance/budget/execution",
+  "atlas/finance/budget/project-cost": "finance/budget/project-cost",
+  "atlas/finance/treasury/account": "finance/treasury/account",
+  "atlas/finance/treasury/plan": "finance/treasury/plan",
   "atlas/hr/attendance-apply/field": "hr/attendance-apply/field",
   "atlas/hr/attendance-apply/leave": "hr/attendance-apply/leave",
   "atlas/hr/attendance-apply/makeup": "hr/attendance-apply/makeup",
@@ -7102,6 +7429,53 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "types": "奖惩类型",
   "depart": "出发地",
   "bourn": "目的地",
+  "indicator": "指标",
+  "current_value": "本期",
+  "previous_value": "上期",
+  "industry_value": "行业均值",
+  "rating": "评价",
+  "total_amount": "应收总额",
+  "due_month_amount": "本月到期",
+  "overdue_amount": "逾期未付",
+  "credit_days": "信用账期(天)",
+  "credit_level": "信用等级",
+  "customer": "客户",
+  "not_due_amount": "未到期",
+  "overdue_m1_amount": "逾期 30 天内",
+  "overdue_m2_amount": "逾期 31-60 天",
+  "overdue_m3_amount": "逾期 61-90 天",
+  "overdue_over_amount": "逾期 90 天以上",
+  "bad_debt_amount": "坏账准备",
+  "overdue_days": "最长逾期(天)",
+  "dept": "部门",
+  "year": "年度",
+  "budget_amount": "年度预算",
+  "used_amount": "已使用",
+  "remain_amount": "剩余",
+  "execution_rate": "执行率(%)",
+  "warning": "预警",
+  "project": "项目",
+  "contract_amount": "合同金额",
+  "labor_cost": "人工成本",
+  "purchase_cost": "采购成本",
+  "other_total_amount": "其他成本",
+  "profit_amount": "毛利",
+  "gross_rate": "毛利率(%)",
+  "account_name": "账户名称",
+  "bank_name": "开户行",
+  "account_no": "账号",
+  "currency": "币种",
+  "account_type": "账户类型",
+  "balance": "账户余额",
+  "inflow_amount": "本月流入",
+  "outflow_amount": "本月流出",
+  "account_state_label": "状态",
+  "month": "月份",
+  "plan_in_amount": "计划流入",
+  "plan_out_amount": "计划流出",
+  "actual_in_amount": "实际流入",
+  "actual_out_amount": "实际流出",
+  "diff_amount": "净额差异",
   "day": "加班日期",
   "leave_time_fmt": "请假时长",
   "checkin_time": "补卡时间",
@@ -7183,6 +7557,15 @@ export const ROUTE_PERMISSIONS: string[] = [
   "EXP_REQUEST_ENTERTAIN",
   "EXP_REQUEST_PURCHASE",
   "EXP_REQUEST_TRAVEL",
+  "FIN_ANALYSIS_DASHBOARD",
+  "FIN_ANALYSIS_INDICATOR",
+  "FIN_ARAP_PAYABLE",
+  "FIN_ARAP_RECEIVABLE",
+  "FIN_BUDGET_EXECUTION",
+  "FIN_BUDGET_PROJECT",
+  "FIN_TREASURY_ACCOUNT",
+  "FIN_TREASURY_OVERVIEW",
+  "FIN_TREASURY_PLAN",
   "HR_APPLY_FIELD",
   "HR_APPLY_LEAVE",
   "HR_APPLY_MAKEUP",

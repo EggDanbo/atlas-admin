@@ -122,6 +122,7 @@
   },
   "discovered": {
     "icons": [
+      "ant-design:bank-outlined",
       "ant-design:cloud-download-outlined",
       "ant-design:cloud-server-outlined",
       "ant-design:delete-row-outline",
@@ -133,11 +134,11 @@
       "ant-design:share-alt-outlined",
       "ant-design:skin-outlined"
     ],
-    "lastUpdate": "2026-11-04T17:22:34.436Z",
+    "lastUpdate": "2026-11-05T17:58:28.213Z",
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
-    "totalIcons": 114,
+    "totalIcons": 115,
     "byCollection": {
       "ant-design": 110,
       "circle-flags": 2,

@@ -37,6 +37,12 @@ const DISPLAY_FORMAT: Record<ColumnType, string> = {
   enums: '',
 }
 
+/** 不做合计行的模块：比率类指标、多币种账户 */
+const NO_TOTAL_MODULES = new Set([
+  'finance/analysis/indicator',
+  'finance/treasury/account',
+])
+
 /**
  * 不应出现在表格中的字段
  *
@@ -278,7 +284,10 @@ export function buildColumns(name?: string | null): DataFormatColumn[] {
     // 字段若登记了枚举（含状态类），表格直接显示中文
     const isStatus = /^(status|states|state)$/i.test(item.field)
     const fieldEnum = resolveFieldEnum(moduleDir, item.field) ?? (isStatus ? 'BillStatus' : null)
-    const type: ColumnType = fieldEnum ? 'enums' : inferColumnType(item.field)
+    // 比率类指标（流动比率、毛利率等）不进金额格式化：金额列只保留 0 位小数，
+    // 2.14 会被显示成 2，指标表就失去意义了。数值型原样输出并保留两位小数
+    const isRatioField = moduleDir === 'finance/analysis/indicator' && item.field.endsWith('_value')
+    const type: ColumnType = fieldEnum ? 'enums' : (isRatioField ? 'number' : inferColumnType(item.field))
     const column: DataFormatColumn = {
       column: item.field,
       title: item.title,
@@ -296,7 +305,9 @@ export function buildColumns(name?: string | null): DataFormatColumn[] {
       isview: true,
       isprint: true,
       ismerge: false,
-      istotal: isSummable(item.field, type) ? '1' : '',
+      // 财务指标全是比率和天数，加总没有业务意义；
+      // 银行账户跨币种，把美元、港币余额加进人民币合计是错的
+      istotal: NO_TOTAL_MODULES.has(moduleDir) ? '' : (isSummable(item.field, type) ? '1' : ''),
       sortable: true,
       filter_express: null,
       filter_value: null,
