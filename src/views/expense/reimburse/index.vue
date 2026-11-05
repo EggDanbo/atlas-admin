@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { ModalInst, OpenModal } from '@/components/SpModal'
-import { format } from 'date-fns'
+import type { OpenModal } from '@/components/SpModal'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
-import { SpCascader } from '@/components/SpCascader'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { SpTree } from '@/components/SpTree'
@@ -12,7 +10,6 @@ import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import common from '@/service/api/common'
 import { reimburse as api } from '@/service/api/expense'
-import { subject } from '@/service/api/masterdata'
 import { defDate, unDate } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
@@ -21,17 +18,12 @@ import BorrowDetail from '@/views/expense/advance/detail.vue'
 import AnsureDetail from '@/views/expense/deposit/detail.vue'
 import ApplyDetail from '@/views/expense/payment/detail.vue'
 import PayerDetail from '@/views/expense/tax/detail.vue'
-import VouchDetail from '@/views/finance/voucher/detail.vue'
 
 const logBizRef = ref<OpenModal | null>(null)
 const ansureDetailRef = ref<OpenModal | null>(null)
 const applyDetailRef = ref<OpenModal | null>(null)
 const borrowDetailRef = ref<OpenModal | null>(null)
 const payerDetailRef = ref<OpenModal | null>(null)
-const vouchModalRef = ref<ModalInst | null>(null)
-const vouchDetailRef = ref<OpenModal | null>(null)
-
-const btnLoading = ref<boolean>(false)
 
 const querySchemas = computed(() => ({
   status: [
@@ -59,17 +51,6 @@ const querySchemas = computed(() => ({
     },
   ],
 }))
-
-const contentOptions = ref<Recordable[]>([])
-
-const vouchInfo = ref({
-  no: null as number | null,
-  date: null as number | null,
-  content_debit: null as string | null,
-  content_credit: null as string | null,
-  account_id: null as string | null,
-  list: [] as any,
-})
 
 const teamTreeOptions = ref<Recordable[]>([])
 async function loadTeamTree() {
@@ -250,47 +231,6 @@ async function cancel() {
   toast.success('操作成功')
   await tableRef.value.refresh()
 }
-
-function handleVouch() {
-  const rows = tableRef.value.getCheckboxRows()
-  if (rows.length === 0) {
-    toast.info('请选择需要操作的数据')
-    return
-  }
-
-  vouchInfo.value.no = null
-  vouchInfo.value.content_debit = null
-  vouchInfo.value.content_credit = null
-  vouchInfo.value.account_id = null
-  vouchInfo.value.list = rows.map(q => q.id)
-  loadContentOptions()
-
-  vouchModalRef.value?.open()
-}
-
-async function createVouch() {
-  btnLoading.value = true
-  const { isSuccess, data } = await api.vouch({ ...vouchInfo.value }).finally(() => (btnLoading.value = false))
-  if (!isSuccess)
-    return
-
-  vouchModalRef.value?.close()
-
-  vouchDetailRef.value?.open({
-    data,
-    isvouch: true,
-  })
-}
-
-async function loadContentOptions() {
-  const year = vouchInfo.value.date ? format(Number(vouchInfo.value.date), 'yyyy') : null
-  const { isSuccess, data } = await subject.tree({
-    year,
-    codes: ['1002'],
-  })
-  if (isSuccess)
-    contentOptions.value = data
-}
 </script>
 
 <script lang="ts">
@@ -362,12 +302,6 @@ export default { name: 'ExpenseClaimReimburse' }
               >
                 取消支付
               </n-button>
-              <n-button
-                :disabled="!(queryModel.status && Number(queryModel.status) === 8)"
-                @click="handleVouch"
-              >
-                入账
-              </n-button>
             </n-button-group>
             <n-dropdown trigger="hover" :options="moreOptions" @select="handleMore">
               <n-button type="default" icon-placement="right">
@@ -406,61 +340,7 @@ export default { name: 'ExpenseClaimReimburse' }
     <ApplyDetail ref="applyDetailRef" @on-action="editAction" />
     <BorrowDetail ref="borrowDetailRef" @on-action="editAction" />
     <PayerDetail ref="payerDetailRef" @on-action="editAction" />
-    <VouchDetail ref="vouchDetailRef" @on-action="editAction" />
     <PdfSetting ref="pdfSettingRef" />
     <LogBiz ref="logBizRef" />
-
-    <SpModal
-      ref="vouchModalRef"
-      title="凭证生成"
-      width="650"
-      :mask="true"
-      :draggable="true"
-    >
-      <template #default>
-        <div class="w-full flex">
-          <n-form label-placement="left" require-mark-placement="left" :label-width="80">
-            <n-grid :cols="24" :x-gap="24">
-              <n-form-item-gi :span="10" label="凭证日期">
-                <n-date-picker
-                  v-model:value="vouchInfo.date"
-                  type="date"
-                  fast-month-select
-                  @update:value="loadContentOptions"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="14" label="凭证号码">
-                <n-input-number
-                  v-model:value="vouchInfo.no"
-                  placeholder="非补断号不要填写"
-                  :show-button="false"
-                  :precision="0"
-                  clearable
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="24" label="银行科目">
-                <SpCascader
-                  v-model:value="vouchInfo.content_credit"
-                  :options="contentOptions"
-                  placeholder="默认100206 银行存款-建行白云支行（3811活期）"
-                  value-field="id"
-                />
-              </n-form-item-gi>
-            </n-grid>
-          </n-form>
-        </div>
-      </template>
-
-      <template #footer>
-        <n-space justify="end">
-          <n-button @click="vouchModalRef?.close">
-            关闭
-          </n-button>
-          <n-button type="primary" :loading="btnLoading" @click="createVouch">
-            提交
-          </n-button>
-        </n-space>
-      </template>
-    </SpModal>
   </NaPage>
 </template>

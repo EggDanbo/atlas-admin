@@ -201,16 +201,6 @@ function buildRow(module: string, index: number): Record<string, any> {
   if ('stoped' in row)
     row.stoped = index % 13 === 7
 
-  // 期末结账的三个状态有先后顺序：审核 → 结转 → 结账。
-  // 各字段独立随机会出现「已结转但未审核」这种业务上不存在的组合，
-  // 而且页面操作列是按前一个状态是否完成来显示按钮的，随机值会让按钮逻辑显得混乱。
-  if ('isAudited' in row && 'isCarried' in row && 'isClosed' in row) {
-    const stage = index % 4
-    row.isAudited = stage >= 1
-    row.isCarried = stage >= 2
-    row.isClosed = stage >= 3
-  }
-
   // id 最后赋值，避免被同名业务字段覆盖
   row.id = id
   // 部分列表以 bill_id 作为详情主键（hr 系列），与 id 保持一致，否则「查看」取不到主键会退化成新增
@@ -542,27 +532,9 @@ function buildDictionaryNodes(parentId: string) {
  * 单据明细行
  *
  * 详情页的明细表格从详情接口的 list 字段取数。按明细的形态分三类生成：
- * 凭证分录、资产条目、费用条目；其余模块不生成，避免给纯配置页塞入无意义的行。
+ * 资产条目、费用条目；其余模块不生成，避免给纯配置页塞入无意义的行。
  */
 const LINE_ITEM_NAMES = ['办公用品', '设备配件', '技术服务费', '运输费', '咨询服务费', '材料费']
-
-/** 凭证分录：借贷必须相等，页面对合计做校验 */
-function buildVoucherLines(id: string): Record<string, any>[] {
-  const amount = floatBetween(createRng(`voucher#${id}`), 1200, 36000, 2)
-  const rows = [
-    { digest: '支付供应商货款', subject: '应付账款', debit: amount, credit: 0 },
-    { digest: '支付供应商货款', subject: '银行存款', debit: 0, credit: amount },
-  ]
-  return rows.map((row, index) => ({
-    id: `${id || 'V'}-${index + 1}`,
-    no: index + 1,
-    digest: row.digest,
-    content_id: row.subject,
-    content_name: row.subject,
-    debit: row.debit,
-    credit: row.credit,
-  }))
-}
 
 /** 资产类单据明细：资产编码 / 名称 / 品牌 / 型号 */
 function buildAssetDetailLines(module: string, id: string): Record<string, any>[] {
@@ -611,7 +583,6 @@ const BILL_NO_PREFIX: Array<[RegExp, string]> = [
   [/^expense\//, 'FY'],
   [/^hr\//, 'RS'],
   [/^crm\//, 'KH'],
-  [/^finance\//, 'PZ'],
   [/^archive\//, 'DA'],
 ]
 
@@ -717,9 +688,6 @@ function buildBillMeta(module: string, row: Record<string, any>, id: string): Re
 }
 
 function buildDetailLines(module: string, id: string): Record<string, any>[] | undefined {
-  if (/^finance\/voucher$/.test(module))
-    return buildVoucherLines(id)
-
   const fields = resolveAllFields(module)
   const hasModel = fields.some(item => item.field === 'model')
   if (!hasModel)
@@ -862,7 +830,6 @@ const WORKFLOW_BIZ = [
   { label: '费用报销', key: 'pense_apply', module: 'expense/payment' },
   { label: '借款申请', key: 'pense_borrow', module: 'expense/advance' },
   { label: '合同签订', key: 'pense_contract', module: 'expense/contract' },
-  { label: '记账凭证', key: 'vouch_entry', module: 'finance/voucher' },
   { label: '档案借阅', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
@@ -895,7 +862,6 @@ const WORKFLOW_DYNAMIC = [
   { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/payment' },
   { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/allot' },
   { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/apply' },
-  { title: '记账凭证已过账', types: '账', key: 'vouch_entry', module: 'finance/voucher' },
   { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract' },
   { title: '档案借阅已归还', types: '资', key: 'paper_borrow', module: 'archive/borrow' },
 ]
@@ -933,7 +899,6 @@ const MONITOR_MODULES: MonitorModule[] = [
   { code: 'hr', name: '人力资源', children: ['员工名册', '异动管理', '考勤记录', '薪酬管理'] },
   { code: 'expense', name: '费用管理', children: ['费用申请', '事前申请', '费用支付', '预算额度'] },
   { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
-  { code: 'finance', name: '财务核算', children: ['凭证', '账簿', '报表', '余额查询'] },
   { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
 ]
 

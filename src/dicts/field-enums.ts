@@ -114,11 +114,6 @@ export const FIELD_ENUMS: Record<string, Record<string, string>> = {
     types: 'checkin_vacation_types',
   },
 
-  // ---------------- 财务 ----------------
-  'finance/voucher': {
-    source: 'vouch_entry_source',
-  },
-
   // ---------------- 主数据 ----------------
   'masterdata/subject': {
     direction: 'basic_content_direction',

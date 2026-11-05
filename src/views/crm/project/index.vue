@@ -280,7 +280,7 @@ export default { name: 'CrmProject' }
               <n-button
                 text type="primary"
                 :disabled="
-                  !hasPermDele || Number(row.receive) !== 0 || Number(row.settle_id) !== 0 || Number(row.vouch_id) !== 0
+                  !hasPermDele || Number(row.receive) !== 0 || Number(row.settle_id) !== 0
                 "
                 @click="handleRemove([row])"
               >

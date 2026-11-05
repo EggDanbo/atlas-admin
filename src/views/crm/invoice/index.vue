@@ -1,24 +1,18 @@
 <script setup lang="ts">
 import type { ModalInst, OpenModal } from '@/components/SpModal'
-import { format } from 'date-fns'
-import printJS from 'print-js'
 import { UploadBtn } from '@/components/BizFile/UploadBtn'
 import { LogBiz } from '@/components/BizLogs/Biz'
 import { PdfSetting } from '@/components/BizPrint'
 import { BatchImportDownloadModal, SpBatchImportModal } from '@/components/SpBatchImportModal'
-import { SpCascader } from '@/components/SpCascader'
 import { SpDateRange } from '@/components/SpDateRange'
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { unit as teamApi } from '@/service/api/access'
 import { invoice as api } from '@/service/api/crm'
-import { voucher } from '@/service/api/finance'
-import { bankAccount, subject } from '@/service/api/masterdata'
 import { defDate, unDate } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
-import VouchEntryDetail from '@/views/finance/voucher/detail.vue'
 import allot from './allot.vue'
 import detail from './detail.vue'
 
@@ -34,61 +28,7 @@ const checkFileMessage = ref<string | null>(null)
 const uploadModalRef = ref<ModalInst | null>(null)
 
 const allotRef = ref<OpenModal | null>(null)
-const vouchModalRef = ref<ModalInst | null>(null)
-const vouchEntryDetailRef = ref<OpenModal | null>(null)
 const btnLoading = ref<boolean>(false)
-
-const vouchInfo = ref<vouchInfoTypes>({
-  no: null,
-  date: null,
-  content_debit: null,
-  content_credit: null,
-  account_id: null,
-  list: [],
-})
-
-interface vouchInfoTypes {
-  no: number | null
-  date: number | null
-  content_debit: string | null
-  content_credit: string | null
-  account_id: string | null
-  list: any[]
-}
-
-const contentDebitOptions = ref<Recordable[]>([])
-async function loadContentDebitOptions() {
-  const year = vouchInfo.value.date ? format(Number(vouchInfo.value.date), 'yyyy') : null
-  const { isSuccess, data } = await subject.tree({
-    year,
-    codes: ['1002', '1122', '2203'],
-  })
-  if (!isSuccess)
-    return
-  contentDebitOptions.value = data
-}
-
-const contentCreditOptions = ref<Recordable[]>([])
-async function loadContentCreditOptions() {
-  const year = vouchInfo.value.date ? format(Number(vouchInfo.value.date), 'yyyy') : null
-  const { isSuccess, data } = await subject.tree({
-    year,
-    codes: ['6001', '6051'],
-  })
-  if (!isSuccess)
-    return
-  contentCreditOptions.value = data
-}
-
-const accountOptions = ref<Recordable[]>([])
-async function loadAccountOptions() {
-  const { isSuccess, data } = await bankAccount.tree({
-    stoped: false,
-  })
-  if (!isSuccess)
-    return
-  accountOptions.value = data
-}
 
 const querySchemas = computed(() => ({
   status: [
@@ -328,72 +268,6 @@ async function uploadZIP(file: any, uploading: Ref) {
   uploadModalRef.value?.close()
 }
 
-async function vouchPrint(row: Recordable) {
-  btnLoading.value = true
-  const { isSuccess, data } = await voucher.card(row.vouch_id).finally(() => {
-    btnLoading.value = false
-  })
-  if (!isSuccess)
-    return
-  printJS({
-    printable: data,
-    type: 'pdf',
-    showModal: true,
-    modalMessage: '下载中...',
-  })
-}
-
-function handleVouchDateSelected() {
-  if (vouchInfo.value.date) {
-    loadContentDebitOptions()
-    loadContentCreditOptions()
-  }
-}
-
-const accountListShow = ref<boolean>(false)
-function handleVouchDebitSelected(_e, options) {
-  vouchInfo.value.account_id = null
-  if (options.code.includes('1002')) {
-    loadAccountOptions()
-    accountListShow.value = true
-  }
-  else {
-    accountListShow.value = false
-  }
-}
-
-function handleVouch() {
-  const rows = tableRef.value.getCheckboxRows()
-  if (rows.length === 0) {
-    toast.info('请选择需要操作的数据')
-    return
-  }
-
-  vouchInfo.value.no = null
-  vouchInfo.value.date = Math.max(...rows.map(q => q.date))
-  vouchInfo.value.content_debit = null
-  vouchInfo.value.content_credit = null
-  vouchInfo.value.account_id = null
-  vouchInfo.value.list = rows.map(q => q.id)
-  handleVouchDateSelected()
-
-  vouchModalRef.value?.open()
-}
-
-async function handleCreateVouch() {
-  btnLoading.value = true
-  const { isSuccess, data } = await api.vouch({ ...vouchInfo.value }).finally(() => (btnLoading.value = false))
-  if (!isSuccess)
-    return
-
-  vouchModalRef.value?.close()
-
-  vouchEntryDetailRef.value?.open({
-    data,
-    isvouch: true,
-  })
-}
-
 function handleAllot(row: Recordable) {
   allotModalRef.value?.open({
     id: row.id,
@@ -439,13 +313,6 @@ export default { name: 'CrmInvoice' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions" @cell-dblclick="({ row }) => handleEdit('view', row)">
           <template #toolbarLeftBtn>
-            <n-button
-              :disabled="!(queryModel.status && queryModel.status === '未入账')"
-              @click="handleVouch"
-            >
-              入账
-            </n-button>
-
             <n-dropdown trigger="hover" :options="moreOptions" @select="handleMore">
               <n-button type="default" icon-placement="right">
                 <template #icon>
@@ -467,7 +334,7 @@ export default { name: 'CrmInvoice' }
               <n-button
                 text type="primary"
                 :disabled="
-                  !hasPermDele || Number(row.receive) !== 0 || Number(row.settle_id) !== 0 || Number(row.vouch_id) !== 0
+                  !hasPermDele || Number(row.receive) !== 0 || Number(row.settle_id) !== 0
                 "
                 @click="handleRemove([row])"
               >
@@ -476,10 +343,6 @@ export default { name: 'CrmInvoice' }
               <n-divider vertical />
               <n-button text type="primary" @click="handleAllot(row)">
                 分摊
-              </n-button>
-              <n-divider vertical />
-              <n-button text type="primary" :disabled="Number(row.vouch_id) === 0" @click="vouchPrint(row)">
-                打印
               </n-button>
               <n-divider vertical />
               <n-dropdown trigger="hover" :options="rowMoreOptions" @select="(key: string) => handleRowMore(key, row)">
@@ -505,7 +368,6 @@ export default { name: 'CrmInvoice' }
       :check-file-message="checkFileMessage"
       @upload-success="handleImportSuccess"
     />
-    <VouchEntryDetail ref="vouchEntryDetailRef" @on-action="editAction" />
     <allot ref="allotModalRef" @on-action="editAction" />
 
     <SpModal
@@ -536,76 +398,6 @@ export default { name: 'CrmInvoice' }
           </UploadBtn>
           <n-button @click="uploadModalRef?.close">
             关闭
-          </n-button>
-        </n-space>
-      </template>
-    </SpModal>
-
-    <SpModal
-      ref="vouchModalRef"
-      title="凭证生成"
-      width="650"
-      :mask="true"
-      :draggable="true"
-    >
-      <template #default>
-        <div class="w-full flex">
-          <n-form label-placement="left" require-mark-placement="left" :label-width="80">
-            <n-grid :cols="24" :x-gap="24">
-              <n-form-item-gi :span="10" label="凭证日期">
-                <n-date-picker
-                  v-model:value="vouchInfo.date"
-                  type="date"
-                  fast-month-select
-                  @update:value="handleVouchDateSelected"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="14" label="凭证号码">
-                <n-input-number
-                  v-model:value="vouchInfo.no"
-                  placeholder="非补断号不要填写"
-                  :show-button="false"
-                  :precision="0"
-                  clearable
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="24" label="借方科目">
-                <SpCascader
-                  v-model:value="vouchInfo.content_debit"
-                  :options="contentDebitOptions"
-                  placeholder="默认1122 应收账款"
-                  value-field="id"
-                  @update:value="handleVouchDebitSelected"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi v-if="accountListShow" :span="24" label="银行账户">
-                <SpCascader
-                  v-model:value="vouchInfo.account_id"
-                  :options="accountOptions"
-                  placeholder="请选择"
-                  value-field="id"
-                />
-              </n-form-item-gi>
-              <n-form-item-gi :span="24" label="贷方科目">
-                <SpCascader
-                  v-model:value="vouchInfo.content_credit"
-                  :options="contentCreditOptions"
-                  placeholder="默认60010501 主营业务收入-安保服务费-劳务派遣收入"
-                  value-field="id"
-                />
-              </n-form-item-gi>
-            </n-grid>
-          </n-form>
-        </div>
-      </template>
-
-      <template #footer>
-        <n-space justify="end">
-          <n-button @click="vouchModalRef?.close">
-            关闭
-          </n-button>
-          <n-button type="primary" :loading="btnLoading" @click="handleCreateVouch">
-            提交
           </n-button>
         </n-space>
       </template>

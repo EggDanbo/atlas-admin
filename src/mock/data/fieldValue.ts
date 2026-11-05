@@ -588,7 +588,6 @@ function bankAccount(rng: Rng): string {
 /** 业务域默认单号前缀 */
 const SERIAL_PREFIX: Record<string, string> = {
   asset: 'ZC',
-  finance: 'PZ',
   expense: 'BX',
   hr: 'YG',
   crm: 'HT',
@@ -604,8 +603,6 @@ const SERIAL_PREFIX_BY_MODULE: Record<string, string> = {
   'crm/receipt': 'SK',
   'crm/receivable': 'YS',
   'crm/project': 'XM',
-  'finance/voucher': 'PZ',
-  'finance/opening': 'QC',
   'expense/reimburse': 'BX',
   'expense/advance': 'JK',
   'expense/payment': 'FK',

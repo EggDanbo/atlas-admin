@@ -32,7 +32,6 @@ const MODULE_COLORS: Record<string, string> = {
   人力资源: '#F97316',
   费用管理: '#E9A020',
   资产管理: '#22B99A',
-  财务核算: '#E8635F',
   文档中心: '#8B6BE8',
 }
 

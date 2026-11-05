@@ -205,7 +205,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -337,7 +337,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -369,7 +369,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "organ_code",
@@ -437,7 +437,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "paper_id",
@@ -602,7 +602,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -679,7 +679,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -894,7 +894,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -1087,7 +1087,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -1176,7 +1176,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -1374,7 +1374,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       }
     ]
   },
@@ -1434,7 +1434,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -1923,7 +1923,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "model",
@@ -2261,7 +2261,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": "年度"
+        "title": ""
       },
       {
         "field": "team_id",
@@ -2277,7 +2277,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": "年度"
+        "title": ""
       },
       {
         "field": "team_id",
@@ -2331,7 +2331,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "amount",
@@ -2580,7 +2580,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "amount",
@@ -2717,7 +2717,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -2951,7 +2951,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -3217,578 +3217,10 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "finance/cashflow": {
-    "formats": [
-      "atlas/finance/cashflow",
-      "atlas/finance/cashflow/list"
-    ],
-    "columnFields": [
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "debit_credit",
-        "title": "金额"
-      },
-      {
-        "field": "content_name",
-        "title": "会计科目"
-      },
-      {
-        "field": "amount",
-        "title": "分配金额"
-      },
-      {
-        "field": "cash_dir_id",
-        "title": "主表项目"
-      },
-      {
-        "field": "cash_sub_id",
-        "title": "附表项目"
-      },
-      {
-        "field": "cash_dir_name",
-        "title": "主表项目"
-      },
-      {
-        "field": "cash_sub_name",
-        "title": "附表项目"
-      }
-    ],
-    "fields": [
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "debit_credit",
-        "title": "金额"
-      },
-      {
-        "field": "content_name",
-        "title": "会计科目"
-      },
-      {
-        "field": "amount",
-        "title": "分配金额"
-      },
-      {
-        "field": "cash_dir_id",
-        "title": "主表项目"
-      },
-      {
-        "field": "cash_sub_id",
-        "title": "附表项目"
-      },
-      {
-        "field": "cash_dir_name",
-        "title": "主表项目"
-      },
-      {
-        "field": "cash_sub_name",
-        "title": "附表项目"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "stoped",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "code",
-        "title": "项目编码"
-      },
-      {
-        "field": "cash_amount",
-        "title": ""
-      },
-      {
-        "field": "status",
-        "title": ""
-      }
-    ]
-  },
-  "finance/detail-ledger": {
-    "formats": [
-      "atlas/finance/detail-ledger"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "content_code",
-        "title": ""
-      }
-    ]
-  },
-  "finance/dimension-balance": {
-    "formats": [
-      "atlas/finance/dimension-balance"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "assist_type",
-        "title": ""
-      },
-      {
-        "field": "content_id",
-        "title": "会计科目"
-      },
-      {
-        "field": "assist_id",
-        "title": ""
-      }
-    ]
-  },
-  "finance/dimension-ledger": {
-    "formats": [
-      "atlas/finance/dimension-ledger"
-    ],
-    "columnFields": [],
-    "fields": []
-  },
-  "finance/general-ledger": {
-    "formats": [
-      "atlas/finance/general-ledger"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "content_code",
-        "title": ""
-      }
-    ]
-  },
-  "finance/opening": {
-    "formats": [
-      "atlas/finance/opening"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "year",
-        "title": "年度"
-      },
-      {
-        "field": "content_id",
-        "title": "会计科目"
-      },
-      {
-        "field": "content_name",
-        "title": "会计科目"
-      },
-      {
-        "field": "debit",
-        "title": "借方金额"
-      },
-      {
-        "field": "credit",
-        "title": "贷方金额"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "room_id",
-        "title": ""
-      },
-      {
-        "field": "room_name",
-        "title": ""
-      },
-      {
-        "field": "work_id",
-        "title": ""
-      },
-      {
-        "field": "work_name",
-        "title": ""
-      },
-      {
-        "field": "bank_id",
-        "title": ""
-      },
-      {
-        "field": "bank_name",
-        "title": ""
-      },
-      {
-        "field": "account_id",
-        "title": ""
-      },
-      {
-        "field": "account_name",
-        "title": ""
-      },
-      {
-        "field": "project_id",
-        "title": ""
-      },
-      {
-        "field": "project_name",
-        "title": ""
-      },
-      {
-        "field": "customer_id",
-        "title": ""
-      },
-      {
-        "field": "customer_name",
-        "title": ""
-      },
-      {
-        "field": "supplier_id",
-        "title": ""
-      },
-      {
-        "field": "supplier_name",
-        "title": ""
-      },
-      {
-        "field": "transact_id",
-        "title": ""
-      },
-      {
-        "field": "transact_name",
-        "title": ""
-      },
-      {
-        "field": "article_id",
-        "title": "资产分类"
-      },
-      {
-        "field": "article_name",
-        "title": "资产分类"
-      },
-      {
-        "field": "pattern_id",
-        "title": ""
-      },
-      {
-        "field": "pattern_name",
-        "title": ""
-      },
-      {
-        "field": "product_id",
-        "title": "业务类型"
-      },
-      {
-        "field": "product_name",
-        "title": "业务类型"
-      },
-      {
-        "field": "invests_id",
-        "title": ""
-      },
-      {
-        "field": "invests_name",
-        "title": ""
-      },
-      {
-        "field": "expense_id",
-        "title": ""
-      },
-      {
-        "field": "expense_name",
-        "title": "费用分类"
-      },
-      {
-        "field": "unusual_id",
-        "title": ""
-      },
-      {
-        "field": "unusual_name",
-        "title": ""
-      },
-      {
-        "field": "content_period",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "assist_id",
-        "title": ""
-      }
-    ]
-  },
-  "finance/period": {
-    "formats": [
-      "atlas/finance/period"
-    ],
-    "columnFields": [
-      {
-        "field": "year",
-        "title": "年度"
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      },
-      {
-        "field": "isAudited",
-        "title": "审核状态"
-      },
-      {
-        "field": "isCarried",
-        "title": "结转状态"
-      },
-      {
-        "field": "isClosed",
-        "title": "结账状态"
-      }
-    ],
-    "fields": [
-      {
-        "field": "year",
-        "title": "年度"
-      },
-      {
-        "field": "month",
-        "title": "月份"
-      },
-      {
-        "field": "isAudited",
-        "title": "审核状态"
-      },
-      {
-        "field": "isCarried",
-        "title": "结转状态"
-      },
-      {
-        "field": "isClosed",
-        "title": "结账状态"
-      }
-    ]
-  },
-  "finance/statement/balance-sheet": {
-    "formats": [
-      "atlas/finance/statement/balance-sheet"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "name",
-        "title": "名称"
-      },
-      {
-        "field": "debit",
-        "title": "一年内到期投资"
-      },
-      {
-        "field": "credit",
-        "title": "一年内到期负债"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "date",
-        "title": ""
-      }
-    ]
-  },
-  "finance/statement/cash-flow": {
-    "formats": [
-      "atlas/finance/statement/cash-flow"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "code",
-        "title": "项目编码"
-      },
-      {
-        "field": "debit",
-        "title": "调增数"
-      },
-      {
-        "field": "credit",
-        "title": "调减数"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "source",
-        "title": "源"
-      }
-    ]
-  },
-  "finance/statement/equity": {
-    "formats": [
-      "atlas/finance/statement/equity"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "date",
-        "title": ""
-      }
-    ]
-  },
-  "finance/statement/profit": {
-    "formats": [
-      "atlas/finance/statement/profit"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "date",
-        "title": ""
-      }
-    ]
-  },
-  "finance/subject-balance": {
-    "formats": [
-      "atlas/finance/subject-balance",
-      "atlas/finance/subject-balance/list"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "level",
-        "title": "日志等级"
-      },
-      {
-        "field": "content_type",
-        "title": ""
-      },
-      {
-        "field": "content_id",
-        "title": "会计科目"
-      }
-    ]
-  },
-  "finance/voucher": {
-    "formats": [
-      "atlas/finance/voucher"
-    ],
-    "columnFields": [
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "content_name",
-        "title": "会计科目"
-      },
-      {
-        "field": "debit",
-        "title": "借方金额"
-      },
-      {
-        "field": "credit",
-        "title": "贷方金额"
-      }
-    ],
-    "fields": [
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "content_name",
-        "title": "会计科目"
-      },
-      {
-        "field": "debit",
-        "title": "借方金额"
-      },
-      {
-        "field": "credit",
-        "title": "贷方金额"
-      },
-      {
-        "field": "content_id",
-        "title": "会计科目"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "source",
-        "title": "源"
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ]
-  },
-  "finance/voucher-query": {
-    "formats": [
-      "atlas/finance/voucher-query"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "assist_id",
         "title": ""
       }
     ]
@@ -3841,7 +3273,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "remark",
@@ -3914,7 +3346,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "leave",
@@ -4060,7 +3492,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "outer_id",
@@ -4132,7 +3564,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "remark",
@@ -4197,7 +3629,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "mobile",
@@ -4381,7 +3813,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": "月份"
+        "title": ""
       }
     ]
   },
@@ -4397,7 +3829,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": "月份"
+        "title": ""
       }
     ]
   },
@@ -4470,7 +3902,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -4547,7 +3979,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -4632,7 +4064,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -4717,7 +4149,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "mobile",
@@ -4781,7 +4213,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "mobile",
@@ -4946,7 +4378,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -5018,7 +4450,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -5127,7 +4559,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -5256,7 +4688,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -5308,7 +4740,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": "月份"
+        "title": ""
       }
     ]
   },
@@ -5342,7 +4774,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": "月份"
+        "title": ""
       },
       {
         "field": "group_id",
@@ -5394,7 +4826,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": "月份"
+        "title": ""
       }
     ]
   },
@@ -5430,7 +4862,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "year",
-        "title": "年度"
+        "title": ""
       },
       {
         "field": "start",
@@ -5687,7 +5119,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "status",
@@ -5756,7 +5188,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "digest",
-        "title": "凭证摘要"
+        "title": "摘要"
       },
       {
         "field": "remark",
@@ -6197,7 +5629,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "mobile",
@@ -6509,7 +5941,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6547,7 +5979,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6607,7 +6039,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6643,7 +6075,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6731,7 +6163,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6783,7 +6215,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6807,7 +6239,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6831,7 +6263,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6867,7 +6299,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -6975,7 +6407,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -7031,7 +6463,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -7099,7 +6531,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "code",
-        "title": "项目编码"
+        "title": "资产编码"
       },
       {
         "field": "name",
@@ -7538,22 +6970,6 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/expense/query": "expense/query",
   "atlas/expense/reimburse": "expense/reimburse",
   "atlas/expense/travel": "expense/travel",
-  "atlas/finance/cashflow": "finance/cashflow",
-  "atlas/finance/cashflow/list": "finance/cashflow",
-  "atlas/finance/detail-ledger": "finance/detail-ledger",
-  "atlas/finance/dimension-balance": "finance/dimension-balance",
-  "atlas/finance/dimension-ledger": "finance/dimension-ledger",
-  "atlas/finance/general-ledger": "finance/general-ledger",
-  "atlas/finance/opening": "finance/opening",
-  "atlas/finance/period": "finance/period",
-  "atlas/finance/statement/balance-sheet": "finance/statement/balance-sheet",
-  "atlas/finance/statement/cash-flow": "finance/statement/cash-flow",
-  "atlas/finance/statement/equity": "finance/statement/equity",
-  "atlas/finance/statement/profit": "finance/statement/profit",
-  "atlas/finance/subject-balance": "finance/subject-balance",
-  "atlas/finance/subject-balance/list": "finance/subject-balance",
-  "atlas/finance/voucher": "finance/voucher",
-  "atlas/finance/voucher-query": "finance/voucher-query",
   "atlas/hr/attendance-apply/field": "hr/attendance-apply/field",
   "atlas/hr/attendance-apply/leave": "hr/attendance-apply/leave",
   "atlas/hr/attendance-apply/makeup": "hr/attendance-apply/makeup",
@@ -7612,7 +7028,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "ctime": "操作时间",
   "utime": "更新时间",
   "name": "格式名称",
-  "code": "项目编码",
+  "code": "资产编码",
   "mobile": "手机号",
   "team_name": "分摊单位",
   "working": "工作中",
@@ -7642,8 +7058,8 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "period": "应收期间",
   "months": "不支付月份",
   "product_name": "业务类型",
-  "content_id": "会计科目",
-  "content_name": "会计科目",
+  "content_id": "费用科目",
+  "content_name": "费用科目",
   "salary": "合同约定工资",
   "bases": "基本工资",
   "grade": "综合补贴",
@@ -7677,7 +7093,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "address": "用餐地点",
   "guests": "招待对象",
   "quotas": "预算标准",
-  "digest": "凭证摘要",
+  "digest": "摘要",
   "expense_name": "费用分类",
   "predict": "需求日期",
   "supplier": "供应商",
@@ -7686,18 +7102,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "types": "奖惩类型",
   "depart": "出发地",
   "bourn": "目的地",
-  "debit_credit": "金额",
-  "cash_dir_id": "主表项目",
-  "cash_sub_id": "附表项目",
-  "cash_dir_name": "主表项目",
-  "cash_sub_name": "附表项目",
-  "year": "年度",
-  "month": "月份",
-  "isAudited": "审核状态",
-  "isCarried": "结转状态",
-  "isClosed": "结账状态",
-  "debit": "借方金额",
-  "credit": "贷方金额",
   "day": "加班日期",
   "leave_time_fmt": "请假时长",
   "checkin_time": "补卡时间",
@@ -7779,19 +7183,6 @@ export const ROUTE_PERMISSIONS: string[] = [
   "EXP_REQUEST_ENTERTAIN",
   "EXP_REQUEST_PURCHASE",
   "EXP_REQUEST_TRAVEL",
-  "FIN_BALANCE_DIMENSION",
-  "FIN_BALANCE_SUBJECT",
-  "FIN_CASHFLOW",
-  "FIN_LEDGER_DETAIL",
-  "FIN_LEDGER_GENERAL",
-  "FIN_OPENING",
-  "FIN_PERIOD",
-  "FIN_STATEMENT_BALANCE",
-  "FIN_STATEMENT_CASHFLOW",
-  "FIN_STATEMENT_EQUITY",
-  "FIN_STATEMENT_PROFIT",
-  "FIN_VOUCHER_CREATE",
-  "FIN_VOUCHER_ENTRY",
   "HR_APPLY_FIELD",
   "HR_APPLY_LEAVE",
   "HR_APPLY_MAKEUP",

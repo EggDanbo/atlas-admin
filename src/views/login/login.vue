@@ -36,7 +36,7 @@ const parallaxStyle = computed(() => login.parallax ? transform.value : 'none')
 
 /** 登录页品牌面板的能力点 */
 const highlights = [
-  { title: '11 个业务域', desc: '客户 · 人力 · 费用 · 资产 · 财务 · 文档' },
+  { title: '10 个业务域', desc: '客户 · 人力 · 费用 · 资产 · 文档 · 主数据' },
   { title: '统一的权限模型', desc: '菜单、按钮、数据范围三层校验' },
   { title: '可编排的审批流', desc: '单据提交、审批、过账全链路留痕' },
 ]
