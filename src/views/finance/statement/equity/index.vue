@@ -5,13 +5,14 @@ import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { equity as api } from '@/service/api/finance/statement'
 import { subject as contentApi } from '@/service/api/masterdata'
+import { resolvePeriodTimestamp } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 
 async function getLastDate() {
   const { isSuccess, data } = await contentApi.getLast()
-  if (isSuccess) {
-    queryModel.date = Number(data)
-  }
+  // 接口返回的是年份，选择器要时间戳，直接赋值会渲染成 1970
+  if (isSuccess)
+    queryModel.date = resolvePeriodTimestamp(data, 'month') ?? Date.now()
 }
 
 onMounted(() => getLastDate())

@@ -4,13 +4,14 @@ import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
 import { period as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
+import { resolvePeriodTimestamp } from '@/utils/dateUtil'
 import toast from '@/utils/toast'
 
 async function getLastDate() {
   const { isSuccess, data } = await contentApi.getLast()
-  if (isSuccess) {
-    queryModel.year = Number(data)
-  }
+  // 接口返回的是年份，选择器要时间戳，直接赋值会渲染成 1970
+  if (isSuccess)
+    queryModel.year = resolvePeriodTimestamp(data, 'year') ?? Date.now()
 }
 
 onMounted(() => getLastDate())
@@ -35,6 +36,12 @@ const {
   idField: 'id',
   createQueryModel,
   columns: [
+    // 按月结账的页面，只有年度看不出是哪一期，补上月份
+    { field: 'year', title: '年度', width: 100, align: 'center' },
+    { field: 'month', title: '月份', width: 80, align: 'center' },
+    { field: 'isAudited', title: '审核状态', width: 110, align: 'center', slots: { default: 'isAudited' } },
+    { field: 'isCarried', title: '结转状态', width: 110, align: 'center', slots: { default: 'isCarried' } },
+    { field: 'isClosed', title: '结账状态', width: 110, align: 'center', slots: { default: 'isClosed' } },
     {
       isOperate: true,
       title: '操作',
@@ -158,7 +165,7 @@ async function bookCancel(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'FinancePeriod' }
+export default { name: 'FinancePeriodClosing' }
 </script>
 
 <template>
@@ -189,17 +196,34 @@ export default { name: 'FinancePeriod' }
             </n-button-group>
           </template>
 
+          <!-- 状态列 -->
+          <template #isAudited="{ row }">
+            <n-tag :type="row.isAudited ? 'success' : 'default'" size="small" :bordered="false">
+              {{ row.isAudited ? '已审核' : '待审核' }}
+            </n-tag>
+          </template>
+          <template #isCarried="{ row }">
+            <n-tag :type="row.isCarried ? 'success' : 'default'" size="small" :bordered="false">
+              {{ row.isCarried ? '已结转' : '未结转' }}
+            </n-tag>
+          </template>
+          <template #isClosed="{ row }">
+            <n-tag :type="row.isClosed ? 'info' : 'default'" size="small" :bordered="false">
+              {{ row.isClosed ? '已结账' : '未结账' }}
+            </n-tag>
+          </template>
+
           <!-- 操作列 -->
           <template #operate="{ row }">
             <div class="flex items-center justify-center">
-              <n-dropdown v-if="!row.look" trigger="hover" :options="rowMoreOptions" @select="(key: string) => handleRowMore(key, row)">
+              <n-dropdown v-if="!row.isAudited" trigger="hover" :options="rowMoreOptions" @select="(key: string) => handleRowMore(key, row)">
                 <n-button text type="primary">
                   修改凭证号
                 </n-button>
               </n-dropdown>
-              <n-divider v-if="!row.look" vertical />
+              <n-divider v-if="!row.isAudited" vertical />
               <n-button
-                v-if="!row.look"
+                v-if="!row.isAudited"
                 text
                 type="primary"
                 @click="lookConfirm(row)"
@@ -207,16 +231,16 @@ export default { name: 'FinancePeriod' }
                 审核
               </n-button>
               <n-button
-                v-if="row.look && !row.turn"
+                v-if="row.isAudited && !row.isCarried"
                 text
                 type="primary"
                 @click="lookCancel(row)"
               >
                 取消审核
               </n-button>
-              <n-divider v-if="row.look && !row.turn" vertical />
+              <n-divider v-if="row.isAudited && !row.isCarried" vertical />
               <n-button
-                v-if="row.look && !row.turn"
+                v-if="row.isAudited && !row.isCarried"
                 text
                 type="primary"
                 @click="turnConfirm(row)"
@@ -224,16 +248,16 @@ export default { name: 'FinancePeriod' }
                 结转
               </n-button>
               <n-button
-                v-if="!row.book && row.turn"
+                v-if="!row.isClosed && row.isCarried"
                 text
                 type="primary"
                 @click="turnCancel(row)"
               >
                 取消结转
               </n-button>
-              <n-divider v-if="!row.book && row.turn" vertical />
+              <n-divider v-if="!row.isClosed && row.isCarried" vertical />
               <n-button
-                v-if="!row.book && row.turn"
+                v-if="!row.isClosed && row.isCarried"
                 text
                 type="primary"
                 @click="bookConfirm(row)"
@@ -241,7 +265,7 @@ export default { name: 'FinancePeriod' }
                 结账
               </n-button>
               <n-button
-                v-if="row.book"
+                v-if="row.isClosed"
                 text
                 type="primary"
                 @click="bookCancel(row)"

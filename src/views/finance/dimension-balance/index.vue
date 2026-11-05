@@ -113,7 +113,7 @@ function handleQuery(row: Recordable) {
 </script>
 
 <script lang="ts">
-export default { name: 'FinanceBalanceDimension' }
+export default { name: 'FinanceLedgerAuxiliary' }
 </script>
 
 <template>

@@ -241,7 +241,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       }
     ]
   },
@@ -345,7 +345,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "parent_id",
@@ -389,7 +389,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "wechat_work_dept",
@@ -994,7 +994,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "lead_id",
@@ -1470,7 +1470,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       }
     ]
   },
@@ -1947,7 +1947,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "indate",
-        "title": ""
+        "title": "有效期"
       },
       {
         "field": "revise",
@@ -2233,7 +2233,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "indate",
-        "title": ""
+        "title": "有效期"
       },
       {
         "field": "expire",
@@ -2261,7 +2261,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "team_id",
@@ -2277,7 +2277,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "team_id",
@@ -2383,8 +2383,37 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/expense/budget"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "content_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "indate",
+        "title": "有效期"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      }
+    ],
     "fields": [
+      {
+        "field": "content_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "indate",
+        "title": "有效期"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "content_id",
+        "title": "费用分类"
+      },
       {
         "field": "id",
         "title": ""
@@ -2408,10 +2437,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       {
         "field": "date",
         "title": ""
-      },
-      {
-        "field": "amount",
-        "title": "金额"
       },
       {
         "field": "remark",
@@ -2491,7 +2516,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "indate",
-        "title": ""
+        "title": "有效期"
       },
       {
         "field": "revise",
@@ -2607,8 +2632,69 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/expense/entertain"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "address",
+        "title": "用餐地点"
+      },
+      {
+        "field": "pcs",
+        "title": "用餐人数"
+      },
+      {
+        "field": "guests",
+        "title": "招待对象"
+      },
+      {
+        "field": "content_name",
+        "title": "费用科目"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "quotas",
+        "title": "预算标准"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      }
+    ],
     "fields": [
+      {
+        "field": "address",
+        "title": "用餐地点"
+      },
+      {
+        "field": "pcs",
+        "title": "用餐人数"
+      },
+      {
+        "field": "guests",
+        "title": "招待对象"
+      },
+      {
+        "field": "content_name",
+        "title": "费用科目"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "quotas",
+        "title": "预算标准"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      },
+      {
+        "field": "content_id",
+        "title": "费用科目"
+      },
       {
         "field": "id",
         "title": ""
@@ -2634,10 +2720,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
         "title": "凭证摘要"
       },
       {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
         "field": "status",
         "title": ""
       }
@@ -2647,8 +2729,45 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/expense/payment"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "digest",
+        "title": "摘要"
+      },
+      {
+        "field": "expense_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "invoice",
+        "title": "发票"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      }
+    ],
     "fields": [
+      {
+        "field": "digest",
+        "title": "摘要"
+      },
+      {
+        "field": "expense_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "invoice",
+        "title": "发票"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "content_id",
+        "title": "费用分类"
+      },
       {
         "field": "id",
         "title": ""
@@ -2672,14 +2791,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       {
         "field": "date",
         "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
       },
       {
         "field": "contract_id",
@@ -2904,8 +3015,37 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/expense/payment"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "digest",
+        "title": "摘要"
+      },
+      {
+        "field": "expense_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      }
+    ],
     "fields": [
+      {
+        "field": "digest",
+        "title": "摘要"
+      },
+      {
+        "field": "expense_name",
+        "title": "费用分类"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "content_id",
+        "title": "费用分类"
+      },
       {
         "field": "id",
         "title": ""
@@ -2929,14 +3069,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       {
         "field": "date",
         "title": ""
-      },
-      {
-        "field": "digest",
-        "title": "凭证摘要"
-      },
-      {
-        "field": "amount",
-        "title": "金额"
       },
       {
         "field": "contract_id",
@@ -2984,8 +3116,85 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/expense/travel"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "start",
+        "title": "出发日期"
+      },
+      {
+        "field": "expire",
+        "title": "结束日期"
+      },
+      {
+        "field": "types",
+        "title": "出行方式"
+      },
+      {
+        "field": "depart",
+        "title": "出发地"
+      },
+      {
+        "field": "bourn",
+        "title": "目的地"
+      },
+      {
+        "field": "content_name",
+        "title": "费用科目"
+      },
+      {
+        "field": "quotas",
+        "title": "预算标准"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      }
+    ],
     "fields": [
+      {
+        "field": "start",
+        "title": "出发日期"
+      },
+      {
+        "field": "expire",
+        "title": "结束日期"
+      },
+      {
+        "field": "types",
+        "title": "出行方式"
+      },
+      {
+        "field": "depart",
+        "title": "出发地"
+      },
+      {
+        "field": "bourn",
+        "title": "目的地"
+      },
+      {
+        "field": "content_name",
+        "title": "费用科目"
+      },
+      {
+        "field": "quotas",
+        "title": "预算标准"
+      },
+      {
+        "field": "amount",
+        "title": "金额"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      },
+      {
+        "field": "content_id",
+        "title": "费用科目"
+      },
       {
         "field": "id",
         "title": ""
@@ -3009,10 +3218,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       {
         "field": "digest",
         "title": "凭证摘要"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
       },
       {
         "field": "status",
@@ -3163,24 +3368,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       "atlas/finance/dimension-ledger"
     ],
     "columnFields": [],
-    "fields": [
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "assist_type",
-        "title": ""
-      },
-      {
-        "field": "assist_id",
-        "title": ""
-      },
-      {
-        "field": "content_id",
-        "title": "会计科目"
-      }
-    ]
+    "fields": []
   },
   "finance/general-ledger": {
     "formats": [
@@ -3210,7 +3398,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "content_id",
@@ -3334,7 +3522,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "expense_name",
-        "title": ""
+        "title": "费用分类"
       },
       {
         "field": "unusual_id",
@@ -3362,11 +3550,48 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/finance/period"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "year",
+        "title": "年度"
+      },
+      {
+        "field": "month",
+        "title": "月份"
+      },
+      {
+        "field": "isAudited",
+        "title": "审核状态"
+      },
+      {
+        "field": "isCarried",
+        "title": "结转状态"
+      },
+      {
+        "field": "isClosed",
+        "title": "结账状态"
+      }
+    ],
     "fields": [
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
+      },
+      {
+        "field": "month",
+        "title": "月份"
+      },
+      {
+        "field": "isAudited",
+        "title": "审核状态"
+      },
+      {
+        "field": "isCarried",
+        "title": "结转状态"
+      },
+      {
+        "field": "isClosed",
+        "title": "结账状态"
       }
     ]
   },
@@ -3632,8 +3857,25 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/hr/attendance-apply/leave"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "day",
+        "title": "请假日期"
+      },
+      {
+        "field": "leave_time_fmt",
+        "title": "请假时长"
+      }
+    ],
     "fields": [
+      {
+        "field": "day",
+        "title": "请假日期"
+      },
+      {
+        "field": "leave_time_fmt",
+        "title": "请假时长"
+      },
       {
         "field": "id",
         "title": ""
@@ -3680,7 +3922,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "contacts",
@@ -3704,8 +3946,33 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/hr/attendance-apply/makeup"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "day",
+        "title": "补卡日期"
+      },
+      {
+        "field": "checkin_time",
+        "title": "补卡时间"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      }
+    ],
     "fields": [
+      {
+        "field": "day",
+        "title": "补卡日期"
+      },
+      {
+        "field": "checkin_time",
+        "title": "补卡时间"
+      },
+      {
+        "field": "remark",
+        "title": "备注"
+      },
       {
         "field": "id",
         "title": ""
@@ -3731,10 +3998,6 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
         "title": ""
       },
       {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
         "field": "progress",
         "title": "进程地址"
       }
@@ -3744,8 +4007,25 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "formats": [
       "atlas/hr/attendance-apply/overtime"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "day",
+        "title": "加班日期"
+      },
+      {
+        "field": "over_time",
+        "title": "加班时长（小时）"
+      }
+    ],
     "fields": [
+      {
+        "field": "day",
+        "title": "加班日期"
+      },
+      {
+        "field": "over_time",
+        "title": "加班时长（小时）"
+      },
       {
         "field": "id",
         "title": ""
@@ -4101,7 +4381,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -4117,7 +4397,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -5028,7 +5308,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -5062,7 +5342,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       },
       {
         "field": "group_id",
@@ -5114,7 +5394,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "month",
-        "title": ""
+        "title": "月份"
       }
     ]
   },
@@ -5150,7 +5430,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "year",
-        "title": ""
+        "title": "年度"
       },
       {
         "field": "start",
@@ -5777,7 +6057,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "crime",
@@ -6073,7 +6353,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "career",
@@ -6237,7 +6517,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       }
     ]
   },
@@ -6827,7 +7107,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "address",
-        "title": ""
+        "title": "用餐地点"
       },
       {
         "field": "user_list",
@@ -7356,7 +7636,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "rates": "税率",
   "taxes": "税额",
   "totals": "开票金额",
-  "invoice": "发票类型",
+  "invoice": "发票",
   "product_id": "业务类型",
   "payment": "支付方式",
   "period": "应收期间",
@@ -7393,17 +7673,35 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "invoice_no": "发票号码",
   "remain": "应收日期",
   "rate": "税率",
-  "predict": "需求日期",
-  "supplier": "供应商",
+  "indate": "有效期",
+  "address": "用餐地点",
+  "guests": "招待对象",
   "quotas": "预算标准",
   "digest": "凭证摘要",
+  "expense_name": "费用分类",
+  "predict": "需求日期",
+  "supplier": "供应商",
+  "start": "开始日期",
+  "expire": "结束日期",
+  "types": "奖惩类型",
+  "depart": "出发地",
+  "bourn": "目的地",
   "debit_credit": "金额",
   "cash_dir_id": "主表项目",
   "cash_sub_id": "附表项目",
   "cash_dir_name": "主表项目",
   "cash_sub_name": "附表项目",
+  "year": "年度",
+  "month": "月份",
+  "isAudited": "审核状态",
+  "isCarried": "结转状态",
+  "isClosed": "结账状态",
   "debit": "借方金额",
   "credit": "贷方金额",
+  "day": "加班日期",
+  "leave_time_fmt": "请假时长",
+  "checkin_time": "补卡时间",
+  "over_time": "加班时长（小时）",
   "ranks": "职务",
   "reason": "原因",
   "user_pre_rank": "原职务",
@@ -7413,10 +7711,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "conditions": "条件内容",
   "content": "培训内容",
   "describe": "公式说明",
-  "types": "奖惩类型",
   "user_name": "操作人",
-  "start": "开始日期",
-  "expire": "结束日期",
   "branch": "培训机构",
   "outcome": "培训成果",
   "kind": "固定",
@@ -7488,7 +7783,6 @@ export const ROUTE_PERMISSIONS: string[] = [
   "FIN_BALANCE_SUBJECT",
   "FIN_CASHFLOW",
   "FIN_LEDGER_DETAIL",
-  "FIN_LEDGER_DIMENSION",
   "FIN_LEDGER_GENERAL",
   "FIN_OPENING",
   "FIN_PERIOD",

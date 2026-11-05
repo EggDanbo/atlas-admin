@@ -183,3 +183,26 @@ export function getYearFirstAndLastMonthTimestamp() {
 
   return [firstMonthTimestamp, lastMonthTimestamp]
 }
+
+/**
+ * 把接口返回的「年份」转成日期选择器需要的时间戳
+ *
+ * 后端只给年份（如 2026），直接 `Number()` 交给 n-date-picker 会被当成毫秒数，
+ * 渲染出来是 1970。这里统一转成该年 1 月 1 日（或该年当前月 1 日）的时间戳。
+ *
+ * @param value 接口返回值，可能是 2026、'2026' 或已是时间戳
+ * @param unit  year 用于年度选择器，month 用于月度选择器
+ */
+export function resolvePeriodTimestamp(value: unknown, unit: 'year' | 'month' = 'year'): number | null {
+  const raw = Number(value)
+  if (!Number.isFinite(raw) || raw <= 0)
+    return null
+  // 已经是时间戳（毫秒）就直接用
+  if (raw > 100_000_000_000)
+    return raw
+  // 合理年份：1900 - 2999
+  if (raw < 1900 || raw > 2999)
+    return null
+  const month = unit === 'month' ? new Date().getMonth() : 0
+  return new Date(raw, month, 1).getTime()
+}

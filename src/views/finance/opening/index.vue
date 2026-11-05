@@ -10,7 +10,7 @@ import { SpTree } from '@/components/SpTree'
 import { useListPage } from '@/hooks/list'
 import { opening as api } from '@/service/api/finance'
 import { subject as contentApi } from '@/service/api/masterdata'
-import { getMonthFirstAndLastDayTimestamp } from '@/utils/dateUtil'
+import { getMonthFirstAndLastDayTimestamp, resolvePeriodTimestamp } from '@/utils/dateUtil'
 import { createIcon } from '@/utils/iconify'
 import { tenantStorage } from '@/utils/tenant'
 import toast from '@/utils/toast'
@@ -36,9 +36,9 @@ async function loadContentOptions() {
 
 async function getLastDate() {
   const { isSuccess, data } = await contentApi.getLast()
-  if (isSuccess) {
-    queryModel.year = Number(data)
-  }
+  // 接口返回的是年份，选择器要时间戳，直接赋值会渲染成 1970
+  if (isSuccess)
+    queryModel.year = resolvePeriodTimestamp(data, 'year') ?? Date.now()
 }
 
 onMounted(() => {

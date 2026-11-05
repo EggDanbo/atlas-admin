@@ -201,6 +201,16 @@ function buildRow(module: string, index: number): Record<string, any> {
   if ('stoped' in row)
     row.stoped = index % 13 === 7
 
+  // 期末结账的三个状态有先后顺序：审核 → 结转 → 结账。
+  // 各字段独立随机会出现「已结转但未审核」这种业务上不存在的组合，
+  // 而且页面操作列是按前一个状态是否完成来显示按钮的，随机值会让按钮逻辑显得混乱。
+  if ('isAudited' in row && 'isCarried' in row && 'isClosed' in row) {
+    const stage = index % 4
+    row.isAudited = stage >= 1
+    row.isCarried = stage >= 2
+    row.isClosed = stage >= 3
+  }
+
   // id 最后赋值，避免被同名业务字段覆盖
   row.id = id
   // 部分列表以 bill_id 作为详情主键（hr 系列），与 id 保持一致，否则「查看」取不到主键会退化成新增

@@ -179,7 +179,7 @@ async function handleImportSuccess(fileId: string) {
 </script>
 
 <script lang="ts">
-export default { name: 'FinanceVoucherCreate' }
+export default { name: 'FinanceVoucherEntry' }
 </script>
 
 <template>

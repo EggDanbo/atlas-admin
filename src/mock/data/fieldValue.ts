@@ -634,6 +634,13 @@ export function generateValue(field: string, ctx: RowContext, type?: ColumnType,
   const t = type || inferColumnType(field)
   const lower = field.toLowerCase()
 
+  // 会计期间类字段：year / month 走通用文本兜底会得到「业务招待费支出」这类摘要词，
+  // 表格里看起来像数据错位。这两个字段语义固定，直接按年月生成。
+  if (/^year$/i.test(field))
+    return intBetween(rng, 2022, 2026)
+  if (/^(month|month_no)$/i.test(field))
+    return intBetween(rng, 1, 12)
+
   // ---------- 日志字段 ----------
   // 日志类模块的字段名（level / message / appname / hostname / ip…）与业务单据差异很大，
   // 按通用语义猜会得到「摘要」「公司名」这类错位数据，这里单独给一组合乎日志直觉的取值。
