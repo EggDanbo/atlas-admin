@@ -32,13 +32,15 @@ const RESOURCE_LABELS: Record<string, string> = {
   // 工作台
   MONITOR: '运营监控',
   // 客户与项目
-  CUSTOMER: '客户',
-  PROJECT: '项目',
-  RECEIVABLE: '应收',
-  INVOICE: '发票',
-  RECEIPT: '回款',
-  REPORT_PROJECT: '项目统计',
-  REPORT_RECEIVABLE: '应收统计',
+  CUSTOMER_ARCHIVE: '客户档案',
+  CUSTOMER_CONTACT: '联系人',
+  OPPORTUNITY_LIST: '商机列表',
+  OPPORTUNITY_FUNNEL: '销售漏斗',
+  DELIVERY_PROJECT: '项目台账',
+  DELIVERY_MILESTONE: '里程碑',
+  BILLING_INVOICE: '开票记录',
+  BILLING_RECEIPT: '回款登记',
+  BILLING_REVENUE: '客户收入',
   // 人力资源
   ROSTER: '员工名册',
   RESUME: '简历库',

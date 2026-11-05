@@ -1,14 +1,12 @@
+import billing from './billing'
 import customer from './customer'
-import invoice from './invoice'
-import project from './project'
-import receipt from './receipt'
-import receivable from './receivable'
+import delivery from './delivery'
+import opportunity from './opportunity'
 
-export { customer, invoice, project, receipt, receivable }
+export { billing, customer, delivery, opportunity }
 export default {
+  billing,
   customer,
-  invoice,
-  project,
-  receipt,
-  receivable,
+  delivery,
+  opportunity,
 }

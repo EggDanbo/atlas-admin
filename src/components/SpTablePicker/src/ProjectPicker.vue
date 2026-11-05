@@ -2,7 +2,7 @@
 import type { TablePickerItem } from './useTablePicker'
 import type { ModalInst } from '@/components/SpModal'
 import type { TableInstance, TableProps } from '@/components/SpTable'
-import { project as api } from '@/service/api/crm'
+import { delivery as api } from '@/service/api/crm'
 import { isArray } from '@/utils/is'
 import { TablePickerProps } from './props'
 import { useTablePicker } from './useTablePicker'
@@ -44,7 +44,7 @@ const filterModel = reactive<FilterModel>({
 })
 
 const gridOptions = reactive<TableProps>({
-  dataFormat: 'select/project',
+  dataFormat: 'atlas/crm/delivery/project',
   columns: [
     {
       isOperate: true,
@@ -168,7 +168,7 @@ async function fetchData(params: any) {
   const exclude_id = props.openModal ? props.selectList.map((q: any) => q.apply_id) : null
   const select_id = tableShowSelected.value ? Array.from(tableSelectedList.value) : null
 
-  const { isSuccess, data } = await api.getList({
+  const { isSuccess, data } = await api.projectSearch({
     ...params,
     ...filterModel,
     team_id: props.team_id,

@@ -149,11 +149,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "mobile_number",
@@ -237,7 +237,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "email",
-        "title": ""
+        "title": "邮箱"
       },
       {
         "field": "address",
@@ -329,11 +329,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -409,11 +409,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "no",
@@ -473,11 +473,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "date",
@@ -566,11 +566,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "team_in",
@@ -659,11 +659,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -780,11 +780,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -866,11 +866,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -918,7 +918,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "article_id",
@@ -1063,11 +1063,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "lend_name",
@@ -1160,11 +1160,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -1269,11 +1269,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -1354,11 +1354,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -1386,7 +1386,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "methods",
@@ -1394,7 +1394,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "period",
-        "title": "应收期间"
+        "title": ""
       },
       {
         "field": "name",
@@ -1402,687 +1402,42 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       }
     ]
   },
-  "crm/customer": {
+  "crm/billing/invoice": {
     "formats": [
-      "atlas/crm/customer"
+      "atlas/crm/billing/invoice"
     ],
-    "columnFields": [],
-    "fields": [
+    "columnFields": [
       {
-        "field": "id",
-        "title": ""
+        "field": "invoice_no",
+        "title": "发票号码"
       },
       {
-        "field": "types",
-        "title": "奖惩类型"
+        "field": "customer_name",
+        "title": "客户"
       },
       {
-        "field": "stoped",
-        "title": ""
-      },
-      {
-        "field": "team_id",
-        "title": "分摊单位"
-      },
-      {
-        "field": "team_name",
-        "title": "分摊单位"
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "nature",
-        "title": ""
-      },
-      {
-        "field": "account",
-        "title": ""
-      },
-      {
-        "field": "deposit",
-        "title": ""
-      },
-      {
-        "field": "contact",
-        "title": "证明人"
-      },
-      {
-        "field": "mobile",
-        "title": "手机号"
-      },
-      {
-        "field": "email",
-        "title": ""
-      },
-      {
-        "field": "hotline",
-        "title": ""
-      },
-      {
-        "field": "address",
-        "title": "用餐地点"
-      }
-    ]
-  },
-  "crm/invoice": {
-    "formats": [
-      "atlas/crm/invoice"
-    ],
-    "columnFields": [],
-    "fields": [
-      {
-        "field": "team_id",
-        "title": "单位部门"
+        "field": "project_name",
+        "title": "项目"
       },
       {
         "field": "amount",
         "title": "金额"
       },
       {
-        "field": "name",
-        "title": "名称"
+        "field": "tax_rate",
+        "title": "税率(%)"
       },
       {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "unit",
-        "title": "计量单位"
-      },
-      {
-        "field": "pcs",
-        "title": "数量"
-      },
-      {
-        "field": "price",
-        "title": "单价"
-      },
-      {
-        "field": "rates",
-        "title": "税率"
-      },
-      {
-        "field": "taxes",
-        "title": "税额"
-      },
-      {
-        "field": "totals",
-        "title": "价税合计"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "outer_name",
-        "title": "客户名称"
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "red",
-        "title": ""
-      },
-      {
-        "field": "source",
-        "title": "源"
-      },
-      {
-        "field": "status",
-        "title": ""
-      },
-      {
-        "field": "states",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "drawer",
-        "title": ""
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "settle",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      }
-    ]
-  },
-  "crm/project": {
-    "formats": [
-      "atlas/crm/project"
-    ],
-    "columnFields": [
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "outer_name",
-        "title": "开票客户"
-      },
-      {
-        "field": "invoice",
+        "field": "invoice_type",
         "title": "发票类型"
       },
       {
-        "field": "product_name",
-        "title": "业务类型"
+        "field": "invoice_date",
+        "title": "开票日期"
       },
       {
-        "field": "payment",
-        "title": "支付方式"
-      },
-      {
-        "field": "period",
-        "title": "期数"
-      },
-      {
-        "field": "price",
-        "title": "每期服务费"
-      },
-      {
-        "field": "amount",
-        "title": "服务费"
-      },
-      {
-        "field": "months",
-        "title": "不支付月份"
-      },
-      {
-        "field": "content_name",
-        "title": "费用科目"
-      },
-      {
-        "field": "name",
-        "title": "名称"
-      },
-      {
-        "field": "salary",
-        "title": "工资总额"
-      },
-      {
-        "field": "bases",
-        "title": "基本工资"
-      },
-      {
-        "field": "grade",
-        "title": "综合补贴"
-      },
-      {
-        "field": "posts",
-        "title": "岗位补贴"
-      },
-      {
-        "field": "dine_fix",
-        "title": "每月伙食补助"
-      },
-      {
-        "field": "dine_day",
-        "title": "每日伙食补助"
-      },
-      {
-        "field": "heats",
-        "title": "高温补贴"
-      },
-      {
-        "field": "rise_fix",
-        "title": "固定绩效工资"
-      },
-      {
-        "field": "rise_var",
-        "title": "浮动绩效工资"
-      },
-      {
-        "field": "hour_on",
-        "title": "工作日时薪"
-      },
-      {
-        "field": "hour_off",
-        "title": "休息日时薪"
-      },
-      {
-        "field": "hour_ext",
-        "title": "节假日时薪"
-      },
-      {
-        "field": "hour_add",
-        "title": "年假加班时薪"
-      },
-      {
-        "field": "hour_fix",
-        "title": "约定时薪"
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "extra",
-        "title": "约定加班工资"
-      },
-      {
-        "field": "skill",
-        "title": "分队长管理员"
-      },
-      {
-        "field": "other",
-        "title": "其他补贴"
-      },
-      {
-        "field": "insure",
-        "title": "扣残障金"
-      },
-      {
-        "field": "social",
-        "title": "扣社保"
-      },
-      {
-        "field": "house",
-        "title": "扣公积金"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "branch_name",
-        "title": "所在分队"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "pcs",
-        "title": "人数"
-      },
-      {
-        "field": "van",
-        "title": "空缺人数"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      }
-    ],
-    "fields": [
-      {
-        "field": "team_name",
-        "title": "所属单位"
-      },
-      {
-        "field": "outer_name",
-        "title": "开票客户"
-      },
-      {
-        "field": "invoice",
-        "title": "发票类型"
-      },
-      {
-        "field": "product_name",
-        "title": "业务类型"
-      },
-      {
-        "field": "payment",
-        "title": "支付方式"
-      },
-      {
-        "field": "period",
-        "title": "期数"
-      },
-      {
-        "field": "price",
-        "title": "每期服务费"
-      },
-      {
-        "field": "amount",
-        "title": "服务费"
-      },
-      {
-        "field": "months",
-        "title": "不支付月份"
-      },
-      {
-        "field": "content_name",
-        "title": "费用科目"
-      },
-      {
-        "field": "name",
-        "title": "名称"
-      },
-      {
-        "field": "salary",
-        "title": "工资总额"
-      },
-      {
-        "field": "bases",
-        "title": "基本工资"
-      },
-      {
-        "field": "grade",
-        "title": "综合补贴"
-      },
-      {
-        "field": "posts",
-        "title": "岗位补贴"
-      },
-      {
-        "field": "dine_fix",
-        "title": "每月伙食补助"
-      },
-      {
-        "field": "dine_day",
-        "title": "每日伙食补助"
-      },
-      {
-        "field": "heats",
-        "title": "高温补贴"
-      },
-      {
-        "field": "rise_fix",
-        "title": "固定绩效工资"
-      },
-      {
-        "field": "rise_var",
-        "title": "浮动绩效工资"
-      },
-      {
-        "field": "hour_on",
-        "title": "工作日时薪"
-      },
-      {
-        "field": "hour_off",
-        "title": "休息日时薪"
-      },
-      {
-        "field": "hour_ext",
-        "title": "节假日时薪"
-      },
-      {
-        "field": "hour_add",
-        "title": "年假加班时薪"
-      },
-      {
-        "field": "hour_fix",
-        "title": "约定时薪"
-      },
-      {
-        "field": "times",
-        "title": "约定加班时长"
-      },
-      {
-        "field": "extra",
-        "title": "约定加班工资"
-      },
-      {
-        "field": "skill",
-        "title": "分队长管理员"
-      },
-      {
-        "field": "other",
-        "title": "其他补贴"
-      },
-      {
-        "field": "insure",
-        "title": "扣残障金"
-      },
-      {
-        "field": "social",
-        "title": "扣社保"
-      },
-      {
-        "field": "house",
-        "title": "扣公积金"
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "branch_name",
-        "title": "所在分队"
-      },
-      {
-        "field": "position",
-        "title": "岗位"
-      },
-      {
-        "field": "pcs",
-        "title": "人数"
-      },
-      {
-        "field": "van",
-        "title": "空缺人数"
-      },
-      {
-        "field": "scale",
-        "title": "工资级别"
-      },
-      {
-        "field": "team_id",
-        "title": "所属单位"
-      },
-      {
-        "field": "outer_id",
-        "title": "开票客户"
-      },
-      {
-        "field": "product_id",
-        "title": "业务类型"
-      },
-      {
-        "field": "content_id",
-        "title": "费用科目"
-      },
-      {
-        "field": "branch_id",
-        "title": "所在分队"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "link_id",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "code",
-        "title": "资产编码"
-      },
-      {
-        "field": "model",
-        "title": "规格型号"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "source",
-        "title": "源"
-      },
-      {
-        "field": "pattern",
-        "title": ""
-      },
-      {
-        "field": "schedule",
-        "title": ""
-      },
-      {
-        "field": "indate",
-        "title": "有效期"
-      },
-      {
-        "field": "revise",
-        "title": ""
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "reason",
-        "title": "原因"
-      },
-      {
-        "field": "renew",
-        "title": ""
-      },
-      {
-        "field": "user_id",
-        "title": "用户ID"
-      },
-      {
-        "field": "user_name",
-        "title": "操作人"
-      },
-      {
-        "field": "scales",
-        "title": ""
-      },
-      {
-        "field": "incomes",
-        "title": ""
-      },
-      {
-        "field": "expenses",
-        "title": ""
-      },
-      {
-        "field": "alloctes",
-        "title": ""
-      },
-      {
-        "field": "files_htyj",
-        "title": ""
-      },
-      {
-        "field": "files_gdht",
-        "title": ""
-      },
-      {
-        "field": "files_cbys",
-        "title": ""
-      },
-      {
-        "field": "files_yyzz",
-        "title": ""
-      },
-      {
-        "field": "files_sfz",
-        "title": ""
-      },
-      {
-        "field": "files_jht",
-        "title": ""
-      },
-      {
-        "field": "files_bcxy",
-        "title": ""
-      },
-      {
-        "field": "files_zmcl",
-        "title": ""
-      },
-      {
-        "field": "files_zzxy",
-        "title": ""
-      },
-      {
-        "field": "files_zzsq",
-        "title": ""
-      },
-      {
-        "field": "files_jcxy",
-        "title": ""
-      },
-      {
-        "field": "files_jcsm",
-        "title": ""
-      },
-      {
-        "field": "files_jczj",
-        "title": ""
-      },
-      {
-        "field": "files_qksm",
-        "title": ""
-      },
-      {
-        "field": "files_xctp",
-        "title": ""
-      },
-      {
-        "field": "files_cns",
-        "title": ""
-      },
-      {
-        "field": "files_zfsm",
-        "title": ""
-      },
-      {
-        "field": "states",
-        "title": ""
-      }
-    ]
-  },
-  "crm/receipt": {
-    "formats": [
-      "atlas/crm/receipt"
-    ],
-    "columnFields": [
-      {
-        "field": "invoice_no",
-        "title": "发票号码"
-      },
-      {
-        "field": "outer_name",
-        "title": "客户名称"
-      },
-      {
-        "field": "team_name",
-        "title": "分摊单位"
-      },
-      {
-        "field": "amount",
-        "title": "分摊金额"
+        "field": "invoice_state",
+        "title": "认证状态"
       }
     ],
     "fields": [
@@ -2091,201 +1446,440 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
         "title": "发票号码"
       },
       {
-        "field": "outer_name",
-        "title": "客户名称"
+        "field": "customer_name",
+        "title": "客户"
       },
       {
-        "field": "team_name",
-        "title": "分摊单位"
+        "field": "project_name",
+        "title": "项目"
       },
       {
         "field": "amount",
-        "title": "分摊金额"
+        "title": "金额"
       },
       {
-        "field": "outer_id",
-        "title": "客户名称"
+        "field": "tax_rate",
+        "title": "税率(%)"
       },
       {
-        "field": "team_id",
-        "title": "分摊单位"
+        "field": "invoice_type",
+        "title": "发票类型"
       },
       {
-        "field": "id",
-        "title": ""
+        "field": "invoice_date",
+        "title": "开票日期"
       },
       {
-        "field": "invoice_id",
-        "title": ""
-      },
-      {
-        "field": "date",
-        "title": ""
-      },
-      {
-        "field": "totals",
-        "title": "开票金额"
-      },
-      {
-        "field": "account",
-        "title": ""
-      },
-      {
-        "field": "remark",
-        "title": "备注"
-      },
-      {
-        "field": "status",
-        "title": ""
+        "field": "invoice_state",
+        "title": "认证状态"
       }
     ]
   },
-  "crm/receivable": {
+  "crm/billing/receipt": {
     "formats": [
-      "atlas/crm/receivable"
+      "atlas/crm/billing/receipt"
     ],
     "columnFields": [
       {
-        "field": "period",
-        "title": "应收期间"
+        "field": "customer_name",
+        "title": "客户"
       },
       {
-        "field": "remain",
-        "title": "应收日期"
+        "field": "project_name",
+        "title": "项目"
       },
       {
-        "field": "amount",
-        "title": "应收金额"
+        "field": "invoice_no",
+        "title": "对应发票"
       },
       {
-        "field": "product_name",
-        "title": "业务类型"
+        "field": "receipt_amount",
+        "title": "回款金额"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "pay_method",
+        "title": "回款方式"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "receipt_date",
+        "title": "到账日期"
       },
       {
-        "field": "rate",
-        "title": "税率"
-      },
-      {
-        "field": "totals",
-        "title": "开票金额"
+        "field": "receipt_state",
+        "title": "认领状态"
       }
     ],
     "fields": [
       {
-        "field": "period",
-        "title": "应收期间"
+        "field": "customer_name",
+        "title": "客户"
       },
       {
-        "field": "remain",
-        "title": "应收日期"
+        "field": "project_name",
+        "title": "项目"
       },
       {
-        "field": "amount",
-        "title": "应收金额"
+        "field": "invoice_no",
+        "title": "对应发票"
       },
       {
-        "field": "product_name",
-        "title": "业务类型"
+        "field": "receipt_amount",
+        "title": "回款金额"
       },
       {
-        "field": "model",
-        "title": "规格型号"
+        "field": "pay_method",
+        "title": "回款方式"
       },
       {
-        "field": "unit",
-        "title": "计量单位"
+        "field": "receipt_date",
+        "title": "到账日期"
       },
       {
-        "field": "rate",
-        "title": "税率"
-      },
-      {
-        "field": "totals",
-        "title": "开票金额"
-      },
-      {
-        "field": "product_id",
-        "title": "业务类型"
-      },
-      {
-        "field": "id",
-        "title": ""
-      },
-      {
-        "field": "no",
-        "title": ""
-      },
-      {
-        "field": "name",
-        "title": "格式名称"
-      },
-      {
-        "field": "types",
-        "title": "奖惩类型"
-      },
-      {
-        "field": "indate",
-        "title": "有效期"
-      },
-      {
-        "field": "expire",
-        "title": "结束日期"
-      },
-      {
-        "field": "team_id",
-        "title": "分摊单位"
-      },
-      {
-        "field": "outer_id",
-        "title": "客户名称"
-      },
-      {
-        "field": "status",
-        "title": ""
+        "field": "receipt_state",
+        "title": "认领状态"
       }
     ]
   },
-  "crm/report/project": {
-    "formats": [
-      "atlas/crm/report/project"
-    ],
+  "crm/billing/revenue": {
+    "formats": [],
     "columnFields": [],
-    "fields": [
+    "fields": []
+  },
+  "crm/customer/archive": {
+    "formats": [
+      "atlas/crm/customer/archive"
+    ],
+    "columnFields": [
       {
-        "field": "year",
-        "title": "年度"
+        "field": "customer_name",
+        "title": "客户名称"
       },
       {
-        "field": "team_id",
-        "title": "分摊单位"
+        "field": "customer_level",
+        "title": "客户分级"
+      },
+      {
+        "field": "owner",
+        "title": "负责人"
+      },
+      {
+        "field": "coop_state",
+        "title": "合作状态"
+      },
+      {
+        "field": "project_count",
+        "title": "项目数"
+      },
+      {
+        "field": "contract_total",
+        "title": "累计合同额"
+      },
+      {
+        "field": "receivable_amount",
+        "title": "应收余额"
+      }
+    ],
+    "fields": [
+      {
+        "field": "customer_name",
+        "title": "客户名称"
+      },
+      {
+        "field": "customer_level",
+        "title": "客户分级"
+      },
+      {
+        "field": "owner",
+        "title": "负责人"
+      },
+      {
+        "field": "coop_state",
+        "title": "合作状态"
+      },
+      {
+        "field": "project_count",
+        "title": "项目数"
+      },
+      {
+        "field": "contract_total",
+        "title": "累计合同额"
+      },
+      {
+        "field": "receivable_amount",
+        "title": "应收余额"
       }
     ]
   },
-  "crm/report/receivable": {
+  "crm/customer/contact": {
     "formats": [
-      "atlas/crm/report/receivable"
+      "atlas/crm/customer/contact"
     ],
-    "columnFields": [],
+    "columnFields": [
+      {
+        "field": "customer_name",
+        "title": "所属客户"
+      },
+      {
+        "field": "contact_name",
+        "title": "姓名"
+      },
+      {
+        "field": "job_title",
+        "title": "职务"
+      },
+      {
+        "field": "phone",
+        "title": "手机号"
+      },
+      {
+        "field": "email",
+        "title": "邮箱"
+      },
+      {
+        "field": "decision_role",
+        "title": "决策角色"
+      }
+    ],
     "fields": [
       {
-        "field": "year",
-        "title": "年度"
+        "field": "customer_name",
+        "title": "所属客户"
       },
       {
-        "field": "team_id",
-        "title": "分摊单位"
+        "field": "contact_name",
+        "title": "姓名"
       },
       {
-        "field": "outer_id",
-        "title": "客户名称"
+        "field": "job_title",
+        "title": "职务"
+      },
+      {
+        "field": "phone",
+        "title": "手机号"
+      },
+      {
+        "field": "email",
+        "title": "邮箱"
+      },
+      {
+        "field": "decision_role",
+        "title": "决策角色"
+      }
+    ]
+  },
+  "crm/delivery/milestone": {
+    "formats": [
+      "atlas/crm/delivery/milestone"
+    ],
+    "columnFields": [
+      {
+        "field": "project_name",
+        "title": "项目"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "milestone_node",
+        "title": "里程碑"
+      },
+      {
+        "field": "plan_date",
+        "title": "计划完成"
+      },
+      {
+        "field": "actual_date",
+        "title": "实际完成"
+      },
+      {
+        "field": "delay_days",
+        "title": "延期(天)"
+      },
+      {
+        "field": "node_state",
+        "title": "状态"
+      },
+      {
+        "field": "manager",
+        "title": "项目经理"
+      }
+    ],
+    "fields": [
+      {
+        "field": "project_name",
+        "title": "项目"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "milestone_node",
+        "title": "里程碑"
+      },
+      {
+        "field": "plan_date",
+        "title": "计划完成"
+      },
+      {
+        "field": "actual_date",
+        "title": "实际完成"
+      },
+      {
+        "field": "delay_days",
+        "title": "延期(天)"
+      },
+      {
+        "field": "node_state",
+        "title": "状态"
+      },
+      {
+        "field": "manager",
+        "title": "项目经理"
+      }
+    ]
+  },
+  "crm/delivery/project": {
+    "formats": [
+      "atlas/crm/delivery/project"
+    ],
+    "columnFields": [
+      {
+        "field": "project_no",
+        "title": "项目编号"
+      },
+      {
+        "field": "project_name",
+        "title": "项目名称"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "contract_amount",
+        "title": "合同额"
+      },
+      {
+        "field": "progress",
+        "title": "交付进度"
+      },
+      {
+        "field": "receipt_rate",
+        "title": "回款进度(%)"
+      },
+      {
+        "field": "project_state",
+        "title": "状态"
+      },
+      {
+        "field": "manager",
+        "title": "项目经理"
+      }
+    ],
+    "fields": [
+      {
+        "field": "project_no",
+        "title": "项目编号"
+      },
+      {
+        "field": "project_name",
+        "title": "项目名称"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "contract_amount",
+        "title": "合同额"
+      },
+      {
+        "field": "progress",
+        "title": "交付进度"
+      },
+      {
+        "field": "receipt_rate",
+        "title": "回款进度(%)"
+      },
+      {
+        "field": "project_state",
+        "title": "状态"
+      },
+      {
+        "field": "manager",
+        "title": "项目经理"
+      }
+    ]
+  },
+  "crm/opportunity/funnel": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
+  },
+  "crm/opportunity/list": {
+    "formats": [
+      "atlas/crm/opportunity/list"
+    ],
+    "columnFields": [
+      {
+        "field": "opp_name",
+        "title": "商机名称"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "expect_amount",
+        "title": "预计金额"
+      },
+      {
+        "field": "opp_stage",
+        "title": "阶段"
+      },
+      {
+        "field": "win_rate",
+        "title": "赢单率(%)"
+      },
+      {
+        "field": "expect_date",
+        "title": "预计成交"
+      },
+      {
+        "field": "owner",
+        "title": "负责人"
+      }
+    ],
+    "fields": [
+      {
+        "field": "opp_name",
+        "title": "商机名称"
+      },
+      {
+        "field": "customer_name",
+        "title": "客户"
+      },
+      {
+        "field": "expect_amount",
+        "title": "预计金额"
+      },
+      {
+        "field": "opp_stage",
+        "title": "阶段"
+      },
+      {
+        "field": "win_rate",
+        "title": "赢单率(%)"
+      },
+      {
+        "field": "expect_date",
+        "title": "预计成交"
+      },
+      {
+        "field": "owner",
+        "title": "负责人"
       }
     ]
   },
@@ -2311,11 +1905,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -2420,11 +2014,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -2468,19 +2062,19 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "outer_id",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "outer_name",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "project_id",
@@ -2488,7 +2082,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "project_name",
-        "title": ""
+        "title": "项目名称"
       },
       {
         "field": "date",
@@ -2512,7 +2106,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "payment",
-        "title": "支付方式"
+        "title": ""
       },
       {
         "field": "indate",
@@ -2560,11 +2154,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -2701,11 +2295,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -2774,11 +2368,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -2935,11 +2529,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -2971,7 +2565,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "status",
@@ -2995,7 +2589,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "user_id",
@@ -3052,11 +2646,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_id",
@@ -3201,11 +2795,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -3557,11 +3151,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "team_in",
@@ -3690,7 +3284,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -3731,11 +3325,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -3816,11 +3410,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "outer_id",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "outer_name",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "remark",
@@ -3832,7 +3426,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -3852,7 +3446,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "user_name",
@@ -3892,7 +3486,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -3908,7 +3502,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -3924,7 +3518,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -3945,7 +3539,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -3985,7 +3579,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -4001,7 +3595,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -4021,7 +3615,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -4037,7 +3631,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "group_name",
@@ -4129,7 +3723,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "month",
@@ -4145,7 +3739,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "month",
@@ -4206,11 +3800,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4283,11 +3877,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4368,11 +3962,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4405,11 +3999,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "outer_id",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "outer_name",
-        "title": "客户名称"
+        "title": "维保单位"
       },
       {
         "field": "no",
@@ -4465,7 +4059,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -4513,7 +4107,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -4529,7 +4123,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -4577,7 +4171,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "status",
@@ -4682,11 +4276,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4754,11 +4348,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4863,11 +4457,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -4984,11 +4578,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "team_in",
@@ -5048,7 +4642,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "status",
@@ -5090,7 +4684,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "month",
@@ -5134,7 +4728,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "status",
@@ -5218,7 +4812,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "status",
@@ -5423,11 +5017,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -5492,11 +5086,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -5597,11 +5191,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "date",
@@ -5629,7 +5223,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -5645,7 +5239,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       }
     ]
   },
@@ -5697,11 +5291,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "branch_id",
@@ -5933,11 +5527,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "branch_id",
@@ -6253,11 +5847,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -6351,11 +5945,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -6411,7 +6005,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "rate",
-        "title": "税率"
+        "title": ""
       },
       {
         "field": "add",
@@ -6523,11 +6117,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "types",
@@ -6803,7 +6397,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "period",
-        "title": "应收期间"
+        "title": ""
       },
       {
         "field": "cashflow_in",
@@ -6843,11 +6437,11 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       },
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "team_name",
-        "title": "分摊单位"
+        "title": "所属单位"
       },
       {
         "field": "code",
@@ -6893,7 +6487,7 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "fields": [
       {
         "field": "team_id",
-        "title": "分摊单位"
+        "title": ""
       },
       {
         "field": "date",
@@ -7275,13 +6869,13 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/asset/info": "asset/info",
   "atlas/asset/order": "asset/order",
   "atlas/asset/value": "asset/value",
-  "atlas/crm/customer": "crm/customer",
-  "atlas/crm/invoice": "crm/invoice",
-  "atlas/crm/project": "crm/project",
-  "atlas/crm/receipt": "crm/receipt",
-  "atlas/crm/receivable": "crm/receivable",
-  "atlas/crm/report/project": "crm/report/project",
-  "atlas/crm/report/receivable": "crm/report/receivable",
+  "atlas/crm/billing/invoice": "crm/billing/invoice",
+  "atlas/crm/billing/receipt": "crm/billing/receipt",
+  "atlas/crm/customer/archive": "crm/customer/archive",
+  "atlas/crm/customer/contact": "crm/customer/contact",
+  "atlas/crm/delivery/milestone": "crm/delivery/milestone",
+  "atlas/crm/delivery/project": "crm/delivery/project",
+  "atlas/crm/opportunity/list": "crm/opportunity/list",
   "atlas/expense/payment": "expense/advance",
   "atlas/expense/budget": "expense/budget",
   "atlas/expense/contract": "expense/contract",
@@ -7357,7 +6951,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "name": "格式名称",
   "code": "资产编码",
   "mobile": "手机号",
-  "team_name": "分摊单位",
+  "team_name": "所属单位",
   "working": "工作中",
   "sort": "排序",
   "brand": "品牌",
@@ -7370,57 +6964,57 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "enroll": "购置日期",
   "source": "源",
   "article_name": "资产分类",
-  "outer_id": "客户名称",
+  "outer_id": "维保单位",
   "price": "单价",
   "contact": "证明人",
   "explain": "维保内容",
-  "outer_name": "客户名称",
-  "team_id": "分摊单位",
-  "rates": "税率",
-  "taxes": "税额",
-  "totals": "开票金额",
-  "invoice": "发票",
-  "product_id": "业务类型",
-  "payment": "支付方式",
-  "period": "应收期间",
-  "months": "不支付月份",
-  "product_name": "业务类型",
+  "outer_name": "维保单位",
+  "invoice_no": "对应发票",
+  "customer_name": "客户",
+  "project_name": "项目名称",
+  "tax_rate": "税率(%)",
+  "invoice_type": "发票类型",
+  "invoice_date": "开票日期",
+  "invoice_state": "认证状态",
+  "receipt_amount": "回款金额",
+  "pay_method": "回款方式",
+  "receipt_date": "到账日期",
+  "receipt_state": "认领状态",
+  "customer_level": "客户分级",
+  "owner": "负责人",
+  "coop_state": "合作状态",
+  "project_count": "项目数",
+  "contract_total": "累计合同额",
+  "receivable_amount": "应收余额",
+  "contact_name": "姓名",
+  "job_title": "职务",
+  "phone": "手机号",
+  "email": "邮箱",
+  "decision_role": "决策角色",
+  "milestone_node": "里程碑",
+  "plan_date": "计划完成",
+  "actual_date": "实际完成",
+  "delay_days": "延期(天)",
+  "node_state": "状态",
+  "manager": "项目经理",
+  "project_no": "项目编号",
+  "contract_amount": "合同金额",
+  "progress": "进程地址",
+  "receipt_rate": "回款进度(%)",
+  "project_state": "状态",
+  "opp_name": "商机名称",
+  "expect_amount": "预计金额",
+  "opp_stage": "阶段",
+  "win_rate": "赢单率(%)",
+  "expect_date": "预计成交",
   "content_id": "费用科目",
-  "content_name": "费用科目",
-  "salary": "合同约定工资",
-  "bases": "基本工资",
-  "grade": "综合补贴",
-  "posts": "岗位补贴",
-  "dine_fix": "每月伙食补助",
-  "dine_day": "每日伙食补助",
-  "heats": "高温补贴",
-  "rise_fix": "固定绩效工资",
-  "rise_var": "浮动绩效工资",
-  "hour_on": "工作日时薪",
-  "hour_off": "休息日时薪",
-  "hour_ext": "节假日时薪",
-  "hour_add": "年假加班时薪",
-  "hour_fix": "约定时薪",
-  "times": "约定加班时长",
-  "extra": "约定加班工资",
-  "skill": "分队长管理员",
-  "other": "其他补贴",
-  "insure": "扣残障金",
-  "social": "扣社保",
-  "house": "扣公积金",
-  "branch_id": "派驻分队",
-  "position": "岗位",
-  "van": "空缺人数",
-  "scale": "工资级别",
-  "branch_name": "派驻分队",
-  "invoice_no": "发票号码",
-  "remain": "应收日期",
-  "rate": "税率",
   "indate": "有效期",
+  "content_name": "费用科目",
   "address": "用餐地点",
   "guests": "招待对象",
   "quotas": "预算标准",
   "digest": "摘要",
+  "invoice": "发票",
   "expense_name": "费用分类",
   "predict": "需求日期",
   "supplier": "供应商",
@@ -7455,7 +7049,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "execution_rate": "执行率(%)",
   "warning": "预警",
   "project": "项目",
-  "contract_amount": "合同金额",
   "labor_cost": "人工成本",
   "purchase_cost": "采购成本",
   "other_total_amount": "其他成本",
@@ -7481,14 +7074,39 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "checkin_time": "补卡时间",
   "over_time": "加班时长（小时）",
   "ranks": "职务",
+  "position": "岗位",
+  "branch_name": "派驻分队",
   "reason": "原因",
   "user_pre_rank": "原职务",
   "user_pre_position": "原岗位",
   "user_pre_scale": "原工资级别",
+  "branch_id": "派驻分队",
+  "scale": "工资级别",
+  "salary": "合同约定工资",
   "card": "身份证号",
   "conditions": "条件内容",
   "content": "培训内容",
   "describe": "公式说明",
+  "bases": "基本工资",
+  "grade": "综合补贴",
+  "posts": "岗位补贴",
+  "dine_fix": "每月伙食补助",
+  "dine_day": "每日伙食补助",
+  "heats": "高温补贴",
+  "rise_fix": "固定绩效工资",
+  "rise_var": "浮动绩效工资",
+  "hour_on": "工作日时薪",
+  "hour_off": "休息日时薪",
+  "hour_ext": "节假日时薪",
+  "hour_add": "年假加班时薪",
+  "hour_fix": "约定时薪",
+  "times": "约定加班时长",
+  "extra": "约定加班工资",
+  "skill": "分队长管理员",
+  "other": "其他补贴",
+  "insure": "扣残障金",
+  "social": "扣社保",
+  "house": "扣公积金",
   "user_name": "操作人",
   "branch": "培训机构",
   "outcome": "培训成果",
@@ -7518,7 +7136,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "time": "时间",
   "message": "消息",
   "appname": "应用名称",
-  "progress": "进程地址",
   "mark": "操作描述",
   "ref_count": "关联数"
 }
@@ -7536,13 +7153,15 @@ export const ROUTE_PERMISSIONS: string[] = [
   "AST_REPAIR",
   "AST_RESUME",
   "AST_VALUE",
-  "CRM_CUSTOMER",
-  "CRM_INVOICE",
-  "CRM_PROJECT",
-  "CRM_RECEIPT",
-  "CRM_RECEIVABLE",
-  "CRM_REPORT_PROJECT",
-  "CRM_REPORT_RECEIVABLE",
+  "CRM_BILLING_INVOICE",
+  "CRM_BILLING_RECEIPT",
+  "CRM_BILLING_REVENUE",
+  "CRM_CUSTOMER_ARCHIVE",
+  "CRM_CUSTOMER_CONTACT",
+  "CRM_DELIVERY_MILESTONE",
+  "CRM_DELIVERY_PROJECT",
+  "CRM_OPPORTUNITY_FUNNEL",
+  "CRM_OPPORTUNITY_LIST",
   "DASH_MONITOR",
   "DOC_BORROW",
   "DOC_DOCUMENT",

@@ -38,30 +38,6 @@ export const FIELD_ENUMS: Record<string, Record<string, string>> = {
     types: 'organ_outer_types',
   },
 
-  // ---------------- 客户与项目 ----------------
-  'crm/project': {
-    types: 'trade_project_types',
-    pattern: 'trade_project_pattern',
-    payment: 'trade_project_payment',
-    // 明细行里的收付款方式与发票类型
-    paymetn: 'trade_project_payment',
-    invoice: 'trade_invoice_types',
-  },
-  'crm/receivable': {
-    types: 'trade_project_types',
-    payment: 'trade_project_payment',
-  },
-  'crm/customer': {
-    types: 'organ_outer_types',
-  },
-  'crm/invoice': {
-    source: 'trade_invoice_source',
-  },
-  'crm/receipt': {
-    types: 'trade_project_types',
-    payment: 'trade_project_payment',
-  },
-
   // ---------------- 人力 ----------------
   'hr/roster': {
     status: 'staff_info_status',

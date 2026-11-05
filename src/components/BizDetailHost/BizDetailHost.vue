@@ -51,7 +51,6 @@ const BIZ_DETAIL_MAP: Record<string, ReturnType<typeof defineAsyncComponent>> = 
   checkin_overtime: createAsyncComponent(() => import('@/views/hr/attendance-apply/overtime/detail.vue')),
   checkin_vacation: createAsyncComponent(() => import('@/views/hr/attendance-apply/leave/detail.vue')),
   checkin_tanslate: createAsyncComponent(() => import('@/views/hr/attendance-apply/shift/detail.vue')),
-  trade_project: createAsyncComponent(() => import('@/views/crm/project/detail.vue')),
   paper_borrow: createAsyncComponent(() => import('@/views/archive/borrow/detail.vue')),
 }
 

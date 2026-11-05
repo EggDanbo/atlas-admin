@@ -11,6 +11,7 @@ import type { Rng } from './data/random'
 import type { DataFormatColumn } from '@/components/SpTable'
 import { DICTS, getDict } from '../dicts'
 import { resolveFieldEnum } from '../dicts/field-enums'
+import { resolveCrmMock } from './data/crm'
 import { ASSET_BRANDS, ASSET_MODELS, ASSET_NAMES, BRANCHES, CITIES, CURRENCIES, DEPARTMENTS, DIGESTS, MEASURE_UNITS, PAY_TYPES, POSITIONS, STATE_LABELS } from './data/dict'
 import { SYSTEM_ENUMS } from './data/enums'
 import {
@@ -207,9 +208,6 @@ function buildRow(module: string, index: number): Record<string, any> {
   // 部分列表以 bill_id 作为详情主键（hr 系列），与 id 保持一致，否则「查看」取不到主键会退化成新增
   if (!row.bill_id)
     row.bill_id = id
-  // 应收/回款等 crm 列表用 project_id 打开项目详情，缺失时同样兜底，否则「查看」点了没反应
-  if (!row.project_id && /^crm\//.test(module))
-    row.project_id = id
 
   rowCache.set(`${module}:${id}`, row)
   return row
@@ -896,7 +894,7 @@ interface MonitorModule {
 
 /** 统计口径：与左侧一级导航一一对应，二级名称取自各模块真实菜单 */
 const MONITOR_MODULES: MonitorModule[] = [
-  { code: 'crm', name: '客户与项目', children: ['客户', '项目', '应收', '回款'] },
+  { code: 'crm', name: '客户与项目', children: ['客户', '商机', '项目', '开票'] },
   { code: 'hr', name: '人力资源', children: ['员工名册', '异动管理', '考勤记录', '薪酬管理'] },
   { code: 'expense', name: '费用管理', children: ['费用申请', '事前申请', '费用支付', '预算额度'] },
   { code: 'asset', name: '资产管理', children: ['资产台账', '领用申请', '采购申请', '调拨'] },
@@ -1098,6 +1096,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   // ---------- 运营监控 ----------
   if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
     return ok(buildMonitorOverview())
+
+  // ---------- 客户与项目 ----------
+  // 合同额、开票、回款、应收之间要能对上，因此由共享数据集派生，不走通用随机
+  if (/^crm\//.test(module)) {
+    const payload = resolveCrmMock(module, params)
+    if (payload)
+      return ok(payload)
+  }
 
   // ---------- 财务管理 ----------
   // 资金/账龄/预算用的是按业务口径构造的数据：预算不能小于已用，
