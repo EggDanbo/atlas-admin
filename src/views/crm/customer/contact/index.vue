@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { customer } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -12,6 +13,15 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/customer/contact',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['contact_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 780,
+})
+
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: customer.contactSearch },
   createQueryModel,
@@ -22,6 +32,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'phone', title: '手机号', width: 130 },
     { field: 'email', title: '邮箱', width: 200 },
     { field: 'decision_role', title: '决策角色', width: 100, align: 'center', slots: { default: 'decision' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -46,6 +57,11 @@ export default { name: 'CrmCustomerContact' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增联系人
+            </n-button>
+          </template>
           <template #decision="{ row }">
             <n-tag v-if="row.decision_role === '决策人'" type="success" size="small" :bordered="false">
               决策人
@@ -55,5 +71,7 @@ export default { name: 'CrmCustomerContact' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

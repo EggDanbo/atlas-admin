@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { treasury } from '@/service/api/finance'
 
 const currentYear = new Date().getFullYear()
@@ -19,6 +20,15 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/finance/treasury/plan',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['actual_in_amount', 'actual_out_amount', 'diff_amount', 'execution_rate'],
+  nameFields: ['year'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 800,
+})
+
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: treasury.planSearch },
   createQueryModel,
@@ -31,6 +41,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'actual_out_amount', title: '实际流出', width: 150, align: 'right' },
     { field: 'diff_amount', title: '净额差异', width: 150, align: 'right' },
     { field: 'execution_rate', title: '执行率(%)', width: 110, align: 'right' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -59,8 +70,16 @@ export default { name: 'FinanceTreasuryPlan' }
       </n-card>
 
       <n-card :bordered="false" class="h-full">
-        <SpTable ref="tableRef" v-bind="gridOptions" />
+        <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增计划
+            </n-button>
+          </template>
+        </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

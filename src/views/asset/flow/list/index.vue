@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { flow } from '@/service/api/asset'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/asset/flow/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['flow_no'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 780,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: flow.listSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'to_dept', title: '新部门', width: 120 },
     { field: 'flow_date', title: '发生日期', width: 110, align: 'center' },
     { field: 'flow_state', title: '状态', width: 95, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -64,6 +75,11 @@ export default { name: 'AssetFlowList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              发起流转
+            </n-button>
+          </template>
           <template #type="{ row }">
             <n-tag v-if="row.flow_type" :type="typeTag(row.flow_type)" size="small" :bordered="false">
               {{ row.flow_type }}
@@ -77,5 +93,7 @@ export default { name: 'AssetFlowList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { contract } from '@/service/api/expense'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/expense/contract/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['paid_amount', 'payment_rate'],
+  nameFields: ['contract_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: contract.listSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'payment_rate', title: '付款进度(%)', width: 115, align: 'right' },
     { field: 'expire_date', title: '到期日', width: 110, align: 'center' },
     { field: 'contract_state', title: '状态', width: 105, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -60,6 +71,11 @@ export default { name: 'ExpenseContractList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增合同
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag v-if="row.contract_state" :type="stateTag(row.contract_state)" size="small" :bordered="false">
               {{ row.contract_state }}
@@ -68,5 +84,7 @@ export default { name: 'ExpenseContractList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

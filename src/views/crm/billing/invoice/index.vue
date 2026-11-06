@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { billing } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/billing/invoice',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['customer_name', 'project_name'],
+  nameFields: ['invoice_no'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: billing.invoiceSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'invoice_type', title: '发票类型', width: 130 },
     { field: 'invoice_date', title: '开票日期', width: 110, align: 'center' },
     { field: 'invoice_state', title: '认证状态', width: 100, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -48,6 +59,11 @@ export default { name: 'CrmBillingInvoice' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              登记开票
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag
               v-if="row.invoice_state"
@@ -61,5 +77,7 @@ export default { name: 'CrmBillingInvoice' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { maintain } from '@/service/api/asset'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/asset/maintain/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['maintain_no'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 780,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: maintain.listSearch },
@@ -23,6 +33,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'last_date', title: '上次维保', width: 110, align: 'center' },
     { field: 'cost_amount', title: '费用', width: 100, align: 'right' },
     { field: 'maintain_state', title: '状态', width: 100, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -55,6 +66,11 @@ export default { name: 'AssetMaintainList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增维保
+            </n-button>
+          </template>
           <template #type="{ row }">
             <n-tag
               v-if="row.maintain_type"
@@ -73,5 +89,7 @@ export default { name: 'AssetMaintainList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

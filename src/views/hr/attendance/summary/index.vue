@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { attendance } from '@/service/api/hr'
 
 function createQueryModel() {
@@ -11,6 +12,16 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost } = useRecordActions({
+  format: 'atlas/hr/attendance/summary',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['employee_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 760,
+  mode: 'view',
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: attendance.summarySearch },
@@ -24,6 +35,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'leave_days', title: '请假(天)', width: 95, align: 'right' },
     { field: 'overtime_hours', title: '加班(小时)', width: 105, align: 'right' },
     { field: 'exception_count', title: '异常(次)', width: 95, align: 'right', slots: { default: 'exception' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -56,5 +68,7 @@ export default { name: 'HrAttendanceSummary' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

@@ -25,6 +25,7 @@ import {
 } from './data/fieldValue'
 import { resolveFinanceMock } from './data/finance'
 import { resolveHrMock } from './data/hr'
+import { applyMutation, withMutation } from './data/mutation'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
@@ -114,6 +115,11 @@ const MUTATION_ACTIONS = new Set([
   'verify',
   'verifyuser',
 ])
+
+/** 是否为写操作：模块级 mock 只负责读，写要交给覆盖层 */
+function isMutationAction(action: string) {
+  return MUTATION_ACTIONS.has(action) || action.startsWith('update') || action.startsWith('create')
+}
 
 // ==================== URL 解析 ====================
 
@@ -1069,43 +1075,43 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
 
   // ---------- 费用管理 ----------
   // 预算/申请/合同/支付共用一份单据数据，支出合计才对得上
-  if (/^expense\//.test(module)) {
+  if (/^expense\//.test(module) && !isMutationAction(action)) {
     const payload = resolveExpenseMock(module, params)
     if (payload)
-      return ok(payload)
+      return ok(withMutation(module, payload, params))
   }
 
   // ---------- 人力资源 ----------
   // 编制、考勤、工资表都由同一份员工主数据派生，人数与工资成本才对得上
-  if (/^hr\//.test(module)) {
+  if (/^hr\//.test(module) && !isMutationAction(action)) {
     const payload = resolveHrMock(module, action, params)
     if (payload)
-      return ok(payload)
+      return ok(withMutation(module, payload, params))
   }
 
   // ---------- 客户与项目 ----------
   // 合同额、开票、回款、应收之间要能对上，因此由共享数据集派生，不走通用随机
-  if (/^crm\//.test(module)) {
+  if (/^crm\//.test(module) && !isMutationAction(action)) {
     const payload = resolveCrmMock(module, params)
     if (payload)
-      return ok(payload)
+      return ok(withMutation(module, payload, params))
   }
 
   // ---------- 资产管理 ----------
   // 台账、流转、折旧、盘点、维保共用一份资产主数据，净值与折旧才对得上
-  if (/^asset\//.test(module)) {
+  if (/^asset\//.test(module) && !isMutationAction(action)) {
     const payload = resolveAssetMock(module, params)
     if (payload)
-      return ok(payload)
+      return ok(withMutation(module, payload, params))
   }
 
   // ---------- 财务管理 ----------
   // 资金/账龄/预算用的是按业务口径构造的数据：预算不能小于已用，
   // 账龄各段要能加总回总额，资金头寸要和账户余额对得上，通用随机生成不了
-  if (/^finance\//.test(module)) {
+  if (/^finance\//.test(module) && !isMutationAction(action)) {
     const payload = resolveFinanceMock(module, params)
     if (payload)
-      return ok(payload)
+      return ok(withMutation(module, payload, params))
   }
 
   // ---------- 消息通知 ----------
@@ -1197,8 +1203,9 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
     return ok(buildTeamTree())
 
   // ---------- 写操作 ----------
-  if (MUTATION_ACTIONS.has(action) || action.startsWith('update') || action.startsWith('create'))
-    return ok(String(Date.now()))
+  // 记进覆盖层，下次列表查询时叠加，否则保存成功但数据毫无变化
+  if (isMutationAction(action))
+    return ok(applyMutation(module, action, params))
 
   // ---------- 兜底 ----------
   return ok(null)

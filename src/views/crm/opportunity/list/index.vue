@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { opportunity } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/opportunity/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['win_rate'],
+  nameFields: ['opp_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: opportunity.listSearch },
@@ -23,6 +33,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'win_rate', title: '赢单率(%)', width: 100, align: 'right' },
     { field: 'expect_date', title: '预计成交', width: 110, align: 'center' },
     { field: 'owner', title: '负责人', width: 90, align: 'center' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -59,6 +70,11 @@ export default { name: 'CrmOpportunityList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增商机
+            </n-button>
+          </template>
           <template #stage="{ row }">
             <n-tag v-if="row.opp_stage" :type="stageType(row.opp_stage)" size="small" :bordered="false">
               {{ row.opp_stage }}
@@ -67,5 +83,7 @@ export default { name: 'CrmOpportunityList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

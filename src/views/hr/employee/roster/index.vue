@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { employee } from '@/service/api/hr'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/hr/employee/roster',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['employee_no', 'age'],
+  nameFields: ['employee_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: employee.rosterSearch },
@@ -26,6 +36,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'education', title: '学历', width: 100, align: 'center' },
     { field: 'age', title: '年龄', width: 70, align: 'right' },
     { field: 'base_salary', title: '基本工资', width: 115, align: 'right' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -58,6 +69,11 @@ export default { name: 'HrEmployeeRoster' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              办理入职
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag v-if="row.staff_state" :type="stateType(row.staff_state)" size="small" :bordered="false">
               {{ row.staff_state }}
@@ -66,5 +82,7 @@ export default { name: 'HrEmployeeRoster' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

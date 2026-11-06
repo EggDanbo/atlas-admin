@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { attendance } from '@/service/api/hr'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/hr/attendance/record',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['work_hours'],
+  nameFields: ['employee_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 720,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: attendance.recordSearch },
@@ -23,6 +33,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'check_out', title: '下班打卡', width: 100, align: 'center' },
     { field: 'work_hours', title: '工时(小时)', width: 100, align: 'right' },
     { field: 'attendance_state', title: '状态', width: 100, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -57,6 +68,11 @@ export default { name: 'HrAttendanceRecord' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              补卡登记
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag v-if="row.attendance_state" :type="stateType(row.attendance_state)" size="small" :bordered="false">
               {{ row.attendance_state }}
@@ -65,5 +81,7 @@ export default { name: 'HrAttendanceRecord' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

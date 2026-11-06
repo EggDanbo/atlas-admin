@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { claim } from '@/service/api/expense'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/expense/claim/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['claim_no'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 800,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: claim.listSearch },
@@ -23,6 +33,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'amount', title: '金额', width: 120, align: 'right' },
     { field: 'apply_date', title: '申请日期', width: 110, align: 'center' },
     { field: 'claim_state', title: '状态', width: 100, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -71,6 +82,11 @@ export default { name: 'ExpenseClaimList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增申请单
+            </n-button>
+          </template>
           <template #type="{ row }">
             <n-tag v-if="row.expense_type" :type="typeTag(row.expense_type)" size="small" :bordered="false">
               {{ row.expense_type }}
@@ -84,5 +100,7 @@ export default { name: 'ExpenseClaimList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { budget } from '@/service/api/expense'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/expense/budget/quota',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['used_amount', 'remain_amount', 'execution_rate'],
+  nameFields: ['expense_type'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 720,
+})
+
 const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
   api: { search: budget.quotaSearch },
   createQueryModel,
@@ -21,6 +31,7 @@ const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
     { field: 'used_amount', title: '已使用', width: 130, align: 'right' },
     { field: 'remain_amount', title: '剩余额度', width: 130, align: 'right' },
     { field: 'execution_rate', title: '执行率(%)', width: 160, align: 'center', slots: { default: 'rate' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -46,6 +57,11 @@ export default { name: 'ExpenseBudgetQuota' }
     <n-flex>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增预算
+            </n-button>
+          </template>
           <template #rate="{ row }">
             <div class="flex items-center gap-2">
               <n-progress
@@ -63,5 +79,7 @@ export default { name: 'ExpenseBudgetQuota' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

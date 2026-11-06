@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { ledger } from '@/service/api/asset'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/asset/ledger/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['net_amount'],
+  nameFields: ['asset_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 860,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: ledger.listSearch },
@@ -25,6 +35,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'purchase_date', title: '购置日期', width: 110, align: 'center' },
     { field: 'price_amount', title: '原值', width: 115, align: 'right' },
     { field: 'net_amount', title: '净值', width: 115, align: 'right' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -63,6 +74,11 @@ export default { name: 'AssetLedgerList' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增资产
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag v-if="row.asset_state" :type="stateTag(row.asset_state)" size="small" :bordered="false">
               {{ row.asset_state }}
@@ -71,5 +87,7 @@ export default { name: 'AssetLedgerList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

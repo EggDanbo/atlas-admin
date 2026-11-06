@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { treasury } from '@/service/api/finance'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/finance/treasury/account',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['balance', 'inflow_amount', 'outflow_amount', 'account_state_label'],
+  nameFields: ['account_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: treasury.accountSearch },
@@ -25,6 +35,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'inflow_amount', title: '本月流入', width: 120, align: 'right' },
     { field: 'outflow_amount', title: '本月流出', width: 120, align: 'right' },
     { field: 'account_state_label', title: '状态', width: 80, align: 'center' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -52,8 +63,16 @@ export default { name: 'FinanceTreasuryAccount' }
       </n-card>
 
       <n-card :bordered="false" class="h-full">
-        <SpTable ref="tableRef" v-bind="gridOptions" />
+        <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增账户
+            </n-button>
+          </template>
+        </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

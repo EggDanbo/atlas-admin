@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { delivery } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/delivery/project',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['progress', 'receipt_rate', 'customer_name'],
+  nameFields: ['project_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 860,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: delivery.projectSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'receipt_rate', title: '回款进度(%)', width: 110, align: 'right' },
     { field: 'project_state', title: '状态', width: 100, align: 'center', slots: { default: 'state' } },
     { field: 'manager', title: '项目经理', width: 95, align: 'center' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -66,6 +77,11 @@ export default { name: 'CrmDeliveryProject' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增项目
+            </n-button>
+          </template>
           <template #progress="{ row }">
             <div v-if="row.project_no" class="flex items-center gap-2">
               <n-progress
@@ -88,5 +104,7 @@ export default { name: 'CrmDeliveryProject' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

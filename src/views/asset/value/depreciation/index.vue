@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { value } from '@/service/api/asset'
 
 function createQueryModel() {
@@ -11,6 +12,16 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost } = useRecordActions({
+  format: 'atlas/asset/value/depreciation',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['asset_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 860,
+  mode: 'view',
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: value.listSearch },
@@ -25,6 +36,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'accumulated_amount', title: '累计折旧', width: 115, align: 'right' },
     { field: 'net_amount', title: '净值', width: 115, align: 'right' },
     { field: 'dep_method', title: '折旧方法', width: 110, align: 'center' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -55,5 +67,7 @@ export default { name: 'AssetValueDepreciation' }
         <SpTable ref="tableRef" v-bind="gridOptions" />
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

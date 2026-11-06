@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { check } from '@/service/api/asset'
 
 function createQueryModel() {
@@ -10,6 +11,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/asset/check/list',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['loss_count'],
+  nameFields: ['check_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 780,
+})
 
 const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
   api: { search: check.listSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
     { field: 'actual_count', title: '实盘', width: 80, align: 'right' },
     { field: 'loss_count', title: '盘亏', width: 80, align: 'right', slots: { default: 'loss' } },
     { field: 'check_state', title: '状态', width: 95, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -41,6 +52,11 @@ export default { name: 'AssetCheckList' }
     <n-flex>
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新建盘点
+            </n-button>
+          </template>
           <template #loss="{ row }">
             <span :class="Number(row.loss_count) > 0 ? 'text-[#E8635F]' : 'opacity-50'">
               {{ Number(row.loss_count) > 0 ? row.loss_count : '—' }}
@@ -59,5 +75,7 @@ export default { name: 'AssetCheckList' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

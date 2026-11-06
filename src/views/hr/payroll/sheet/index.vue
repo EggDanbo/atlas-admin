@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { payroll } from '@/service/api/hr'
 
 function createQueryModel() {
@@ -11,6 +12,16 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost } = useRecordActions({
+  format: 'atlas/hr/payroll/sheet',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: [],
+  nameFields: ['employee_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 820,
+  mode: 'view',
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: payroll.sheetSearch },
@@ -25,6 +36,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'tax_amount', title: '个税', width: 95, align: 'right' },
     { field: 'net_amount', title: '实发工资', width: 115, align: 'right' },
     { field: 'pay_state', title: '发放状态', width: 100, align: 'center', slots: { default: 'state' } },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -62,5 +74,7 @@ export default { name: 'HrPayrollSheet' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

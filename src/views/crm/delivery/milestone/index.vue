@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { delivery } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -11,6 +12,15 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/delivery/milestone',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['delay_days', 'customer_name', 'project_name', 'manager'],
+  nameFields: ['project_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 780,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: delivery.milestoneSearch },
@@ -24,6 +34,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'delay_days', title: '延期(天)', width: 95, align: 'right', slots: { default: 'delay' } },
     { field: 'node_state', title: '状态', width: 105, align: 'center', slots: { default: 'state' } },
     { field: 'manager', title: '项目经理', width: 95, align: 'center' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -58,6 +69,11 @@ export default { name: 'CrmDeliveryMilestone' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增里程碑
+            </n-button>
+          </template>
           <template #delay="{ row }">
             <span :class="row.delay_days > 0 ? 'text-[#E8635F]' : ''">
               {{ row.delay_days > 0 ? `+${row.delay_days}` : '—' }}
@@ -71,5 +87,7 @@ export default { name: 'CrmDeliveryMilestone' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>

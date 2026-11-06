@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SpQueryGrid } from '@/components/SpQueryGrid'
 import { useListPage } from '@/hooks/list'
+import { useRecordActions } from '@/hooks/list/useRecordActions'
 import { customer } from '@/service/api/crm'
 
 function createQueryModel() {
@@ -11,6 +12,19 @@ function createQueryModel() {
 }
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
+
+/**
+ * 客户档案是 CRM 的主数据，客户会新增、分级会调整、负责人会换。
+ * 累计合同额与应收余额由项目、开票派生，编辑时只读。
+ */
+const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+  format: 'atlas/crm/customer/archive',
+  refresh: () => tableRef.value?.refresh(),
+  readonlyFields: ['project_count', 'contract_total', 'receivable_amount'],
+  nameFields: ['customer_name'],
+  rows: () => tableRef.value?.getData?.() ?? [],
+  width: 880,
+})
 
 const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
   api: { search: customer.archiveSearch },
@@ -23,6 +37,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
     { field: 'project_count', title: '项目数', width: 80, align: 'right' },
     { field: 'contract_total', title: '累计合同额', width: 130, align: 'right' },
     { field: 'receivable_amount', title: '应收余额', width: 130, align: 'right' },
+    operateColumn,
   ],
   gridOptions: {
     checkboxDisabled: true,
@@ -63,8 +78,14 @@ export default { name: 'CrmCustomerArchive' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button type="primary" @click="openCreate">
+              新增客户
+            </n-button>
+          </template>
           <template #level="{ row }">
-            <n-tag :type="levelType(row.customer_level)" size="small" :bordered="false">
+            <!-- 合计行与新增未填的行没有分级，不渲染空标签 -->
+            <n-tag v-if="row.customer_level" :type="levelType(row.customer_level)" size="small" :bordered="false">
               {{ row.customer_level }}
             </n-tag>
           </template>
@@ -76,5 +97,7 @@ export default { name: 'CrmCustomerArchive' }
         </SpTable>
       </n-card>
     </n-flex>
+
+    <RecordFormHost />
   </NaPage>
 </template>
