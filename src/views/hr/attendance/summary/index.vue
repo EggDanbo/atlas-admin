@@ -23,7 +23,7 @@ const { operateColumn, RecordFormHost } = useRecordActions({
   mode: 'view',
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: attendance.summarySearch },
   createQueryModel,
   columns: [
@@ -60,6 +60,11 @@ export default { name: 'HrAttendanceSummary' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
+            </n-button>
+          </template>
           <template #exception="{ row }">
             <span :class="Number(row.exception_count) > 0 ? 'text-[#E8635F]' : 'opacity-50'">
               {{ Number(row.exception_count) > 0 ? row.exception_count : '—' }}

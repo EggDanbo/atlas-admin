@@ -2,8 +2,6 @@
 
 import type { App } from 'vue'
 
-import VxeUIPluginExportXLSX from '@vxe-ui/plugin-export-xlsx'
-import ExcelJS from 'exceljs'
 import {
   VxeButton,
   VxeButtonGroup,
@@ -69,10 +67,6 @@ function useTable(app: App) {
   // 表格功能
   app.use(LazyVxeUI).use(LazyVxeTable)
 }
-
-VxeUI.use(VxeUIPluginExportXLSX, {
-  ExcelJS,
-})
 
 VxeUI.setConfig({
   table: {

@@ -19,6 +19,7 @@ const MODULE_LABELS: Record<string, string> = {
   HR: '人力资源',
   EXP: '费用管理',
   AST: '资产管理',
+  PUR: '采购管理',
   FIN: '财务管理',
   DOC: '文档中心',
   MDM: '主数据',
@@ -48,20 +49,27 @@ const RESOURCE_LABELS: Record<string, string> = {
   ATTENDANCE_RECORD: '考勤明细',
   ATTENDANCE_SUMMARY: '月度汇总',
   PAYROLL_SHEET: '工资表',
-  REPORT_DASHBOARD: '人力看板',
+  HR_REPORT_DASHBOARD: '人力看板',
   // 费用管理
   BUDGET_QUOTA: '预算额度',
   CLAIM_LIST: '费用申请',
   CONTRACT_LIST: '合同台账',
   PAYMENT_LIST: '支付记录',
-  REPORT_DASHBOARD: '费用看板',
+  EXP_REPORT_DASHBOARD: '费用看板',
   // 资产管理
   LEDGER_LIST: '资产台账',
   FLOW_LIST: '流转记录',
   VALUE_DEPRECIATION: '折旧明细',
   CHECK_LIST: '盘点任务',
   MAINTAIN_LIST: '维保计划',
-  REPORT_DASHBOARD: '资产看板',
+  AST_REPORT_DASHBOARD: '资产看板',
+  // 采购管理
+  SUPPLIER_LIST: '供应商台账',
+  ORDER_REQUEST: '采购申请',
+  ORDER_LIST: '采购订单',
+  SETTLEMENT_RECEIPT: '到货验收',
+  SETTLEMENT_PAYABLE: '对账付款',
+  PUR_REPORT_OVERVIEW: '采购看板',
   // 财务管理
   TREASURY_OVERVIEW: '资金总览',
   TREASURY_ACCOUNT: '银行账户',
@@ -127,7 +135,9 @@ export function buildPermissionTree(): Auth.Permission[] {
       groups.set(domain, [])
     groups.get(domain)!.push({
       id: code,
-      title: RESOURCE_LABELS[resource] || resource,
+      // 先按完整权限码查：不同模块都有「看板」这类资源，
+      // 只按资源名查会让人力看板、费用看板全显示成同一个名字
+      title: RESOURCE_LABELS[code] || RESOURCE_LABELS[resource] || resource,
       children: ACTION_SUFFIXES.map(suffix => ({
         id: `${code}_${suffix}`,
         title: suffix,

@@ -13,7 +13,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/crm/delivery/milestone',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['delay_days', 'customer_name', 'project_name', 'manager'],
@@ -22,7 +22,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 780,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: delivery.milestoneSearch },
   createQueryModel,
   columns: [
@@ -70,8 +70,11 @@ export default { name: 'CrmDeliveryMilestone' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增里程碑
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #delay="{ row }">

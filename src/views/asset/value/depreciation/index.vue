@@ -23,7 +23,7 @@ const { operateColumn, RecordFormHost } = useRecordActions({
   mode: 'view',
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: value.listSearch },
   createQueryModel,
   columns: [
@@ -64,7 +64,13 @@ export default { name: 'AssetValueDepreciation' }
       </n-card>
 
       <n-card :bordered="false" class="h-full">
-        <SpTable ref="tableRef" v-bind="gridOptions" />
+        <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
+            </n-button>
+          </template>
+        </SpTable>
       </n-card>
     </n-flex>
 

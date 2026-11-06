@@ -3026,6 +3026,400 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
     "columnFields": [],
     "fields": []
   },
+  "purchase/order/list": {
+    "formats": [
+      "atlas/purchase/order/list"
+    ],
+    "columnFields": [
+      {
+        "field": "order_no",
+        "title": "订单号"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "item_category",
+        "title": "品类"
+      },
+      {
+        "field": "order_amount",
+        "title": "订单金额"
+      },
+      {
+        "field": "receipt_progress",
+        "title": "到货进度"
+      },
+      {
+        "field": "order_date",
+        "title": "下单日期"
+      },
+      {
+        "field": "expect_arrival",
+        "title": "期望到货"
+      },
+      {
+        "field": "order_state",
+        "title": "状态"
+      }
+    ],
+    "fields": [
+      {
+        "field": "order_no",
+        "title": "订单号"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "item_category",
+        "title": "品类"
+      },
+      {
+        "field": "order_amount",
+        "title": "订单金额"
+      },
+      {
+        "field": "receipt_progress",
+        "title": "到货进度"
+      },
+      {
+        "field": "order_date",
+        "title": "下单日期"
+      },
+      {
+        "field": "expect_arrival",
+        "title": "期望到货"
+      },
+      {
+        "field": "order_state",
+        "title": "状态"
+      }
+    ]
+  },
+  "purchase/order/request": {
+    "formats": [
+      "atlas/purchase/order/request"
+    ],
+    "columnFields": [
+      {
+        "field": "request_no",
+        "title": "申请单号"
+      },
+      {
+        "field": "apply_dept",
+        "title": "申请部门"
+      },
+      {
+        "field": "item_name",
+        "title": "物品名称"
+      },
+      {
+        "field": "item_category",
+        "title": "品类"
+      },
+      {
+        "field": "quantity",
+        "title": "数量"
+      },
+      {
+        "field": "budget_amount",
+        "title": "预算金额"
+      },
+      {
+        "field": "apply_date",
+        "title": "申请日期"
+      },
+      {
+        "field": "expect_date",
+        "title": "期望到货"
+      },
+      {
+        "field": "request_state",
+        "title": "状态"
+      }
+    ],
+    "fields": [
+      {
+        "field": "request_no",
+        "title": "申请单号"
+      },
+      {
+        "field": "apply_dept",
+        "title": "申请部门"
+      },
+      {
+        "field": "item_name",
+        "title": "物品名称"
+      },
+      {
+        "field": "item_category",
+        "title": "品类"
+      },
+      {
+        "field": "quantity",
+        "title": "数量"
+      },
+      {
+        "field": "budget_amount",
+        "title": "预算金额"
+      },
+      {
+        "field": "apply_date",
+        "title": "申请日期"
+      },
+      {
+        "field": "expect_date",
+        "title": "期望到货"
+      },
+      {
+        "field": "request_state",
+        "title": "状态"
+      }
+    ]
+  },
+  "purchase/report/dashboard": {
+    "formats": [],
+    "columnFields": [],
+    "fields": []
+  },
+  "purchase/settlement/payable": {
+    "formats": [
+      "atlas/purchase/settlement/payable"
+    ],
+    "columnFields": [
+      {
+        "field": "payable_no",
+        "title": "应付单号"
+      },
+      {
+        "field": "order_no",
+        "title": "采购订单"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "payable_amount",
+        "title": "应付金额"
+      },
+      {
+        "field": "paid_amount",
+        "title": "已付金额"
+      },
+      {
+        "field": "unpaid_amount",
+        "title": "未付金额"
+      },
+      {
+        "field": "due_date",
+        "title": "到期日"
+      },
+      {
+        "field": "remain_days",
+        "title": "距到期(天)"
+      },
+      {
+        "field": "settle_state",
+        "title": "结算状态"
+      }
+    ],
+    "fields": [
+      {
+        "field": "payable_no",
+        "title": "应付单号"
+      },
+      {
+        "field": "order_no",
+        "title": "采购订单"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "payable_amount",
+        "title": "应付金额"
+      },
+      {
+        "field": "paid_amount",
+        "title": "已付金额"
+      },
+      {
+        "field": "unpaid_amount",
+        "title": "未付金额"
+      },
+      {
+        "field": "due_date",
+        "title": "到期日"
+      },
+      {
+        "field": "remain_days",
+        "title": "距到期(天)"
+      },
+      {
+        "field": "settle_state",
+        "title": "结算状态"
+      }
+    ]
+  },
+  "purchase/settlement/receipt": {
+    "formats": [
+      "atlas/purchase/settlement/receipt"
+    ],
+    "columnFields": [
+      {
+        "field": "receipt_no",
+        "title": "验收单号"
+      },
+      {
+        "field": "order_no",
+        "title": "采购订单"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "arrival_qty",
+        "title": "到货数量"
+      },
+      {
+        "field": "qualified_qty",
+        "title": "合格数"
+      },
+      {
+        "field": "reject_qty",
+        "title": "不合格数"
+      },
+      {
+        "field": "qualified_rate",
+        "title": "合格率(%)"
+      },
+      {
+        "field": "receipt_date",
+        "title": "验收日期"
+      },
+      {
+        "field": "receipt_result",
+        "title": "验收结论"
+      }
+    ],
+    "fields": [
+      {
+        "field": "receipt_no",
+        "title": "验收单号"
+      },
+      {
+        "field": "order_no",
+        "title": "采购订单"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商"
+      },
+      {
+        "field": "arrival_qty",
+        "title": "到货数量"
+      },
+      {
+        "field": "qualified_qty",
+        "title": "合格数"
+      },
+      {
+        "field": "reject_qty",
+        "title": "不合格数"
+      },
+      {
+        "field": "qualified_rate",
+        "title": "合格率(%)"
+      },
+      {
+        "field": "receipt_date",
+        "title": "验收日期"
+      },
+      {
+        "field": "receipt_result",
+        "title": "验收结论"
+      }
+    ]
+  },
+  "purchase/supplier/list": {
+    "formats": [
+      "atlas/purchase/supplier/list"
+    ],
+    "columnFields": [
+      {
+        "field": "supplier_no",
+        "title": "供应商编码"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商名称"
+      },
+      {
+        "field": "supplier_category",
+        "title": "供应品类"
+      },
+      {
+        "field": "credit_days",
+        "title": "账期(天)"
+      },
+      {
+        "field": "access_state",
+        "title": "准入状态"
+      },
+      {
+        "field": "rating",
+        "title": "评级"
+      },
+      {
+        "field": "ontime_rate",
+        "title": "准时率(%)"
+      },
+      {
+        "field": "purchase_total",
+        "title": "累计采购额"
+      }
+    ],
+    "fields": [
+      {
+        "field": "supplier_no",
+        "title": "供应商编码"
+      },
+      {
+        "field": "supplier_name",
+        "title": "供应商名称"
+      },
+      {
+        "field": "supplier_category",
+        "title": "供应品类"
+      },
+      {
+        "field": "credit_days",
+        "title": "账期(天)"
+      },
+      {
+        "field": "access_state",
+        "title": "准入状态"
+      },
+      {
+        "field": "rating",
+        "title": "评级"
+      },
+      {
+        "field": "ontime_rate",
+        "title": "准时率(%)"
+      },
+      {
+        "field": "purchase_total",
+        "title": "累计采购额"
+      }
+    ]
+  },
   "system/dictionary": {
     "formats": [],
     "columnFields": [
@@ -3426,7 +3820,12 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/masterdata/location": "masterdata/location",
   "atlas/masterdata/payroll-item": "masterdata/payroll-item",
   "atlas/masterdata/subject": "masterdata/subject",
-  "atlas/masterdata/warehouse": "masterdata/warehouse"
+  "atlas/masterdata/warehouse": "masterdata/warehouse",
+  "atlas/purchase/order/list": "purchase/order/list",
+  "atlas/purchase/order/request": "purchase/order/request",
+  "atlas/purchase/settlement/payable": "purchase/settlement/payable",
+  "atlas/purchase/settlement/receipt": "purchase/settlement/receipt",
+  "atlas/purchase/supplier/list": "purchase/supplier/list"
 }
 
 /** 全局字段中文标题词典（跨模块同名取众数） */
@@ -3485,7 +3884,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "invoice_state": "认证状态",
   "receipt_amount": "回款金额",
   "pay_method": "支付方式",
-  "receipt_date": "到账日期",
+  "receipt_date": "验收日期",
   "receipt_state": "认领状态",
   "customer_level": "客户分级",
   "owner": "负责人",
@@ -3512,10 +3911,10 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "expect_amount": "预计金额",
   "opp_stage": "阶段",
   "win_rate": "赢单率(%)",
-  "expect_date": "预计成交",
+  "expect_date": "期望到货",
   "expense_type": "费用类型",
   "year": "年度",
-  "budget_amount": "年度预算",
+  "budget_amount": "预算金额",
   "used_amount": "已使用",
   "remain_amount": "剩余",
   "execution_rate": "执行率(%)",
@@ -3526,7 +3925,7 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "contract_no": "合同编号",
   "contract_name": "合同名称",
   "supplier": "供应商",
-  "paid_amount": "已付款",
+  "paid_amount": "已付金额",
   "payment_rate": "付款进度(%)",
   "expire_date": "到期日",
   "contract_state": "状态",
@@ -3537,11 +3936,11 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "current_value": "本期",
   "previous_value": "上期",
   "industry_value": "行业均值",
-  "rating": "评价",
+  "rating": "评级",
   "total_amount": "应收总额",
   "due_month_amount": "本月到期",
   "overdue_amount": "逾期未付",
-  "credit_days": "信用账期(天)",
+  "credit_days": "账期(天)",
   "credit_level": "信用等级",
   "customer": "客户",
   "not_due_amount": "未到期",
@@ -3607,6 +4006,36 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "social_amount": "社保",
   "fund_amount": "公积金",
   "tax_amount": "个税",
+  "order_no": "采购订单",
+  "supplier_name": "供应商名称",
+  "item_category": "品类",
+  "order_amount": "订单金额",
+  "receipt_progress": "到货进度",
+  "order_date": "下单日期",
+  "expect_arrival": "期望到货",
+  "order_state": "状态",
+  "request_no": "申请单号",
+  "apply_dept": "申请部门",
+  "item_name": "物品名称",
+  "quantity": "数量",
+  "request_state": "状态",
+  "payable_no": "应付单号",
+  "payable_amount": "应付金额",
+  "unpaid_amount": "未付金额",
+  "due_date": "到期日",
+  "remain_days": "距到期(天)",
+  "settle_state": "结算状态",
+  "receipt_no": "验收单号",
+  "arrival_qty": "到货数量",
+  "qualified_qty": "合格数",
+  "reject_qty": "不合格数",
+  "qualified_rate": "合格率(%)",
+  "receipt_result": "验收结论",
+  "supplier_no": "供应商编码",
+  "supplier_category": "供应品类",
+  "access_state": "准入状态",
+  "ontime_rate": "准时率(%)",
+  "purchase_total": "累计采购额",
   "kind": "固定",
   "depth": "深度",
   "max_depth": "最大深度",
@@ -3697,6 +4126,12 @@ export const ROUTE_PERMISSIONS: string[] = [
   "MDM_HOLIDAY",
   "MDM_PAYROLL_ITEM",
   "MDM_SUBJECT",
+  "PUR_ORDER_LIST",
+  "PUR_ORDER_REQUEST",
+  "PUR_REPORT_OVERVIEW",
+  "PUR_SETTLEMENT_PAYABLE",
+  "PUR_SETTLEMENT_RECEIPT",
+  "PUR_SUPPLIER_LIST",
   "SYS_DICTIONARY",
   "SYS_GRID",
   "SYS_LOG",

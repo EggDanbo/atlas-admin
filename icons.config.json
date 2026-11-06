@@ -126,13 +126,14 @@
       "ant-design:property-safety-outlined",
       "ant-design:retweet-outlined",
       "ant-design:share-alt-outlined",
+      "ant-design:shopping-cart-outlined",
       "ant-design:skin-outlined"
     ],
-    "lastUpdate": "2026-11-06T06:16:16.055Z",
+    "lastUpdate": "2026-11-06T18:30:36.696Z",
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
-    "totalIcons": 109,
+    "totalIcons": 110,
     "byCollection": {
       "ant-design": 105,
       "circle-flags": 2,

@@ -164,7 +164,13 @@ export function withMutation(module: string, payload: any, params: Row): any {
   // 新增行只挂第一页；它们仍要过一遍关键字筛选，否则搜「恒通」也冒出别的新客户
   const visible = page === 1 ? overlay.created.filter(row => matches(row, params)) : []
   const merged = page === 1 ? [...visible, ...list] : list
-  const totalcount = Number(payload.totalcount ?? list.length) + (page === 1 ? visible.length : 0)
+  // 删掉的行要从总数里扣：只在当前页扣得准，但总比「删了还显示原数量」可信。
+  // 不扣的话分页会一直停在最后一页一个空列表上，看起来像删出了 bug
+  const removedInPage = payload.list.length - list.length
+  const totalcount = Math.max(
+    merged.length,
+    Number(payload.totalcount ?? list.length) - removedInPage + (page === 1 ? visible.length : 0),
+  )
 
   return {
     ...payload,

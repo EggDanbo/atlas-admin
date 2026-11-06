@@ -85,6 +85,14 @@ const ALWAYS_READONLY = [
 const SERIAL_RE = /(?:_|^)(?:project|claim|contract|flow|asset|order|apply|bill|voucher|settle|check|maintain|purchase|reimburse|advance|salary|transfer)_no$/i
 const BARE_SERIAL_RE = /^(?:no|code)$/i
 
+/**
+ * 负面状态：新增单据不该默认落到这几档
+ *
+ * 「取第一个可选项」在供应商上选出了「已暂停」——新建的供应商当然不是停用状态，
+ * 但它在数据里排第一，就这么被选中了。这里显式避开，实在没有别的值才退回第一个。
+ */
+const NEGATIVE_STATE_RE = /暂停|作废|关闭|驳回|报废|停用|逾期|过期|失效|异常|亏损/
+
 /** 派生列：金额合计、进度、计数这类由其他字段算出来的值 */
 function isDerived(field: string) {
   return /(?:_count|_total|_rate|_progress|progress|_label)$/.test(field)
@@ -186,7 +194,9 @@ function resetForm(row?: Recordable) {
       const options = enumOptions(column).map(item => String(item.value))
       if (!options.length)
         continue
-      form[column.column] = options.find(item => PENDING_STATES.includes(item)) ?? options[0]
+      form[column.column] = options.find(item => PENDING_STATES.includes(item))
+        ?? options.find(item => !NEGATIVE_STATE_RE.test(item))
+        ?? options[0]
     }
   }
 }

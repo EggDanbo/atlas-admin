@@ -4,6 +4,7 @@ import type { TableColumn, TableInstance, TableProps } from '@/components/SpTabl
 import { getNestedValue } from '@/hooks/detail/utils'
 import { usePermission } from '@/hooks/permission/usePermission'
 import { useTabbar } from '@/hooks/tabbar/useTabbar'
+import { request } from '@/service/http'
 import toast from '@/utils/toast'
 
 /**
@@ -114,6 +115,20 @@ export function useListPage<
   const hasPermPrint = hasPermission([`${tabPermName}_PRINT`])
 
   // === 工具函数 ===
+  /**
+   * 默认导出实现
+   *
+   * 页面只声明了 search，导出就一直点不动。既然每张列表的 format 都写在
+   * createQueryModel 里，导出地址可以由它推导，不必给二十多个 api 文件
+   * 各补一个 export 方法。
+   */
+  async function defaultExport(params: Q) {
+    const format = String((createQueryModel() as Recordable).format ?? '')
+    if (!format)
+      return { isSuccess: false, data: '' } as Service.Result<string>
+    return request.Post<Service.Result<string>>(`${format.replace(/^atlas\//, '')}/export`, params)
+  }
+
   function getId(row: T): string {
     return getNestedValue(row, idField) ?? row.id
   }
@@ -186,16 +201,38 @@ export function useListPage<
 
   // === 导出 Excel ===
   async function handleExportExcel(ids: string[]) {
-    if (!api.export)
-      return
+    const exportApi = api.export ?? defaultExport
     pageLoading.value = true
-    const { isSuccess, data } = await api.export({
+    const { isSuccess, data } = await exportApi({
       ...buildFetchParams({ ids }),
       searchfilter: tableRef.value?.getSearchFilter(),
     } as Q).finally(() => pageLoading.value = false)
     if (!isSuccess)
       return
-    location.href = data
+    downloadFromUrl(data)
+  }
+
+  /**
+   * 触发下载
+   *
+   * mock 返回的是 data URL。Chrome 明确禁止顶层导航到 data: 地址
+   * （Not allowed to navigate top frame to data URL），原先用 location.href
+   * 赋值会静默失败——点了导出没有任何反应，也不报错。
+   * 用 a[download] 触发才不受这条限制；真实后端的 http 地址仍然直接跳转。
+   */
+  function downloadFromUrl(url: string) {
+    if (!url.startsWith('data:')) {
+      location.href = url
+      return
+    }
+    const link = document.createElement('a')
+    link.href = url
+    // 文件名用页面标题，权限码当兜底：CRM_CUSTOMER_ARCHIVE.csv 发出去没人看得懂
+    const title = currentTab?.meta?.title || tabPermName || 'export'
+    link.download = `${title}.csv`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
   }
 
   // === 打印 ===

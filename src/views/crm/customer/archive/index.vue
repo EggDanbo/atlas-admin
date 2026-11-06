@@ -17,7 +17,7 @@ type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
  * 客户档案是 CRM 的主数据，客户会新增、分级会调整、负责人会换。
  * 累计合同额与应收余额由项目、开票派生，编辑时只读。
  */
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/crm/customer/archive',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['project_count', 'contract_total', 'receivable_amount'],
@@ -26,7 +26,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 880,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: customer.archiveSearch },
   createQueryModel,
   columns: [
@@ -79,8 +79,11 @@ export default { name: 'CrmCustomerArchive' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增客户
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #level="{ row }">

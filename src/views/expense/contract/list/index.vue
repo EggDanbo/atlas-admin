@@ -13,7 +13,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/expense/contract/list',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['paid_amount', 'payment_rate'],
@@ -22,7 +22,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 820,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: contract.listSearch },
   createQueryModel,
   columns: [
@@ -72,8 +72,11 @@ export default { name: 'ExpenseContractList' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增合同
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #state="{ row }">

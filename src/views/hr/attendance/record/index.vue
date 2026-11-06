@@ -13,7 +13,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/hr/attendance/record',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['work_hours'],
@@ -22,7 +22,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 720,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: attendance.recordSearch },
   createQueryModel,
   columns: [
@@ -69,8 +69,11 @@ export default { name: 'HrAttendanceRecord' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               补卡登记
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #state="{ row }">

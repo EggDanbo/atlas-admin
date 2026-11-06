@@ -12,7 +12,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/hr/org/team',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['on_job', 'vacancy', 'avg_tenure'],
@@ -21,7 +21,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 720,
 })
 
-const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: org.teamSearch },
   createQueryModel,
   columns: [
@@ -50,8 +50,11 @@ export default { name: 'HrOrgTeam' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增部门
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #vacancy="{ row }">

@@ -13,7 +13,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/finance/treasury/account',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['balance', 'inflow_amount', 'outflow_amount', 'account_state_label'],
@@ -22,7 +22,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 820,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: treasury.accountSearch },
   createQueryModel,
   columns: [
@@ -65,8 +65,11 @@ export default { name: 'FinanceTreasuryAccount' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增账户
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
         </SpTable>

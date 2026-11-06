@@ -3,6 +3,8 @@ import type { TableColumn } from '@/components/SpTable'
 import { NButton, NDivider } from 'naive-ui'
 import { defineComponent, h, ref } from 'vue'
 import { SpRecordForm } from '@/components/SpRecordForm'
+import { usePermission } from '@/hooks/permission/usePermission'
+import { useTabbar } from '@/hooks/tabbar/useTabbar'
 import { request } from '@/service/http'
 import toast from '@/utils/toast'
 
@@ -44,6 +46,15 @@ interface UseRecordActionsOptions {
  */
 export function useRecordActions(options: UseRecordActionsOptions) {
   const recordRef = ref<RecordFormInst | null>(null)
+
+  // 与 useListPage 同一套口径：当前 tab 的权限码 + _ADD/_EDIT/_DELE 后缀。
+  // 不接权限的话，只读账号也能点到删除，这类问题在演示里看不出来、上线就出事
+  const { getPermission } = useTabbar()
+  const { hasPermission } = usePermission()
+  const permName = getPermission()
+  const canAdd = computed(() => hasPermission([`${permName}_ADD`]))
+  const canEdit = computed(() => hasPermission([`${permName}_EDIT`]))
+  const canDelete = computed(() => hasPermission([`${permName}_DELE`]))
 
   const modulePath = options.format.replace(/^atlas\//, '')
 
@@ -99,9 +110,9 @@ export function useRecordActions(options: UseRecordActionsOptions) {
         return h('div', { class: 'flex items-center justify-center' }, [
           h(NButton, { text: true, type: 'primary', onClick: () => openView(row) }, () => '查看'),
           h(NDivider, { vertical: true }),
-          h(NButton, { text: true, type: 'primary', onClick: () => openEdit(row) }, () => '编辑'),
+          h(NButton, { text: true, type: 'primary', disabled: !canEdit.value, onClick: () => openEdit(row) }, () => '编辑'),
           h(NDivider, { vertical: true }),
-          h(NButton, { text: true, type: 'primary', onClick: () => handleRemove(row) }, () => '删除'),
+          h(NButton, { text: true, type: 'primary', disabled: !canDelete.value, onClick: () => handleRemove(row) }, () => '删除'),
         ])
       },
     },
@@ -123,5 +134,5 @@ export function useRecordActions(options: UseRecordActionsOptions) {
     },
   })
 
-  return { operateColumn, RecordFormHost, openView, openEdit, openCreate, handleRemove }
+  return { operateColumn, RecordFormHost, openView, openEdit, openCreate, handleRemove, canAdd, canEdit, canDelete }
 }

@@ -87,7 +87,8 @@ function readOrCreateConfig(): IconConfig {
  */
 function saveConfig(config: IconConfig) {
   const configPath = 'icons.config.json'
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
+  // 末尾补换行，与仓库里其它文本文件保持一致（lint 的 eol-last）
+  fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`, 'utf-8')
 }
 
 /**

@@ -24,7 +24,6 @@ export default defineConfig((configEnv: ConfigEnv) => {
       // CJS → ESM 转换：仅 CJS 模块需要
       include: [
         'print-js',
-        'exceljs',
       ],
     },
     define: {

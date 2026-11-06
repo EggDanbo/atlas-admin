@@ -20,7 +20,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/finance/treasury/plan',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['actual_in_amount', 'actual_out_amount', 'diff_amount', 'execution_rate'],
@@ -29,7 +29,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 800,
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: treasury.planSearch },
   createQueryModel,
   columns: [
@@ -72,8 +72,11 @@ export default { name: 'FinanceTreasuryPlan' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新增计划
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
         </SpTable>

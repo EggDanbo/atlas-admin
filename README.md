@@ -133,9 +133,9 @@ atlas-admin/
 读取 URL 与参数 → 交给 `engine.ts` 分发 → 返回与后端一致的 `{ code, message, data }`。
 **整个过程不发生任何网络请求。**
 
-请求地址统一形如 `/mock-api/atlas/asset/allot/search`：`mock-api` 是接口前缀（`VITE_API_URL_PREFIX`），
+请求地址统一形如 `/mock-api/atlas/crm/customer/archive/search`：`mock-api` 是接口前缀（`VITE_API_URL_PREFIX`），
 `atlas` 是本地 mock 命名空间；适配器先剥掉这两层，再按业务路径分发。
-视图里声明的 `format: 'atlas/asset/allot'` 与之一一对应，换品牌时把前缀一起替换、再跑一次
+视图里声明的 `format: 'atlas/crm/customer/archive'` 与之一一对应，换品牌时把前缀一起替换、再跑一次
 `pnpm mock:schema` 即可。
 
 ### 响应形态
@@ -146,8 +146,8 @@ atlas-admin/
 | 详情 `get`     | 单条业务对象（含该模块全部业务字段）                           |
 | 树 `tree`      | 节点数组（含 `id / pid / label / children`）                   |
 | 字典 `getlist` | 选项数组（含 `label / value`）                                 |
-| 增删改         | 成功标记 + 新 ID                                               |
-| 导出 / 打印    | 前端生成的 CSV / 可打印 HTML 的 data URL                       |
+| 增删改         | 写入内存覆盖层并返回行 ID，列表查询时叠加                       |
+| 导出 / 打印    | CSV / 可打印 HTML 的 data URL（前端用 `a[download]` 触发下载） |
 | 登录 / 权限    | AccessToken / 当前用户 / 权限码                                |
 
 ### 数据如何贴合页面
@@ -219,7 +219,7 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 
 ## 🧩 功能模块
 
-演示版按业务域收敛为 **11 个一级菜单（67 个叶子路由）**，覆盖「人、事、财、物、档」的完整链路：
+演示版按业务域收敛为 **12 个一级菜单（73 个叶子路由）**，覆盖「人、事、财、物、档、供」的完整链路：
 
 | 一级菜单 | 路由前缀 | 包含页面 |
 | -------- | -------- | -------- |
@@ -229,6 +229,7 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 | 费用管理 | `/expense` | 预算额度、费用申请单、合同台账、支付记录、费用看板 |
 | 资产管理 | `/asset` | 资产台账、流转记录、折旧明细、盘点任务、维保计划、资产看板 |
 | 财务管理 | `/finance` | 资金总览、银行账户、资金计划、应收账龄、应付账款、预算执行、项目成本、经营看板、财务指标 |
+| 采购管理 | `/purchase` | 供应商台账、采购申请、采购订单、到货验收、对账付款、采购看板 |
 | 文档中心 | `/archive` | 文档库、借阅 |
 | 主数据 | `/masterdata` | 会计科目、核算维度、各类分类（资产/物料/费用/业务类型）、银行账户、仓库、工资项目、假期类型 |
 | 组织与权限 | `/access` | 组织单元、成员、外部协作、角色、授权、权限组、合作方角色与账号 |
@@ -236,7 +237,7 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 | 个人中心 | `/profile` | 个人资料、修改密码、我的申请、我的审批（默认隐藏，从头像菜单进入） |
 
 一级菜单由 `src/router/modules/*.ts` 定义，一个业务域一个文件；权限码按域前缀组织
-（`CRM_*`、`HR_*`、`EXP_*`、`AST_*`、`FIN_*`、`DOC_*`、`MDM_*`、`IAM_*`、`SYS_*`、`DASH_*`）。
+（`CRM_*`、`HR_*`、`EXP_*`、`AST_*`、`PUR_*`、`FIN_*`、`DOC_*`、`MDM_*`、`IAM_*`、`SYS_*`、`DASH_*`）。
 
 ### 功能范围的取舍
 
@@ -295,7 +296,7 @@ skin.less      布局骨架皮肤：侧栏 / 顶栏 / 页签 / 卡片 / 表格
 | 类型检查 | `vue-tsc` 严格模式，0 error |
 | 代码规范 | ESLint（含 Vue / TS / import 排序 / Prettier），0 error |
 | 单元测试 | Vitest，覆盖随机数可复现性、字段语义、列生成、权限匹配（44 个用例） |
-| 全量巡检 | 无头浏览器遍历 67 个路由，断言控制台 0 报错、表格无「有列无值」 |
+| 全量巡检 | 无头浏览器遍历 73 个路由，断言控制台 0 报错、表格无「有列无值」 |
 | 持续集成 | `.github/workflows/ci.yml`：lint → typecheck → test → build → 上传产物 |
 
 ```bash
@@ -325,7 +326,7 @@ mock 引擎的价值在于「像真的」，而像不像真的取决于规则是
 
 ### 文件命名约定
 
-- 单文件组件、页面目录：`PascalCase` / 语义化目录（`views/asset/allot`）
+- 单文件组件、页面目录：`PascalCase` / 语义化目录（`views/asset/ledger/list`）
 - 工具函数、组合式函数、Store、常量模块：`camelCase`（`utils/storage.ts`、`hooks/useECharts.ts`、`store/modules/theme.ts`）
 - 全局样式：按职责命名（`var.less` 变量、`global.less` 全局、`vxe-pc-ui.scss` 第三方覆盖）
 

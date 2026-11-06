@@ -23,7 +23,7 @@ const { operateColumn, RecordFormHost } = useRecordActions({
   mode: 'view',
 })
 
-const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: payroll.sheetSearch },
   createQueryModel,
   columns: [
@@ -61,6 +61,11 @@ export default { name: 'HrPayrollSheet' }
 
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
+          <template #toolbarLeftBtn>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
+            </n-button>
+          </template>
           <template #state="{ row }">
             <n-tag
               v-if="row.pay_state"

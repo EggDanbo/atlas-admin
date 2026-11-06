@@ -12,7 +12,7 @@ function createQueryModel() {
 
 type QueryModel = ReturnType<typeof createQueryModel> & Service.SearchCondition
 
-const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
+const { operateColumn, RecordFormHost, openCreate, canAdd } = useRecordActions({
   format: 'atlas/asset/check/list',
   refresh: () => tableRef.value?.refresh(),
   readonlyFields: ['loss_count'],
@@ -21,7 +21,7 @@ const { operateColumn, RecordFormHost, openCreate } = useRecordActions({
   width: 780,
 })
 
-const { tableRef, pageLoading, gridOptions } = useListPage<QueryModel>({
+const { tableRef, pageLoading, gridOptions, handleExportOrPrint, hasPermExport } = useListPage<QueryModel>({
   api: { search: check.listSearch },
   createQueryModel,
   columns: [
@@ -53,8 +53,11 @@ export default { name: 'AssetCheckList' }
       <n-card :bordered="false" class="h-full">
         <SpTable ref="tableRef" v-bind="gridOptions">
           <template #toolbarLeftBtn>
-            <n-button type="primary" @click="openCreate">
+            <n-button type="primary" :disabled="!canAdd" @click="openCreate">
               新建盘点
+            </n-button>
+            <n-button :disabled="!hasPermExport" @click="handleExportOrPrint('excel', [])">
+              导出
             </n-button>
           </template>
           <template #loss="{ row }">

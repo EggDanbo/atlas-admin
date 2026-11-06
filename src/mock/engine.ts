@@ -27,6 +27,7 @@ import { resolveFinanceMock } from './data/finance'
 import { resolveHrMock } from './data/hr'
 import { applyMutation, withMutation } from './data/mutation'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
+import { resolvePurchaseMock } from './data/purchase'
 import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
 import { FIELD_TITLE_DICT } from './schema/schema.generated'
@@ -765,14 +766,19 @@ function buildRoleList() {
   return list
 }
 
-/** 导出：生成 CSV data URL，便于演示下载 */
-function buildExportUrl(module: string, columns: DataFormatColumn[]): string {
-  const rows = buildRows(module, 30)
-  const header = columns.map(item => item.title).join(',')
-  const body = rows
-    .map(row => columns.map(item => `${row[item.column] ?? ''}`.replace(/,/g, '，')).join(','))
-    .join('\n')
-  const csv = `\uFEFF${header}\n${body}`
+/**
+ * 导出：生成 CSV 的 data URL
+ *
+ * 行数据走 exportRows 而不是通用 buildRows —— 重建后的模块由各自的构造器
+ * 提供数据，通用构造器出来的字段和列表对不上，导出的表格会整片空白。
+ */
+function buildExportUrl(module: string, columns: DataFormatColumn[], params: Record<string, any>): string {
+  const rows = exportRows(module, params)
+  // 逗号、引号、换行都要处理，否则一条含逗号的地址就能把列错开
+  const cell = (value: any) => `"${String(value ?? '').replace(/"/g, '""')}"`
+  const header = columns.map(item => cell(item.title)).join(',')
+  const body = rows.map(row => columns.map(item => cell(row[item.column])).join(',')).join('\r\n')
+  const csv = `\uFEFF${header}\r\n${body}`
   return `data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`
 }
 
@@ -789,6 +795,29 @@ table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid 
 th{background:#f5f6f8}</style></head><body><h2>业务单据打印预览（演示数据）</h2>
 <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></body></html>`
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`
+}
+
+/**
+ * 取某模块的导出行
+ *
+ * 各业务模块的数据由自己的构造器产生，通用 buildPage 拿不到，
+ * 这里按前缀分派；导出上限 2000 行，演示数据量足够。
+ */
+function exportRows(module: string, params: Record<string, any>): Record<string, any>[] {
+  const query = { ...params, page: 1, pagesize: 2000 }
+  if (/^crm\//.test(module))
+    return (withMutation(module, resolveCrmMock(module, query), query) as any)?.list ?? []
+  if (/^finance\//.test(module))
+    return (withMutation(module, resolveFinanceMock(module, query), query) as any)?.list ?? []
+  if (/^hr\//.test(module))
+    return (withMutation(module, resolveHrMock(module, 'search', query), query) as any)?.list ?? []
+  if (/^expense\//.test(module))
+    return (withMutation(module, resolveExpenseMock(module, query), query) as any)?.list ?? []
+  if (/^asset\//.test(module))
+    return (withMutation(module, resolveAssetMock(module, query), query) as any)?.list ?? []
+  if (/^purchase\//.test(module))
+    return (withMutation(module, resolvePurchaseMock(module, query), query) as any)?.list ?? []
+  return (withMutation(module, buildPage(module, query), query) as any)?.list ?? []
 }
 
 /**
@@ -874,6 +903,7 @@ const MONITOR_MODULES: MonitorModule[] = [
   { code: 'hr', name: '人力资源', children: ['花名册', '异动', '考勤', '薪酬'] },
   { code: 'expense', name: '费用管理', children: ['预算', '费用申请', '合同', '支付'] },
   { code: 'asset', name: '资产管理', children: ['台账', '流转', '折旧', '盘点'] },
+  { code: 'purchase', name: '采购管理', children: ['供应商', '申请', '订单', '验收'] },
   { code: 'archive', name: '文档中心', children: ['文档库', '借阅'] },
 ]
 
@@ -1105,6 +1135,14 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
       return ok(withMutation(module, payload, params))
   }
 
+  // ---------- 采购管理 ----------
+  // 供应商、申请、订单、验收、应付共用一份数据集，累计采购额与到货进度才对得上
+  if (/^purchase\//.test(module) && !isMutationAction(action)) {
+    const payload = resolvePurchaseMock(module, params)
+    if (payload)
+      return ok(withMutation(module, payload, params))
+  }
+
   // ---------- 财务管理 ----------
   // 资金/账龄/预算用的是按业务口径构造的数据：预算不能小于已用，
   // 账龄各段要能加总回总额，资金头寸要和账户余额对得上，通用随机生成不了
@@ -1152,7 +1190,7 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
 
   // ---------- 导出与打印 ----------
   if (/\/export$/.test(path))
-    return ok(buildExportUrl(module, buildColumns(module)))
+    return ok(buildExportUrl(module, buildColumns(module), params))
   if (/\/print$/.test(path) || /\/pdf$/.test(path))
     return ok(buildPrintUrl(module, buildColumns(module)))
 

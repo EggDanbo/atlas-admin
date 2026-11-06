@@ -70,7 +70,8 @@ export function iconTrackerPlugin(): Plugin {
                   config.metadata.totalIcons = allIcons.size
 
                   // 保存配置
-                  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
+                  // 末尾补换行：这个文件被 git 跟踪，缺 eol 每次都会让 lint 报错
+                  fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`, 'utf-8')
                   console.log(`[Icon Discovery] 记录新图标: ${icon}`)
                 }
 
