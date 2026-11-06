@@ -22,10 +22,9 @@
       "ant-design:arrow-down-outlined",
       "ant-design:arrow-right-outlined",
       "ant-design:arrow-up-outlined",
-      "ant-design:bars-outlined",
+      "ant-design:bank-outlined",
       "ant-design:bell-outlined",
       "ant-design:book-outlined",
-      "ant-design:calculator-outlined",
       "ant-design:check-circle-outlined",
       "ant-design:check-outlined",
       "ant-design:check-square-outlined",
@@ -46,7 +45,6 @@
       "ant-design:download-outlined",
       "ant-design:edit-outlined",
       "ant-design:enter-outlined",
-      "ant-design:environment-outlined",
       "ant-design:expand-outlined",
       "ant-design:export-outlined",
       "ant-design:eye-outlined",
@@ -55,7 +53,6 @@
       "ant-design:file-markdown-outlined",
       "ant-design:file-pdf-outlined",
       "ant-design:file-ppt-outlined",
-      "ant-design:file-search-outlined",
       "ant-design:file-text-outlined",
       "ant-design:file-unknown-outlined",
       "ant-design:file-word-outlined",
@@ -63,7 +60,6 @@
       "ant-design:filter-filled",
       "ant-design:filter-outlined",
       "ant-design:folder-open-outlined",
-      "ant-design:form-outlined",
       "ant-design:fullscreen-exit-outlined",
       "ant-design:fullscreen-outlined",
       "ant-design:global-outlined",
@@ -97,7 +93,6 @@
       "ant-design:setting-filled",
       "ant-design:setting-outlined",
       "ant-design:signature-outlined",
-      "ant-design:sort-ascending-outlined",
       "ant-design:sort-descending-outlined",
       "ant-design:star-filled",
       "ant-design:star-outlined",
@@ -117,12 +112,11 @@
       "vaadin:ctrl-a",
       "vaadin:esc-a"
     ],
-    "lastScan": "2026-11-04T17:22:34.433Z",
+    "lastScan": "2026-11-06T06:16:16.052Z",
     "note": "扫描发现的图标，每次扫描会更新"
   },
   "discovered": {
     "icons": [
-      "ant-design:bank-outlined",
       "ant-design:cloud-download-outlined",
       "ant-design:cloud-server-outlined",
       "ant-design:delete-row-outline",
@@ -134,13 +128,13 @@
       "ant-design:share-alt-outlined",
       "ant-design:skin-outlined"
     ],
-    "lastUpdate": "2026-11-05T17:58:28.213Z",
+    "lastUpdate": "2026-11-06T06:16:16.055Z",
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
-    "totalIcons": 115,
+    "totalIcons": 109,
     "byCollection": {
-      "ant-design": 110,
+      "ant-design": 105,
       "circle-flags": 2,
       "vaadin": 2
     }

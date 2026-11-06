@@ -1,8 +1,8 @@
 /**
  * Iconify 图标类型
  * 自动生成，请勿手动修改
- * 生成时间: 2026-11-04T17:22:34.591Z
- * 图标总数: 114
+ * 生成时间: 2026-11-06T06:16:16.173Z
+ * 图标总数: 109
  */
 
 /**
@@ -17,12 +17,11 @@ export type IconifyIcon
     | 'ant-design:arrow-down-outlined'
     | 'ant-design:arrow-right-outlined'
     | 'ant-design:arrow-up-outlined'
-    | 'ant-design:bars-outlined'
+    | 'ant-design:bank-outlined'
     | 'ant-design:bell-outlined'
     | 'ant-design:bg-colors-outlined'
     | 'ant-design:book-outlined'
     | 'ant-design:border-verticle-outlined'
-    | 'ant-design:calculator-outlined'
     | 'ant-design:check-circle-outlined'
     | 'ant-design:check-outlined'
     | 'ant-design:check-square-outlined'
@@ -46,7 +45,6 @@ export type IconifyIcon
     | 'ant-design:download-outlined'
     | 'ant-design:edit-outlined'
     | 'ant-design:enter-outlined'
-    | 'ant-design:environment-outlined'
     | 'ant-design:expand-outlined'
     | 'ant-design:export-outlined'
     | 'ant-design:eye-outlined'
@@ -55,7 +53,6 @@ export type IconifyIcon
     | 'ant-design:file-markdown-outlined'
     | 'ant-design:file-pdf-outlined'
     | 'ant-design:file-ppt-outlined'
-    | 'ant-design:file-search-outlined'
     | 'ant-design:file-text-outlined'
     | 'ant-design:file-unknown-outlined'
     | 'ant-design:file-word-outlined'
@@ -63,7 +60,6 @@ export type IconifyIcon
     | 'ant-design:filter-filled'
     | 'ant-design:filter-outlined'
     | 'ant-design:folder-open-outlined'
-    | 'ant-design:form-outlined'
     | 'ant-design:fullscreen-exit-outlined'
     | 'ant-design:fullscreen-outlined'
     | 'ant-design:global-outlined'
@@ -104,7 +100,6 @@ export type IconifyIcon
     | 'ant-design:share-alt-outlined'
     | 'ant-design:signature-outlined'
     | 'ant-design:skin-outlined'
-    | 'ant-design:sort-ascending-outlined'
     | 'ant-design:sort-descending-outlined'
     | 'ant-design:star-filled'
     | 'ant-design:star-outlined'
@@ -136,12 +131,11 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:arrow-down-outlined',
   'ant-design:arrow-right-outlined',
   'ant-design:arrow-up-outlined',
-  'ant-design:bars-outlined',
+  'ant-design:bank-outlined',
   'ant-design:bell-outlined',
   'ant-design:bg-colors-outlined',
   'ant-design:book-outlined',
   'ant-design:border-verticle-outlined',
-  'ant-design:calculator-outlined',
   'ant-design:check-circle-outlined',
   'ant-design:check-outlined',
   'ant-design:check-square-outlined',
@@ -165,7 +159,6 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:download-outlined',
   'ant-design:edit-outlined',
   'ant-design:enter-outlined',
-  'ant-design:environment-outlined',
   'ant-design:expand-outlined',
   'ant-design:export-outlined',
   'ant-design:eye-outlined',
@@ -174,7 +167,6 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:file-markdown-outlined',
   'ant-design:file-pdf-outlined',
   'ant-design:file-ppt-outlined',
-  'ant-design:file-search-outlined',
   'ant-design:file-text-outlined',
   'ant-design:file-unknown-outlined',
   'ant-design:file-word-outlined',
@@ -182,7 +174,6 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:filter-filled',
   'ant-design:filter-outlined',
   'ant-design:folder-open-outlined',
-  'ant-design:form-outlined',
   'ant-design:fullscreen-exit-outlined',
   'ant-design:fullscreen-outlined',
   'ant-design:global-outlined',
@@ -223,7 +214,6 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:share-alt-outlined',
   'ant-design:signature-outlined',
   'ant-design:skin-outlined',
-  'ant-design:sort-ascending-outlined',
   'ant-design:sort-descending-outlined',
   'ant-design:star-filled',
   'ant-design:star-outlined',
