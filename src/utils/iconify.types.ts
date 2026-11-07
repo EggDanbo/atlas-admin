@@ -1,8 +1,8 @@
 /**
  * Iconify 图标类型
  * 自动生成，请勿手动修改
- * 生成时间: 2026-11-06T06:16:16.173Z
- * 图标总数: 109
+ * 生成时间: 2026-11-07T18:35:47.245Z
+ * 图标总数: 110
  */
 
 /**
@@ -90,7 +90,6 @@ export type IconifyIcon
     | 'ant-design:question-circle-outlined'
     | 'ant-design:reload-outlined'
     | 'ant-design:retweet-outlined'
-    | 'ant-design:right-outlined'
     | 'ant-design:rollback-outlined'
     | 'ant-design:save-outlined'
     | 'ant-design:search-outlined'
@@ -98,12 +97,14 @@ export type IconifyIcon
     | 'ant-design:setting-filled'
     | 'ant-design:setting-outlined'
     | 'ant-design:share-alt-outlined'
+    | 'ant-design:shopping-cart-outlined'
     | 'ant-design:signature-outlined'
     | 'ant-design:skin-outlined'
     | 'ant-design:sort-descending-outlined'
     | 'ant-design:star-filled'
     | 'ant-design:star-outlined'
     | 'ant-design:sun-outlined'
+    | 'ant-design:swap-outlined'
     | 'ant-design:team-outlined'
     | 'ant-design:tool-outlined'
     | 'ant-design:unlock-outlined'
@@ -204,7 +205,6 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:question-circle-outlined',
   'ant-design:reload-outlined',
   'ant-design:retweet-outlined',
-  'ant-design:right-outlined',
   'ant-design:rollback-outlined',
   'ant-design:save-outlined',
   'ant-design:search-outlined',
@@ -212,12 +212,14 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:setting-filled',
   'ant-design:setting-outlined',
   'ant-design:share-alt-outlined',
+  'ant-design:shopping-cart-outlined',
   'ant-design:signature-outlined',
   'ant-design:skin-outlined',
   'ant-design:sort-descending-outlined',
   'ant-design:star-filled',
   'ant-design:star-outlined',
   'ant-design:sun-outlined',
+  'ant-design:swap-outlined',
   'ant-design:team-outlined',
   'ant-design:tool-outlined',
   'ant-design:unlock-outlined',

@@ -85,18 +85,19 @@
       "ant-design:printer-outlined",
       "ant-design:question-circle-outlined",
       "ant-design:reload-outlined",
-      "ant-design:right-outlined",
       "ant-design:rollback-outlined",
       "ant-design:save-outlined",
       "ant-design:search-outlined",
       "ant-design:send-outlined",
       "ant-design:setting-filled",
       "ant-design:setting-outlined",
+      "ant-design:shopping-cart-outlined",
       "ant-design:signature-outlined",
       "ant-design:sort-descending-outlined",
       "ant-design:star-filled",
       "ant-design:star-outlined",
       "ant-design:sun-outlined",
+      "ant-design:swap-outlined",
       "ant-design:team-outlined",
       "ant-design:tool-outlined",
       "ant-design:unlock-outlined",
@@ -112,7 +113,7 @@
       "vaadin:ctrl-a",
       "vaadin:esc-a"
     ],
-    "lastScan": "2026-11-06T06:16:16.052Z",
+    "lastScan": "2026-11-07T18:35:46.763Z",
     "note": "扫描发现的图标，每次扫描会更新"
   },
   "discovered": {
@@ -126,16 +127,15 @@
       "ant-design:property-safety-outlined",
       "ant-design:retweet-outlined",
       "ant-design:share-alt-outlined",
-      "ant-design:shopping-cart-outlined",
       "ant-design:skin-outlined"
     ],
-    "lastUpdate": "2026-11-06T18:30:36.696Z",
+    "lastUpdate": "2026-11-07T18:35:46.763Z",
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
     "totalIcons": 110,
     "byCollection": {
-      "ant-design": 105,
+      "ant-design": 106,
       "circle-flags": 2,
       "vaadin": 2
     }

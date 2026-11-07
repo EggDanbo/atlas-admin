@@ -28,7 +28,7 @@ import { resolveHrMock } from './data/hr'
 import { applyMutation, withMutation } from './data/mutation'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { resolvePurchaseMock } from './data/purchase'
-import { createRng, floatBetween, intBetween, pick, toDateTimeString } from './data/random'
+import { createRng, dateOffset, floatBetween, intBetween, pick, toDateString, toDateTimeString } from './data/random'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
 import { FIELD_TITLE_DICT } from './schema/schema.generated'
 
@@ -828,23 +828,53 @@ function exportRows(module: string, params: Record<string, any>): Record<string,
  * - `module` 业务模块目录，用于取一条真实行数据的 id，保证详情能回填到同一单据
  */
 const WORKFLOW_BIZ = [
-  { label: '资产调拨', key: 'asset_allot', module: 'asset/flow/list', no_field: 'flow_no' },
-  { label: '资产领用', key: 'asset_apply', module: 'asset/flow/list', no_field: 'flow_no' },
-  { label: '资产采购', key: 'asset_order', module: 'asset/flow/list', no_field: 'flow_no' },
-  { label: '费用报销', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
-  { label: '借款申请', key: 'pense_borrow', module: 'expense/claim/list', no_field: 'claim_no' },
-  { label: '合同签订', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
+  { label: '资产调拨', key: 'asset_allot', module: 'asset/flow/list' },
+  { label: '资产领用', key: 'asset_apply', module: 'asset/flow/list' },
+  { label: '资产采购', key: 'asset_order', module: 'asset/flow/list' },
+  { label: '费用报销', key: 'pense_apply', module: 'expense/claim/list' },
+  { label: '借款申请', key: 'pense_borrow', module: 'expense/claim/list' },
+  { label: '合同签订', key: 'pense_contract', module: 'expense/contract/list' },
   { label: '档案借阅', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
-/** 构建工作台待办条目 */
+/**
+ * 工作台待办的单号
+ *
+ * 通用行构造器给不同模块填的单号五花八门（资产流转那边干脆填成了同类名称），
+ * 所以按业务类型统一生成：前缀 + 年月 + 流水，同类单据在列表里一眼能认出。
+ */
+const WORKFLOW_NO_PREFIX: Record<string, string> = {
+  asset_allot: 'DB',
+  asset_apply: 'LY',
+  asset_order: 'CG',
+  pense_apply: 'BX',
+  pense_borrow: 'JK',
+  pense_contract: 'HT',
+  paper_borrow: 'JY',
+}
+
+function buildWorkflowNo(bizKey: string, index: number) {
+  const now = new Date()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  return `${WORKFLOW_NO_PREFIX[bizKey] ?? 'NO'}${now.getFullYear()}${month}${String(index + 1).padStart(4, '0')}`
+}
+
+/**
+ * 构建工作台待办条目
+ *
+ * 等待时长按序号递增而不是随机：列表按时间倒序展示才符合直觉，
+ * 也让「超期」稳定落在最后几条上，刷新前后不会一会儿红一会儿灰。
+ */
 function buildWorkflowItems(kind: string, count = 9) {
   return Array.from({ length: count }, (_, index) => {
     const ctx = createRowContext(`workflow/${kind}`, index)
     const biz = WORKFLOW_BIZ[index % WORKFLOW_BIZ.length]!
-    // 复用该模块的确定性行数据：id / 单号与详情页打开的是同一条记录
+    // 复用该模块的确定性行数据：id 与详情页打开的是同一条记录
     const row = buildRow(biz.module, index)
-    const no = String(row[biz.no_field as string] ?? row.no ?? row.code ?? row.id)
+    const no = buildWorkflowNo(biz.key, index)
+    const amount = floatBetween(ctx.rng, 200, 26000, 2)
+    // 审批待办的跨度拉长到 30 小时以上，才会出现「已超期」；自己提的单子还在等结果
+    const waitHours = kind === 'approve' ? 2 + index * 4 : 1 + index * 2
     return {
       id: `${kind === 'apply' ? 'A' : 'P'}${index + 1}`,
       biz_name: biz.label,
@@ -853,20 +883,56 @@ function buildWorkflowItems(kind: string, count = 9) {
       biz_no: no,
       team_name: ctx.team.name,
       user_name: ctx.person.name,
-      content: `单号 ${no} · 金额 ${floatBetween(ctx.rng, 200, 26000, 2)} 元`,
-      ctime: toDateTimeString(new Date(Date.now() - index * 5400 * 1000)),
+      content: `单号 ${no} · 金额 ${amount} 元`,
+      amount,
+      wait_hours: waitHours,
+      overdue: waitHours > 24,
+      ctime: toDateTimeString(new Date(Date.now() - waitHours * 3600 * 1000)),
       // 状态值需落在 BillStatus 枚举内（2 待审核 / 4 已审批），否则页面无法映射中文
       status: kind === 'apply' ? '2' : '4',
+      status_text: kind === 'apply' ? '审批中' : '待审批',
     }
   })
 }
 
+/**
+ * 工作台：近 7 天提交与审批节奏
+ *
+ * 只给汇总值，不含个人待办条数 —— 那两个数由页面按列表实际长度算，
+ * 两边各自造数就一定对不上，「待我审批 9 项」下面却列着 7 条。
+ */
+function buildWorkbenchSummary() {
+  const days: string[] = []
+  const submitted: number[] = []
+  const approved: number[] = []
+
+  for (let offset = 6; offset >= 0; offset--) {
+    const date = dateOffset(-offset)
+    const rng = createRng(`workbench:${toDateString(date)}`)
+    // 周末单量本来就少，一根根一样高的柱子看不出节奏
+    const weekend = date.getDay() === 0 || date.getDay() === 6
+    const base = weekend ? intBetween(rng, 1, 4) : intBetween(rng, 5, 13)
+    days.push(`${date.getMonth() + 1}/${date.getDate()}`)
+    submitted.push(base)
+    approved.push(Math.max(1, base - intBetween(rng, 1, 4)))
+  }
+
+  return {
+    updated: toDateTimeString(new Date()),
+    days,
+    submitted,
+    approved,
+    done_week: approved.reduce((sum, item) => sum + item, 0),
+    avg_hours: floatBetween(createRng('workbench:avg'), 3.6, 9.4, 1),
+  }
+}
+
 /** 工作台：最新动态（同样带上业务键，点击可打开对应详情） */
 const WORKFLOW_DYNAMIC = [
-  { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/claim/list', no_field: 'claim_no' },
-  { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/flow/list', no_field: 'flow_no' },
-  { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/flow/list', no_field: 'flow_no' },
-  { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract/list', no_field: 'contract_no' },
+  { title: '费用报销单已提交', types: '报', key: 'pense_apply', module: 'expense/claim/list' },
+  { title: '资产调拨审批通过', types: '审', key: 'asset_allot', module: 'asset/flow/list' },
+  { title: '资产领用申请已登记', types: '资', key: 'asset_apply', module: 'asset/flow/list' },
+  { title: '合同签订待用印', types: '审', key: 'pense_contract', module: 'expense/contract/list' },
   { title: '档案借阅已归还', types: '资', key: 'paper_borrow', module: 'archive/borrow' },
 ]
 
@@ -882,7 +948,7 @@ function buildWorkplaceDynamic() {
       biz_name: item.title,
       biz_key: item.key,
       biz_id: String(row.id),
-      biz_no: String(row[item.no_field] ?? row.no ?? row.code ?? row.id),
+      biz_no: buildWorkflowNo(item.key, index),
       content: `${ctx.team.name} · ${ctx.person.name}`,
       ctime: toDateTimeString(new Date(Date.now() - index * 7200 * 1000)),
     }
@@ -1098,6 +1164,8 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   }
   if (/dashboard\/overview\/getalter$/.test(path))
     return ok(buildWorkplaceDynamic())
+  if (/dashboard\/overview\/(summary|workbench)$/.test(path))
+    return ok(buildWorkbenchSummary())
 
   // ---------- 运营监控 ----------
   if (/dashboard\/monitor\/(overview|chart|charts|summary)$/.test(path))
