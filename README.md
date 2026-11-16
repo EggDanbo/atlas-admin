@@ -195,7 +195,7 @@ pnpm build         # 生产构建
 pnpm preview       # 预览构建产物
 pnpm test          # 单元测试（watch）
 pnpm test:run      # 单元测试（单次，CI 用）
-pnpm e2e           # 端到端测试（自动构建 + preview + 全量路由巡检）
+pnpm e2e           # 端到端（首次需 playwright install chromium；自动构建 + preview + 全量巡检）
 pnpm e2e:report    # 查看上一次 e2e 的 HTML 报告
 pnpm lint          # ESLint 检查
 pnpm typecheck     # 类型检查（vue-tsc + e2e 的 tsc）
