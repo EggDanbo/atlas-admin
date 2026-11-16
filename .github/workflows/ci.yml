@@ -89,12 +89,15 @@ jobs:
       - name: Explain e2e failure
         if: steps.e2e.outcome == 'failure'
         run: |
-          echo "::error::e2e 失败，最后 40 行输出如下"
-          tail -n 40 e2e.log | head -n 10 | while IFS= read -r line; do
+          echo "::error::e2e 失败，以下为关键行"
+          grep -nE "Error:|Timed out|waiting for|✘" e2e.log | head -n 12 | while IFS= read -r line; do
             echo "::error::$line"
           done
-          grep -E "✘|Error:|failed" e2e.log | head -n 10 | while IFS= read -r line; do
-            echo "::error::$line"
+          for f in $(ls test-results/*/error-context.md 2>/dev/null | head -n 2); do
+            echo "::error::--- $f ---"
+            head -n 20 "$f" | while IFS= read -r line; do
+              echo "::error::$line"
+            done
           done
           exit 1
 

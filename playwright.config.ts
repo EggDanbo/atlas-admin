@@ -21,7 +21,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   timeout: 60_000,
-  expect: { timeout: 10_000 },
+  // CI runner 是 2 核冷盘，首屏要解析 6MB+ 的脚本，断言窗口给宽一点
+  expect: { timeout: process.env.CI ? 20_000 : 10_000 },
   reporter: process.env.CI
     ? [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]]
     : [['list']],
