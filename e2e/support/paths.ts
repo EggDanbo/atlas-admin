@@ -31,3 +31,9 @@ export function readSessionEntries(): Record<string, string> {
     return {}
   }
 }
+
+export function writeSessionEntries(entries: Record<string, string>) {
+  // .auth 目录是被 gitignore 的，干净 checkout 里并不存在，写之前得先建出来
+  fs.mkdirSync(path.dirname(SESSION_FILE), { recursive: true })
+  fs.writeFileSync(SESSION_FILE, JSON.stringify(entries))
+}

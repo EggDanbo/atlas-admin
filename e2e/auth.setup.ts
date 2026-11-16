@@ -1,6 +1,5 @@
-import fs from 'node:fs'
 import { expect, test as setup } from '@playwright/test'
-import { DEMO_USER, SESSION_FILE, STORAGE_STATE } from './support/paths'
+import { DEMO_USER, STORAGE_STATE, writeSessionEntries } from './support/paths'
 
 /**
  * 登录一次，把会话存下来
@@ -29,7 +28,7 @@ setup('登录并缓存会话', async ({ page }) => {
     Object.fromEntries(Object.entries(sessionStorage)) as Record<string, string>,
   )
   expect(Object.keys(entries).length).toBeGreaterThan(0)
-  fs.writeFileSync(SESSION_FILE, JSON.stringify(entries))
+  writeSessionEntries(entries)
 
   await page.context().storageState({ path: STORAGE_STATE })
 })
