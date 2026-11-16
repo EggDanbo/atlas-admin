@@ -113,6 +113,15 @@ mock 数据不是 `Math.random()`。种子由「模块名 + 行号」哈希得�
 ```bash
 pnpm verify   # lint + typecheck + unit test
 pnpm build    # 生产构建
+pnpm e2e      # 端到端：构建 → preview → 交互用例 + 全量路由巡检
 ```
 
-CI（`.github/workflows/ci.yml`）在每次 push / PR 上跑同样四步，任一步失败即阻断。
+CI（`.github/workflows/ci.yml`）把前两步放在 `verify` job，e2e 放在独立的 `e2e` job 并行跑，
+任一步失败即阻断。e2e 的用例分四组：
+
+| 文件 | 守的是什么 |
+| ---- | ---- |
+| `smoke.spec.ts` | 登录态有效、工作台骨架完整、侧栏一级菜单齐全 |
+| `dashboard.spec.ts` | 待办条数 = 列表长度、行内通过/退回后计数同步、空状态、点条目跳转 |
+| `list.spec.ts` | 表头与数据、详情面板开关、新增保存、翻页 |
+| `routes.spec.ts` | 解析路由文件得到全部叶子路由，逐个打开断言渲染成功且控制台零报错 |

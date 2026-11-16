@@ -59,4 +59,11 @@ export default antfu({
     'regexp/no-unused-capturing-group': 'off',
     'regexp/no-useless-assertions': 'off',
   },
+}, {
+  // e2e 里断言的是「用户能看到的文本」：Playwright 的 innerText 正好取渲染结果，
+  // 换成 textContent 会把隐藏节点也算进来，反而掩盖问题
+  files: ['e2e/**/*.ts'],
+  rules: {
+    'unicorn/prefer-dom-node-text-content': 'off',
+  },
 })

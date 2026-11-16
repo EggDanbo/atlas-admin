@@ -29,3 +29,9 @@ typings/components.d.ts
 /public/flyfish-viewer-assets.json
 /public/flyfish-viewer-manifest.json
 /public/vendor
+
+# e2e
+/e2e/.auth
+/test-results
+/playwright-report
+/dist-e2e

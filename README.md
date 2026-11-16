@@ -195,8 +195,10 @@ pnpm build         # 生产构建
 pnpm preview       # 预览构建产物
 pnpm test          # 单元测试（watch）
 pnpm test:run      # 单元测试（单次，CI 用）
+pnpm e2e           # 端到端测试（自动构建 + preview + 全量路由巡检）
+pnpm e2e:report    # 查看上一次 e2e 的 HTML 报告
 pnpm lint          # ESLint 检查
-pnpm typecheck     # 类型检查（vue-tsc）
+pnpm typecheck     # 类型检查（vue-tsc + e2e 的 tsc）
 pnpm verify        # lint + typecheck + test 一次跑完
 pnpm mock:schema   # 重新提取字段结构
 pnpm icons:all     # 扫描并生成离线图标
@@ -298,11 +300,11 @@ skin.less      布局骨架皮肤：侧栏 / 顶栏 / 页签 / 卡片 / 表格
 
 | 能力 | 说明 |
 | ---- | ---- |
-| 类型检查 | `vue-tsc` 严格模式，0 error |
+| 类型检查 | `vue-tsc` 严格模式 + e2e 的 `tsc`，0 error |
 | 代码规范 | ESLint（含 Vue / TS / import 排序 / Prettier），0 error |
 | 单元测试 | Vitest，覆盖随机数可复现性、字段语义、列生成、权限匹配（44 个用例） |
-| 全量巡检 | 无头浏览器遍历 73 个路由，断言控制台 0 报错、表格无「有列无值」 |
-| 持续集成 | `.github/workflows/ci.yml`：lint → typecheck → test → build → 上传产物 |
+| 端到端 | Playwright：登录、工作台待办增删、列表增改查与详情、全量路由巡检（89 个用例，约 2 分钟） |
+| 持续集成 | `.github/workflows/ci.yml`：lint → typecheck → test → build 与 e2e 并行 |
 
 ```bash
 pnpm verify   # lint + typecheck + test 一条命令跑完
@@ -317,6 +319,21 @@ mock 引擎的价值在于「像真的」，而像不像真的取决于规则是
 - 列生成的标题必须唯一且非空（否则表格出现重名列，直接暴露是假数据）
 
 这三条都在 `src/mock/**/__tests__` 里被固化，改代码时不会悄悄退化。
+
+### 为什么 e2e 只跑这几个页面
+
+端到端不追求把每个按钮都点一遍，它守的是「单测守不住、又必须一直能跑」的三类东西：
+
+- **数据自洽**：工作台的待办条数必须等于列表实际长度，通过一条后两边要同时减一 —— 这类断言只能靠真页面
+- **链路能走完**：登录拿 token → 进工作台 → 打开列表 → 查看详情 → 新增保存，任何一环断了都是致命的
+- **没有页面是白屏**：路由是约定式注册的，新增模块不会有人提醒你测。`routes.spec.ts` 直接解析
+  `src/router/modules/*.ts`，把当前 73 个叶子路由逐个打开，断言渲染成功 + 控制台零报错。
+  加模块不用改测试，下一轮自动纳入
+
+跑在构建产物（`vite preview`）而不是 dev server 上：dev 是按路由按需编译的，
+巡检第一次跑要把几十个页面各编译一遍，既慢又容易被首个访问拖到超时。登录态通过
+`sessionStorage` 快照复用（本项目的 token 存在 sessionStorage，Playwright 的 `storageState`
+默认存不到，`e2e/support/fixtures.ts` 里做了补齐）。
 
 ## 📚 文档
 
