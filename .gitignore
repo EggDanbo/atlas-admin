@@ -35,3 +35,4 @@ typings/components.d.ts
 /test-results
 /playwright-report
 /dist-e2e
+/e2e.log

@@ -33,8 +33,9 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    // 沙箱 / 容器内 Chromium 起不来沙箱，关掉它才能跑；测试环境不涉及安全边界
-    launchOptions: { args: ['--no-sandbox'] },
+    // 沙箱 / 容器内 Chromium 起不来沙箱，关掉它才能跑；测试环境不涉及安全边界。
+    // CI runner 的 /dev/shm 只有 64MB，不关共享内存会让浏览器中途崩掉
+    launchOptions: { args: ['--no-sandbox', '--disable-dev-shm-usage'] },
   },
   projects: [
     // 先登录一次，把 token 写进 storageState，其余用例不再重复走登录

@@ -77,8 +77,26 @@ jobs:
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
+      # 失败时日志只有登录才能看，状态页面上只能看到「exit code 1」。
+      # 这里先落到文件，再用 workflow command 把关键行抛成 annotation，匿名也能看到原因
       - name: Run e2e
-        run: pnpm run e2e
+        id: e2e
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          pnpm run e2e 2>&1 | tee e2e.log
+
+      - name: Explain e2e failure
+        if: steps.e2e.outcome == 'failure'
+        run: |
+          echo "::error::e2e 失败，最后 40 行输出如下"
+          tail -n 40 e2e.log | head -n 10 | while IFS= read -r line; do
+            echo "::error::$line"
+          done
+          grep -E "✘|Error:|failed" e2e.log | head -n 10 | while IFS= read -r line; do
+            echo "::error::$line"
+          done
+          exit 1
 
       # 失败时保留 trace / 截图 / 录屏，成功时不占存储
       - name: Upload e2e report
@@ -89,4 +107,5 @@ jobs:
           path: |
             playwright-report
             test-results
+            e2e.log
           retention-days: 7
