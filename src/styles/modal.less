@@ -6,6 +6,14 @@
   .vxe-modal--box {
     .vxe-modal--body {
       padding: 0 2px 0 0;
+      // 滚动这件事只在弹窗这一层做：内容再长也由 content 滚，
+      // 页面里不要再自己套一层 max-height + overflow
+      overflow: hidden;
+
+      .vxe-modal--content {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
 
       &-default,
       .vxe-modal--content {

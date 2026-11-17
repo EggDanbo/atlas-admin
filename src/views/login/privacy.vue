@@ -17,7 +17,7 @@ defineExpose(exposed)
   <SpModal ref="modalRef" width="800" :mask="true" :draggable="true" title="用户隐私政策">
     <template #default>
       <div class="w-full flex justify-between text-sm">
-        <div style="max-height: 600px; padding: 15px; overflow-y: auto">
+        <div style="padding: 15px">
           <p>更新日期：2022年12月8日</p>
           <p>生效日期：2022年12月8日</p>
           <p class="mb-4 mt-4">

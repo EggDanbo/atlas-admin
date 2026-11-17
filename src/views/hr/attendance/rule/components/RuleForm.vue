@@ -592,8 +592,16 @@ defineExpose({ open })
         </n-form-item-gi>
       </n-grid>
       <template v-if="!isFreeMode">
-        <div class="rule-form__group">
+        <div class="rule-form__group rule-form__group--action">
           <span class="rule-form__group-title">班次设置</span>
+          <span class="rule-form__group-line" />
+          <span class="rule-form__group-meta">{{ form.shifts.length }} 个班次</span>
+          <n-button size="tiny" secondary type="primary" @click="addShift">
+            <template #icon>
+              <Icon icon="ant-design:plus-outlined" />
+            </template>
+            添加班次
+          </n-button>
         </div>
 
         <!-- 班次库：一行一个字段，左侧带标题，比横着塞一排好读 -->
@@ -655,10 +663,6 @@ defineExpose({ open })
               </n-space>
             </div>
           </div>
-
-          <n-button class="rule-form__add-shift" @click="addShift">
-            + 添加班次
-          </n-button>
         </div>
       </template>
 
@@ -843,11 +847,9 @@ defineExpose({ open })
 
 <style lang="less" scoped>
 .rule-form {
-  // 字段多的时候整张表单滚动（班次区本身不滚，自然往下长）
+  // 不要在这里套滚动条：内容自然撑高，由弹窗自身的 body 滚动
   &__body {
-    max-height: 520px;
-    overflow-y: auto;
-    padding-right: 6px;
+    padding-right: 2px;
   }
 
   // 分组标题：与 label 同宽右对齐 + 一条淡线，标题和字段名在同一条竖线上
@@ -939,19 +941,21 @@ defineExpose({ open })
     padding: 8px 16px 0;
   }
 
-  // 整条虚线按钮：一眼能看出是「往列表里追加」
-  &__add-shift {
-    width: 100%;
-    height: 34px;
-    border-style: dashed;
-    border-color: var(--atlas-border-strong);
-    color: var(--atlas-text-secondary);
+  // 标题带操作时用显式的线，而不是伪元素，这样按钮能留在最右
+  &__group--action::after {
+    display: none;
+  }
 
-    &:hover {
-      border-color: var(--atlas-brand);
-      color: var(--atlas-brand);
-      background: var(--atlas-brand-soft);
-    }
+  &__group-line {
+    flex: 1;
+    height: 1px;
+    background: var(--atlas-border);
+  }
+
+  &__group-meta {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--atlas-text-tertiary);
   }
 
   &__time {
