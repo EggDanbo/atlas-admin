@@ -372,19 +372,22 @@ onMounted(load)
 
 <template>
   <NaPage :loading="loading" style="padding-bottom: 8px">
-    <div class="wb-head">
-      <div>
-        <h3 class="wb-head__title">
-          {{ greeting }}，{{ userName }}
-        </h3>
-        <p class="wb-head__desc">
-          {{ todayText }} · {{ insight }}
-        </p>
+    <!-- 页头也做成卡片：内容都包在卡片里，页面底色只当画布 -->
+    <n-card :bordered="false" size="small" class="wb-head" content-style="padding: 16px 20px">
+      <div class="wb-head__row">
+        <div>
+          <h3 class="wb-head__title">
+            {{ greeting }}，{{ userName }}
+          </h3>
+          <p class="wb-head__desc">
+            {{ todayText }} · {{ insight }}
+          </p>
+        </div>
+        <n-button size="small" type="primary" secondary :loading="loading" @click="load">
+          刷新
+        </n-button>
       </div>
-      <n-button size="small" type="primary" secondary :loading="loading" @click="load">
-        刷新
-      </n-button>
-    </div>
+    </n-card>
 
     <n-grid cols="2 s:2 m:4" responsive="screen" :x-gap="12" :y-gap="12">
       <n-gi v-for="item in cards" :key="item.label">
@@ -555,11 +558,17 @@ onMounted(load)
 
 <style lang="less" scoped>
 .wb-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  // 底色由 n-card 跟随主题，这里只叠一层很淡的品牌色光晕，
+  // 和下面纯白的指标卡拉开一点层级
+  background-image: radial-gradient(120% 160% at 0% 0%, var(--atlas-brand-soft) 0%, transparent 56%);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
 
   &__title {
     margin: 0;
