@@ -1,30 +1,43 @@
 <script setup lang="ts">
 import type { ModalInst } from '@/components/SpModal'
+import { hasAMapKey, loadAMap } from '@/utils/amap'
 import toast from '@/utils/toast'
 
-/** 可选的打卡地点（演示数据，坐标是地图上的相对位置） */
+/** 选中的打卡地点：示意地图给 x/y，真实地图给经纬度 */
 export interface LocationPoint {
   id: string
   name: string
   address: string
-  x: number
-  y: number
+  lng?: number
+  lat?: number
+  x?: number
+  y?: number
 }
 
 const emit = defineEmits<{ (e: 'confirm', value: LocationPoint): void }>()
 
-/** 画在示意图上的几个地点，按 x/y 摆在路网之间 */
+/** 示意地图上的几个地点（只在没有配置地图 Key 时使用） */
 const POINTS: LocationPoint[] = [
-  { id: 'hq', name: '总部大厦', address: '创新大道 88 号', x: 318, y: 232 },
-  { id: 'rd', name: '研发中心', address: '科苑路 12 号 A 座', x: 642, y: 286 },
-  { id: 'wh', name: '中心仓库', address: '物流园 3 号库', x: 934, y: 512 },
-  { id: 'sc', name: '客户服务中心', address: '人民路 205 号', x: 452, y: 566 },
-  { id: 'pl', name: '生产线一厂', address: '工业大道 7 号', x: 762, y: 636 },
-  { id: 'br', name: '滨江办事处', address: '滨江路 66 号', x: 208, y: 448 },
+  { id: 'hq', name: '总部大厦', address: '创新大道 88 号', x: 318, y: 232, lng: 116.404, lat: 39.915 },
+  { id: 'rd', name: '研发中心', address: '科苑路 12 号 A 座', x: 642, y: 286, lng: 116.43, lat: 39.912 },
+  { id: 'wh', name: '中心仓库', address: '物流园 3 号库', x: 934, y: 512, lng: 116.45, lat: 39.9 },
+  { id: 'sc', name: '客户服务中心', address: '人民路 205 号', x: 452, y: 566, lng: 116.392, lat: 39.9 },
+  { id: 'pl', name: '生产线一厂', address: '工业大道 7 号', x: 762, y: 636, lng: 116.442, lat: 39.895 },
+  { id: 'br', name: '滨江办事处', address: '滨江路 66 号', x: 208, y: 448, lng: 116.38, lat: 39.905 },
 ]
 
 const modalRef = ref<ModalInst | null>(null)
 const picked = ref<LocationPoint | null>(null)
+const mapEl = ref<HTMLElement | null>(null)
+
+/** 配了 Key 就用高德，没配或加载失败就用内置示意地图（CI、演示环境走这条） */
+const realMapFailed = ref(false)
+const isRealMap = computed(() => hasAMapKey() && !realMapFailed.value)
+const mapLoading = ref(false)
+
+let amap: any = null
+let marker: any = null
+let geocoder: any = null
 
 function open(current?: LocationPoint | null) {
   picked.value = current ?? null
@@ -36,16 +49,83 @@ function open(current?: LocationPoint | null) {
     cancelText: '取消',
   })
   modalRef.value?.open()
+
+  if (isRealMap.value)
+    nextTick(() => initRealMap())
 }
 
 function pick(point: LocationPoint) {
   picked.value = point
 }
 
+async function initRealMap() {
+  if (!mapEl.value || amap)
+    return
+
+  mapLoading.value = true
+  try {
+    const AMap = await loadAMap(import.meta.env.VITE_MAP_KEY)
+    geocoder = new AMap.Geocoder({ radius: 200, extensions: 'all' })
+    amap = new AMap.Map(mapEl.value, {
+      zoom: 14,
+      center: [picked.value?.lng ?? 116.404, picked.value?.lat ?? 39.915],
+      viewMode: '2D',
+    })
+
+    if (picked.value?.lng && picked.value?.lat)
+      dropMarker(picked.value.lng, picked.value.lat)
+
+    // 点地图任意位置选点，再逆地理编码成地址
+    amap.on('click', (event: any) => {
+      const lng = Number(event.lnglat.getLng().toFixed(6))
+      const lat = Number(event.lnglat.getLat().toFixed(6))
+      dropMarker(lng, lat)
+      reverseGeocode(lng, lat)
+    })
+  }
+  catch (error) {
+    // Key 无效或网络不通时退回示意地图，别让用户卡在空白弹窗里
+    realMapFailed.value = true
+    amap = null
+    toast.warning(`${(error as Error).message || '地图加载失败'}，已切换为示意地图`)
+  }
+  finally {
+    mapLoading.value = false
+  }
+}
+
+function dropMarker(lng: number, lat: number) {
+  if (!amap)
+    return
+  if (marker)
+    marker.setPosition([lng, lat])
+  else
+    marker = new (window as any).AMap.Marker({ position: [lng, lat], map: amap })
+}
+
+function reverseGeocode(lng: number, lat: number) {
+  if (!geocoder)
+    return
+  geocoder.getAddress([lng, lat], (status: string, result: any) => {
+    if (status !== 'complete' || !result?.regeocode) {
+      picked.value = { id: `${lng},${lat}`, name: '自定义位置', address: `${lng}, ${lat}`, lng, lat }
+      return
+    }
+    const info = result.regeocode
+    picked.value = {
+      id: `${lng},${lat}`,
+      name: info.pois?.[0]?.name || info.formattedAddress || '自定义位置',
+      address: info.formattedAddress || `${lng}, ${lat}`,
+      lng,
+      lat,
+    }
+  })
+}
+
 /** 没选点就不让关，省得用户以为已经选上了 */
 function handleOk({ done }: { done: (close?: boolean) => void }) {
   if (!picked.value) {
-    toast.warning('请在地图上点击一个地点')
+    toast.warning('请先在地图上选择打卡地点')
     done(false)
     return
   }
@@ -58,10 +138,16 @@ defineExpose({ open })
 
 <template>
   <SpModal ref="modalRef" @ok="handleOk">
-    <div class="map">
-      <div class="map__canvas">
+    <div class="map" :class="{ 'is-real': isRealMap }">
+      <!-- 真实地图：高德 -->
+      <div v-if="isRealMap" ref="mapEl" class="map__real" />
+      <div v-if="isRealMap && mapLoading" class="map__loading">
+        地图加载中…
+      </div>
+
+      <!-- 示意地图：没有配 Key 时使用 -->
+      <div v-else-if="!isRealMap" class="map__canvas">
         <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" class="map__svg" role="img">
-          <!-- 底图：水域、绿地、路网、街区 -->
           <rect x="0" y="0" width="1200" height="800" class="map__bg" />
 
           <path
@@ -93,7 +179,6 @@ defineExpose({ open })
             <path d="M980,0 L1120,470" />
           </g>
 
-          <!-- 地点标注：点击选点 -->
           <g
             v-for="point in POINTS"
             :key="point.id"
@@ -110,16 +195,20 @@ defineExpose({ open })
         </svg>
 
         <div class="map__legend">
-          点击地图上的标注选择打卡地点
+          点击标注选择打卡地点 · 未配置地图 Key，当前为示意地图
         </div>
+      </div>
 
-        <div class="map__picked" :class="{ 'is-empty': !picked }">
-          <template v-if="picked">
-            <b>{{ picked.name }}</b>
-            <span>{{ picked.address }}</span>
-          </template>
-          <span v-else>尚未选择地点</span>
-        </div>
+      <div v-if="isRealMap && !mapLoading" class="map__legend">
+        点击地图任意位置选择打卡地点
+      </div>
+
+      <div class="map__picked" :class="{ 'is-empty': !picked }">
+        <template v-if="picked">
+          <b>{{ picked.name }}</b>
+          <span>{{ picked.address }}</span>
+        </template>
+        <span v-else>尚未选择地点</span>
       </div>
     </div>
   </SpModal>
@@ -136,15 +225,34 @@ defineExpose({ open })
   --map-park: rgb(34 197 94 / 15%);
 
   // 弹窗 90vh 减去 header / footer / 内边距，剩下的都给地图
+  position: relative;
   height: calc(90vh - 130px);
   min-height: 420px;
+
+  &__real {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--atlas-radius-sm);
+  }
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--atlas-text-tertiary);
+    background: var(--map-bg);
+  }
 
   &__canvas {
     position: relative;
     height: 100%;
     overflow: hidden;
     border-radius: var(--atlas-radius-sm);
-    background: var(--atlas-surface-soft);
+    background: var(--map-bg);
   }
 
   &__svg {
@@ -176,16 +284,11 @@ defineExpose({ open })
     fill: var(--map-block);
   }
 
-  // 路面 + 一条更深的边线，暗色下才看得出是条路
   &__roads path {
     fill: none;
     stroke: var(--map-road);
     stroke-width: 22;
     stroke-linecap: round;
-
-    & + path {
-      stroke: var(--map-road);
-    }
   }
 
   &__pin {
@@ -198,9 +301,8 @@ defineExpose({ open })
 
     &-dot {
       fill: var(--atlas-brand);
-      stroke: var(--atlas-canvas);
+      stroke: var(--map-bg);
       stroke-width: 3;
-      transition: transform 0.2s ease;
     }
 
     &-core {
@@ -224,19 +326,9 @@ defineExpose({ open })
       fill: color-mix(in srgb, var(--atlas-brand) 34%, transparent);
     }
 
-    &.is-active &-dot {
-      fill: var(--atlas-brand);
-      stroke: var(--atlas-brand-soft);
-      stroke-width: 6;
-    }
-
     &.is-active &-label {
       font-weight: 600;
     }
-  }
-
-  &:global(.hidden) {
-    display: none;
   }
 
   &__legend {

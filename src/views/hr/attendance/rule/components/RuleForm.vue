@@ -81,6 +81,8 @@ const form = reactive({
   checkLocation: false,
   locationName: '',
   locationAddress: '',
+  locationLng: 0,
+  locationLat: 0,
   checkWifi: false,
   /** MAC 地址按 6 段 2 位存，空字符串表示这格没填 */
   wifi: ['', '', '', '', '', ''] as string[],
@@ -210,14 +212,16 @@ const wifiRefs = ref<any[]>([])
 function openLocationPicker() {
   locationPickerRef.value?.open(
     form.locationName
-      ? { id: 'picked', name: form.locationName, address: form.locationAddress, x: 0, y: 0 }
+      ? { id: 'picked', name: form.locationName, address: form.locationAddress, lng: form.locationLng, lat: form.locationLat }
       : null,
   )
 }
 
-function onLocationConfirm(point: { name: string, address: string }) {
+function onLocationConfirm(point: { name: string, address: string, lng?: number, lat?: number }) {
   form.locationName = point.name
   form.locationAddress = point.address
+  form.locationLng = point.lng ?? 0
+  form.locationLat = point.lat ?? 0
 }
 
 function setWifiRef(el: any, index: number) {
@@ -369,6 +373,8 @@ function reset(row?: Recordable) {
   form.checkLocation = !!row?.check_location
   form.locationName = String(row?.location_name ?? '')
   form.locationAddress = String(row?.location_address ?? '')
+  form.locationLng = Number(row?.location_lng ?? 0)
+  form.locationLat = Number(row?.location_lat ?? 0)
   form.checkWifi = !!row?.check_wifi
   const mac = String(row?.wifi_mac ?? '').split(':')
   form.wifi = Array.from({ length: 6 }, (_, index) => mac[index] ?? '')
@@ -511,6 +517,8 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     check_location: form.checkLocation,
     location_name: form.checkLocation ? form.locationName : '',
     location_address: form.checkLocation ? form.locationAddress : '',
+    location_lng: form.checkLocation ? form.locationLng : 0,
+    location_lat: form.checkLocation ? form.locationLat : 0,
     check_wifi: form.checkWifi,
     wifi_mac: form.checkWifi ? form.wifi.map(item => item.toUpperCase()).join(':') : '',
     latest: isFreeMode.value ? toHm(form.latestTime) : '',

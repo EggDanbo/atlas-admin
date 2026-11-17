@@ -25,6 +25,10 @@ interface ImportMetaEnv {
   readonly VITE_APP_SHORT_NAME: string
   readonly VITE_API_AUTH_PREFIX: string
   readonly VITE_API_MESSAGE_KIND: string
+  /** 地图服务：amap 用高德，留空则用内置示意地图 */
+  readonly VITE_MAP_PROVIDER?: string
+  /** 高德 JS API 的 Key，不配就走示意地图（CI / 演示部署） */
+  readonly VITE_MAP_KEY?: string
 }
 
 interface ImportMeta {
