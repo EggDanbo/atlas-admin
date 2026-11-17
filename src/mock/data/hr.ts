@@ -37,6 +37,7 @@ interface HrDataset {
   teams: Record<string, any>[]
   attendance: Record<string, any>[]
   attendanceSummary: Record<string, any>[]
+  attendanceRules: Record<string, any>[]
   payroll: Record<string, any>[]
 }
 
@@ -202,6 +203,55 @@ function buildPayroll(employees: Employee[]) {
     })
 }
 
+/**
+ * 考勤规则
+ *
+ * 只描述「规则本身」：班次、工作日、弹性与异常判定，以及什么时候开始生效。
+ * 打卡记录是规则的执行结果，不放在这里 —— 规则的增删改不该被历史打卡绑住。
+ *
+ * 生效状态是四种互斥情况（立即 / 次日 / 指定日期 / 暂不生效），
+ * 列表里靠它决定这一行要不要淡化，所以四个值都要有真实样本。
+ */
+function buildAttendanceRules(employees: Employee[]) {
+  const active = employees.filter(item => item.staff_state !== '离职')
+  const today = toDateString(dateOffset(0))
+  const tomorrow = toDateString(dateOffset(1))
+
+  const seeds = [
+    { name: '总部标准班次', mode: '固定班次', depts: ['综合管理部', '财务管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-10-21 09:12' },
+    { name: '研发弹性班次', mode: '固定班次', depts: ['技术研发部'], days: '周一至周五', start: '10:00', end: '19:00', rest: '13:00-14:00', flex: 30, hours: 8, late: 30, early: 5, state: '立即生效', date: today, utime: '2026-10-18 16:40' },
+    { name: '销售外勤工时', mode: '自由工时', depts: ['市场运营部'], days: '周一至周六', start: '09:30', end: '18:30', rest: '12:00-13:00', flex: 60, hours: 8, late: 60, early: 30, state: '明日生效', date: tomorrow, utime: '2026-11-15 10:05' },
+    { name: '供应链轮班制', mode: '排班制', depts: ['采购供应部'], days: '按排班表', start: '08:00', end: '17:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 10, early: 10, state: '立即生效', date: today, utime: '2026-09-30 11:05' },
+    { name: '生产两班倒', mode: '排班制', depts: ['生产制造部'], days: '按排班表', start: '08:00', end: '20:00', rest: '12:00-13:00', flex: 0, hours: 11, late: 10, early: 10, state: '指定日期', date: toDateString(dateOffset(26)), utime: '2026-11-12 14:30' },
+    { name: '质量检验排班', mode: '排班制', depts: ['质量管理部'], days: '按排班表', start: '07:30', end: '16:30', rest: '11:30-12:30', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-08-08 09:00' },
+    { name: '实习生标准班', mode: '固定班次', depts: ['人力资源部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '暂不生效', date: '', utime: '2026-11-14 17:20' },
+    { name: '远程办公工时', mode: '自由工时', depts: ['综合管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 120, hours: 8, late: 120, early: 60, state: '暂不生效', date: '', utime: '2026-11-16 09:45' },
+  ]
+
+  return seeds.map((seed, index) => ({
+    id: `HR${String(index + 1).padStart(4, '0')}`,
+    rule_name: seed.name,
+    attendance_mode: seed.mode,
+    apply_dept: seed.depts.join('、'),
+    work_days_text: seed.days,
+    work_time: `${seed.start} - ${seed.end}`,
+    rest_time: seed.rest,
+    flex_text: seed.flex ? `弹性 ${seed.flex} 分钟` : '不弹性',
+    // 下面三个是表单回填用的原始值，列表不展示
+    flex_minutes: seed.flex,
+    standard_hours: seed.hours,
+    late_limit: seed.late,
+    early_limit: seed.early,
+    start_time: seed.start,
+    end_time: seed.end,
+    // 覆盖人数按部门在职人数实时汇算，改部门时数字才对得上
+    member_total: active.filter(item => seed.depts.includes(item.dept_name)).length,
+    effective_state: seed.state,
+    effective_date: seed.date,
+    utime: seed.utime,
+  }))
+}
+
 function dataset(): HrDataset {
   if (cache)
     return cache
@@ -212,6 +262,7 @@ function dataset(): HrDataset {
     teams: buildTeams(employees),
     attendance: buildAttendance(employees),
     attendanceSummary: buildAttendanceSummary(employees),
+    attendanceRules: buildAttendanceRules(employees),
     payroll: buildPayroll(employees),
   }
   return cache
@@ -286,6 +337,7 @@ const HR_LISTS: Record<string, () => Record<string, any>[]> = {
   'hr/org/team': () => dataset().teams,
   'hr/attendance/record': () => dataset().attendance,
   'hr/attendance/summary': () => dataset().attendanceSummary,
+  'hr/attendance/rule': () => dataset().attendanceRules,
   'hr/payroll/sheet': () => dataset().payroll,
 }
 

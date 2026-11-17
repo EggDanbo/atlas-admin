@@ -46,6 +46,7 @@ const RESOURCE_LABELS: Record<string, string> = {
   EMPLOYEE_ROSTER: '员工花名册',
   EMPLOYEE_MOVEMENT: '异动流水',
   ORG_TEAM: '团队编制',
+  ATTENDANCE_RULE: '考勤规则',
   ATTENDANCE_RECORD: '考勤明细',
   ATTENDANCE_SUMMARY: '月度汇总',
   PAYROLL_SHEET: '工资表',

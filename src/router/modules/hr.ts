@@ -66,10 +66,16 @@ const routes: RouteRecordRaw[] = [
         name: 'HrAttendance',
         meta: {
           title: '考勤',
-          permissions: ['HR_ATTENDANCE_RECORD', 'HR_ATTENDANCE_SUMMARY'],
+          permissions: ['HR_ATTENDANCE_RULE', 'HR_ATTENDANCE_RECORD', 'HR_ATTENDANCE_SUMMARY'],
           alwaysShow: true,
         },
         children: [
+          {
+            path: 'rule',
+            name: 'HrAttendanceRule',
+            meta: { title: '考勤规则', permissions: ['HR_ATTENDANCE_RULE'], keepAlive: true },
+            component: () => import('@/views/hr/attendance/rule/index.vue'),
+          },
           {
             path: 'record',
             name: 'HrAttendanceRecord',

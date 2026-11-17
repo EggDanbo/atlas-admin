@@ -2011,6 +2011,71 @@ export const MODULE_SCHEMA: Record<string, MockDirSchema> = {
       }
     ]
   },
+  "hr/attendance/rule": {
+    "formats": [
+      "atlas/hr/attendance/rule"
+    ],
+    "columnFields": [
+      {
+        "field": "rule_name",
+        "title": "规则名称"
+      },
+      {
+        "field": "attendance_mode",
+        "title": "考勤模式"
+      },
+      {
+        "field": "apply_dept",
+        "title": "适用部门"
+      },
+      {
+        "field": "work_days_text",
+        "title": "工作日"
+      },
+      {
+        "field": "work_time",
+        "title": "班次时间"
+      },
+      {
+        "field": "member_total",
+        "title": "覆盖人数"
+      },
+      {
+        "field": "effective_state",
+        "title": "生效时间"
+      }
+    ],
+    "fields": [
+      {
+        "field": "rule_name",
+        "title": "规则名称"
+      },
+      {
+        "field": "attendance_mode",
+        "title": "考勤模式"
+      },
+      {
+        "field": "apply_dept",
+        "title": "适用部门"
+      },
+      {
+        "field": "work_days_text",
+        "title": "工作日"
+      },
+      {
+        "field": "work_time",
+        "title": "班次时间"
+      },
+      {
+        "field": "member_total",
+        "title": "覆盖人数"
+      },
+      {
+        "field": "effective_state",
+        "title": "生效时间"
+      }
+    ]
+  },
   "hr/attendance/summary": {
     "formats": [
       "atlas/hr/attendance/summary"
@@ -3802,6 +3867,7 @@ export const FORMAT_OWNER: Record<string, string> = {
   "atlas/finance/treasury/account": "finance/treasury/account",
   "atlas/finance/treasury/plan": "finance/treasury/plan",
   "atlas/hr/attendance/record": "hr/attendance/record",
+  "atlas/hr/attendance/rule": "hr/attendance/rule",
   "atlas/hr/attendance/summary": "hr/attendance/summary",
   "atlas/hr/employee/movement": "hr/employee/movement",
   "atlas/hr/employee/roster": "hr/employee/roster",
@@ -3979,6 +4045,13 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "check_out": "下班打卡",
   "work_hours": "工时(小时)",
   "attendance_state": "状态",
+  "rule_name": "规则名称",
+  "attendance_mode": "考勤模式",
+  "apply_dept": "申请部门",
+  "work_days_text": "工作日",
+  "work_time": "班次时间",
+  "member_total": "覆盖人数",
+  "effective_state": "生效时间",
   "should_days": "应出勤(天)",
   "actual_days": "实出勤(天)",
   "late_count": "迟到(次)",
@@ -4015,7 +4088,6 @@ export const FIELD_TITLE_DICT: Record<string, string> = {
   "expect_arrival": "期望到货",
   "order_state": "状态",
   "request_no": "申请单号",
-  "apply_dept": "申请部门",
   "item_name": "物品名称",
   "quantity": "数量",
   "request_state": "状态",
@@ -4103,6 +4175,7 @@ export const ROUTE_PERMISSIONS: string[] = [
   "FIN_TREASURY_OVERVIEW",
   "FIN_TREASURY_PLAN",
   "HR_ATTENDANCE_RECORD",
+  "HR_ATTENDANCE_RULE",
   "HR_ATTENDANCE_SUMMARY",
   "HR_EMPLOYEE_MOVEMENT",
   "HR_EMPLOYEE_ROSTER",

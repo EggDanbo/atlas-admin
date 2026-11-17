@@ -41,6 +41,9 @@ const DISPLAY_FORMAT: Record<ColumnType, string> = {
 const NO_TOTAL_MODULES = new Set([
   'finance/analysis/indicator',
   'finance/treasury/account',
+  // 考勤规则的「覆盖人数」是规则维度的统计，同一个人可能被多条规则覆盖，
+  // 加总出来的人数没有业务含义
+  'hr/attendance/rule',
 ])
 
 /**

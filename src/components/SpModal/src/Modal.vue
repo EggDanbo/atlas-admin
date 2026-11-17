@@ -98,15 +98,17 @@ export default defineComponent({
       }
     })
 
-    const CancelBtn = (
+    // 用 computed 而不是一次性常量：setProps 之后文案才会跟着变。
+    // 之前写成常量时，新增弹窗永远显示默认的「关闭」，页面传的「取消」不生效
+    const CancelBtn = computed(() => (
       <NButton
         onClick={handleCancel}
       >
         {{
-          default: () => props.cancelText || '取消',
+          default: () => mergeProps.value.cancelText || '取消',
         }}
       </NButton>
-    )
+    ))
 
     const OkBtn = computed(() => (
       <NButton
@@ -126,7 +128,7 @@ export default defineComponent({
      */
     const customFooter = computed(() => (
       <NFlex justify="end">
-        {mergeProps.value.showCancel !== false ? CancelBtn : null}
+        {mergeProps.value.showCancel !== false ? CancelBtn.value : null}
         {mergeProps.value.showOk ? OkBtn.value : null}
       </NFlex>
     ))

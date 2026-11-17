@@ -3,6 +3,10 @@ import { request } from '@/service/http'
 const url = 'hr/attendance'
 
 export default {
+  /** 考勤规则 */
+  ruleSearch: (data: Service.SearchCondition) => {
+    return request.Post<Service.ResultPage<Recordable>>(`${url}/rule/search`, data)
+  },
   /** 考勤明细 */
   recordSearch: (data: Service.SearchCondition) => {
     return request.Post<Service.ResultPage<Recordable>>(`${url}/record/search`, data)

@@ -1,8 +1,8 @@
 /**
  * Iconify 图标类型
  * 自动生成，请勿手动修改
- * 生成时间: 2026-11-07T18:35:47.245Z
- * 图标总数: 110
+ * 生成时间: 2026-11-17T08:43:12.031Z
+ * 图标总数: 111
  */
 
 /**
@@ -22,6 +22,7 @@ export type IconifyIcon
     | 'ant-design:bg-colors-outlined'
     | 'ant-design:book-outlined'
     | 'ant-design:border-verticle-outlined'
+    | 'ant-design:calendar-outlined'
     | 'ant-design:check-circle-outlined'
     | 'ant-design:check-outlined'
     | 'ant-design:check-square-outlined'
@@ -137,6 +138,7 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:bg-colors-outlined',
   'ant-design:book-outlined',
   'ant-design:border-verticle-outlined',
+  'ant-design:calendar-outlined',
   'ant-design:check-circle-outlined',
   'ant-design:check-outlined',
   'ant-design:check-square-outlined',
