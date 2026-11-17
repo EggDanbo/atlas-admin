@@ -24,8 +24,10 @@ test.describe('考勤规则', () => {
   })
 
   test('新增选暂不生效 → 淡化 → 改成立即生效 → 删除', async ({ page }) => {
-    const form = page.locator('.rule-form__body')
+    // vxe 弹窗关闭后 DOM 会留在页面里，多个实例并存时只看可见的那个
+    const form = page.locator('.rule-form__body:visible')
 
+    await expect(page.getByRole('button', { name: '新增规则' })).toBeEnabled()
     await page.getByRole('button', { name: '新增规则' }).click()
     await expect(form).toBeVisible()
 
@@ -48,6 +50,8 @@ test.describe('考勤规则', () => {
     // 保存
     await page.getByRole('button', { name: '保存' }).click()
     await expect(page.locator('.n-message').first()).toContainText('已新增')
+    // 保存后弹窗有一段关闭动画，动画期间点「编辑」会被吞掉，等它彻底收起
+    await expect(page.locator('.rule-form__body:visible')).toHaveCount(0)
 
     const row = page.locator('.vxe-body--row').filter({ hasText: 'E2E 弹性班次' })
     await expect(row).toHaveCount(1)
@@ -64,6 +68,7 @@ test.describe('考勤规则', () => {
     await picker.getByRole('button', { name: '确定' }).click()
     await page.getByRole('button', { name: '保存' }).click()
     await expect(page.locator('.n-message').first()).toContainText('已保存')
+    await expect(page.locator('.rule-form__body:visible')).toHaveCount(0)
 
     await expect(row).not.toHaveClass(/rule-row--muted/)
 
@@ -73,8 +78,37 @@ test.describe('考勤规则', () => {
     await expect(page.locator('.vxe-body--row').filter({ hasText: 'E2E 弹性班次' })).toHaveCount(0)
   })
 
+  test('排班制维护班次：默认一条，可增删，交接间隔只在排班制出现', async ({ page }) => {
+    // vxe 弹窗关闭后 DOM 会留在页面里，多个实例并存时只看可见的那个
+    const form = page.locator('.rule-form__body:visible')
+    await expect(page.getByRole('button', { name: '新增规则' })).toBeEnabled()
+    await page.getByRole('button', { name: '新增规则' }).click()
+    await expect(form).toBeVisible()
+
+    await form.locator('.n-radio-button').filter({ hasText: '排班制' }).click()
+
+    // 切到排班制就该有一条默认班次，否则表单是空的无从下手
+    await expect(form.locator('.rule-form__shift')).toHaveCount(1)
+    await expect(form.getByText('交接间隔')).toBeVisible()
+
+    await form.getByRole('button', { name: '添加班次' }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(2)
+
+    // 至少留一条，删到只剩一条时按钮置灰
+    await form.locator('.rule-form__shift').nth(1).getByRole('button', { name: /删\s*除/ }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(1)
+    await expect(form.locator('.rule-form__shift').first().getByRole('button', { name: /删\s*除/ })).toBeDisabled()
+
+    // 切回固定班次，班次编辑器收起、交接间隔消失
+    await form.locator('.n-radio-button').filter({ hasText: '固定班次' }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(0)
+    await expect(form.getByText('交接间隔')).toHaveCount(0)
+  })
+
   test('「指定日期」才出现日期选择', async ({ page }) => {
-    const form = page.locator('.rule-form__body')
+    // vxe 弹窗关闭后 DOM 会留在页面里，多个实例并存时只看可见的那个
+    const form = page.locator('.rule-form__body:visible')
+    await expect(page.getByRole('button', { name: '新增规则' })).toBeEnabled()
     await page.getByRole('button', { name: '新增规则' }).click()
     await expect(form).toBeVisible()
 

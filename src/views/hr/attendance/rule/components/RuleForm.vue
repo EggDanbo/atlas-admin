@@ -37,6 +37,13 @@ const WEEKDAYS = [
 
 const MODES = ['固定班次', '自由工时', '排班制']
 
+/** 排班制的班次草稿：时间控件要时间戳，落库时再转回 HH:mm */
+interface ShiftDraft {
+  name: string
+  start: number | null
+  end: number | null
+}
+
 const modalRef = ref<ModalInst | null>(null)
 const mode = ref<FormMode>('create')
 const deptOptions = ref<DeptOption[]>([])
@@ -56,6 +63,9 @@ const form = reactive({
   standardHours: 8,
   lateLimit: 5,
   earlyLimit: 5,
+  /** 排班制才有：班次库（早班 / 中班 / 晚班轮换） */
+  shifts: [] as ShiftDraft[],
+  handoverMinutes: 30,
   effectiveMode: '立即生效',
   effectiveDate: '',
   /** 列表里带过来的覆盖人数：详情要展示当时算出来的值 */
@@ -130,6 +140,19 @@ function fromHm(text?: string) {
   return date.getTime()
 }
 
+function newShift(name = '', start = '09:00', end = '18:00'): ShiftDraft {
+  return { name, start: fromHm(start), end: fromHm(end) }
+}
+
+function addShift() {
+  form.shifts.push(newShift(`班次 ${form.shifts.length + 1}`))
+}
+
+function removeShift(index: number) {
+  if (form.shifts.length > 1)
+    form.shifts.splice(index, 1)
+}
+
 function parseDays(text?: string) {
   if (!text || text === '按排班表')
     return []
@@ -176,6 +199,16 @@ function reset(row?: Recordable) {
   form.earlyLimit = Number(row?.early_limit ?? 5)
   form.effectiveMode = String(row?.effective_state ?? '立即生效')
   form.effectiveDate = String(row?.effective_date ?? '')
+  const shifts = Array.isArray(row?.shifts) ? (row.shifts as Recordable[]) : []
+  form.shifts = shifts.map(item => ({
+    name: String(item.name ?? ''),
+    start: fromHm(String(item.start ?? '')),
+    end: fromHm(String(item.end ?? '')),
+  }))
+  form.handoverMinutes = Number(row?.handover_minutes ?? 30)
+  // 排班制至少要有一个班次，否则表单里是空的、也没法加
+  if (form.attendance_mode === '排班制' && !form.shifts.length)
+    form.shifts = [newShift('早班', '08:00', '17:00')]
   form.originalTotal = Number(row?.member_total ?? 0)
   form.utime = String(row?.utime ?? '')
 }
@@ -193,6 +226,8 @@ async function open(options: { opt: FormMode, row?: Recordable }) {
     form.restEnd = fromHm('13:00')
     form.effectiveMode = '立即生效'
     form.effectiveDate = today()
+    if (!form.shifts.length)
+      form.shifts = [newShift('早班', '08:00', '17:00')]
   }
   modalRef.value?.setProps({
     title: title.value,
@@ -217,8 +252,15 @@ function validate() {
     return '请选择适用部门'
   if (!form.startTime || !form.endTime)
     return '请选择上下班时间'
-  if (form.startTime === form.endTime)
+  if (!isShiftMode.value && form.startTime === form.endTime)
     return '上下班时间不能相同'
+  if (isShiftMode.value) {
+    if (!form.shifts.length)
+      return '排班制至少要有一个班次'
+    const invalid = form.shifts.findIndex(item => !item.name.trim() || !item.start || !item.end)
+    if (invalid >= 0)
+      return `第 ${invalid + 1} 个班次还没填完整`
+  }
   if (form.effectiveMode === '指定日期' && !form.effectiveDate)
     return '请选择生效日期'
   return null
@@ -242,7 +284,16 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     attendance_mode: form.attendance_mode,
     apply_dept: form.depts.join('、'),
     work_days_text: workDaysText.value,
-    work_time: workTimeText.value,
+    work_time: isShiftMode.value
+      ? (form.shifts[0] ? `${toHm(form.shifts[0].start)} - ${toHm(form.shifts[0].end)}` : '按排班表')
+      : workTimeText.value,
+    shifts: form.shifts.map(item => ({
+      name: item.name.trim(),
+      start: toHm(item.start),
+      end: toHm(item.end),
+    })),
+    shift_count: form.shifts.length,
+    handover_minutes: form.handoverMinutes,
     rest_time: restTimeText.value,
     flex_text: flexText.value,
     flex_minutes: showFlex.value && form.flex ? form.flexMinutes : 0,
@@ -292,10 +343,20 @@ defineExpose({ open })
       <n-descriptions-item label="班次时间">
         {{ workTimeText }}
       </n-descriptions-item>
-      <n-descriptions-item label="休息时段">
+      <n-descriptions-item v-if="isShiftMode" label="班次" :span="2">
+        <div class="rule-form__shift-list">
+          <n-tag v-for="(shift, index) in form.shifts" :key="index" size="small" :bordered="false">
+            {{ shift.name }} {{ toHm(shift.start) }}-{{ toHm(shift.end) }}
+          </n-tag>
+        </div>
+      </n-descriptions-item>
+      <n-descriptions-item v-if="isShiftMode" label="交接间隔">
+        {{ form.handoverMinutes }} 分钟
+      </n-descriptions-item>
+      <n-descriptions-item v-if="!isShiftMode" label="休息时段">
         {{ restTimeText }}
       </n-descriptions-item>
-      <n-descriptions-item label="弹性">
+      <n-descriptions-item v-if="!isShiftMode" label="弹性">
         {{ flexText }}
       </n-descriptions-item>
       <n-descriptions-item label="标准工时">
@@ -325,7 +386,7 @@ defineExpose({ open })
       size="small"
     >
       <div class="rule-form__group">
-        基本信息
+        <span class="rule-form__group-title">基本信息</span>
       </div>
       <n-grid :cols="2" :x-gap="18">
         <n-form-item-gi label="规则名称" :span="2">
@@ -355,37 +416,59 @@ defineExpose({ open })
       </n-grid>
 
       <div class="rule-form__group">
-        班次设置
+        <span class="rule-form__group-title">班次设置</span>
       </div>
       <n-grid :cols="2" :x-gap="18">
-        <n-form-item-gi label="工作日" :span="2">
-          <div v-if="isShiftMode" class="rule-form__hint">
-            排班制按排班表执行，不需要固定工作日
-          </div>
-          <n-checkbox-group v-else v-model:value="form.days">
-            <n-space :size="18">
-              <n-checkbox v-for="item in WEEKDAYS" :key="item.value" :value="item.value" :label="item.label" />
-            </n-space>
-          </n-checkbox-group>
-        </n-form-item-gi>
+        <!-- 排班制：班次是主角，上下班时间由班次决定，不再单独填 -->
+        <template v-if="isShiftMode">
+          <n-form-item-gi label="班次" :span="2">
+            <div class="rule-form__shifts">
+              <div v-for="(shift, index) in form.shifts" :key="index" class="rule-form__shift">
+                <n-input v-model:value="shift.name" placeholder="如：早班" maxlength="10" class="rule-form__shift-name" />
+                <n-time-picker v-model:value="shift.start" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
+                <span class="rule-form__unit">至</span>
+                <n-time-picker v-model:value="shift.end" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
+                <n-button text type="error" :disabled="form.shifts.length <= 1" @click="removeShift(index)">
+                  删除
+                </n-button>
+              </div>
+              <n-button text type="primary" class="rule-form__add-shift" @click="addShift">
+                添加班次
+              </n-button>
+            </div>
+            <template #feedback>
+              谁上哪个班在各人的排班表里定，这里只维护有哪几种班
+            </template>
+          </n-form-item-gi>
+        </template>
 
-        <n-form-item-gi label="上班时间">
-          <n-time-picker v-model:value="form.startTime" format="HH:mm" class="w-full" :clearable="false" />
-        </n-form-item-gi>
-        <n-form-item-gi label="下班时间">
-          <n-time-picker v-model:value="form.endTime" format="HH:mm" class="w-full" :clearable="false" />
-        </n-form-item-gi>
+        <template v-else>
+          <n-form-item-gi label="工作日" :span="2">
+            <n-checkbox-group v-model:value="form.days">
+              <n-space :size="18">
+                <n-checkbox v-for="item in WEEKDAYS" :key="item.value" :value="item.value" :label="item.label" />
+              </n-space>
+            </n-checkbox-group>
+          </n-form-item-gi>
 
-        <n-form-item-gi label="休息开始">
-          <n-time-picker v-model:value="form.restStart" format="HH:mm" class="w-full" placeholder="不休息" />
-        </n-form-item-gi>
-        <n-form-item-gi label="休息结束">
-          <n-time-picker v-model:value="form.restEnd" format="HH:mm" class="w-full" placeholder="不休息" />
-        </n-form-item-gi>
+          <n-form-item-gi label="上班时间">
+            <n-time-picker v-model:value="form.startTime" format="HH:mm" class="w-full" :clearable="false" />
+          </n-form-item-gi>
+          <n-form-item-gi label="下班时间">
+            <n-time-picker v-model:value="form.endTime" format="HH:mm" class="w-full" :clearable="false" />
+          </n-form-item-gi>
+
+          <n-form-item-gi label="休息开始">
+            <n-time-picker v-model:value="form.restStart" format="HH:mm" class="w-full" placeholder="不休息" />
+          </n-form-item-gi>
+          <n-form-item-gi label="休息结束">
+            <n-time-picker v-model:value="form.restEnd" format="HH:mm" class="w-full" placeholder="不休息" />
+          </n-form-item-gi>
+        </template>
       </n-grid>
 
       <div class="rule-form__group">
-        参数与生效
+        <span class="rule-form__group-title">参数与生效</span>
       </div>
       <n-grid :cols="2" :x-gap="18">
         <n-form-item-gi v-if="showFlex" label="弹性打卡">
@@ -418,6 +501,20 @@ defineExpose({ open })
           >
             <template #suffix>
               小时
+            </template>
+          </n-input-number>
+        </n-form-item-gi>
+
+        <n-form-item-gi v-if="isShiftMode" label="交接间隔">
+          <n-input-number
+            v-model:value="form.handoverMinutes"
+            :min="0"
+            :max="120"
+            :show-button="false"
+            class="rule-form__number"
+          >
+            <template #suffix>
+              分钟
             </template>
           </n-input-number>
         </n-form-item-gi>
@@ -465,23 +562,68 @@ defineExpose({ open })
   &__group {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 12px 0 4px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--atlas-text-secondary);
+    gap: 12px;
+    margin: 16px 0 8px;
 
     &:first-child {
       margin-top: 0;
     }
 
+    // 标题宽度与 label 一致、右对齐：三个小标题和下面的字段名在同一条竖线上，
+    // 不会像原来那样孤零零挂在最左边
+    &-title {
+      flex: none;
+      width: 104px;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--atlas-text-tertiary);
+    }
+
+    // 一条很淡的横线把「段」和「段」连起来，标题不至于孤零零浮在上面
     &::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--atlas-divider);
+      background: var(--atlas-border);
     }
+  }
+
+  // 班次多的时候内部滚动，不把整个表单撑长
+  &__shifts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-height: 168px;
+    overflow-y: auto;
+  }
+
+  &__shift {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__shift-name {
+    width: 132px;
+    flex: none;
+  }
+
+  &__shift-time {
+    width: 118px;
+    flex: none;
+  }
+
+  &__add-shift {
+    align-self: flex-start;
+  }
+
+  &__shift-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   &__hint {

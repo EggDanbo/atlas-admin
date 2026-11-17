@@ -169,7 +169,10 @@ export default { name: 'HrAttendanceRule' }
           <template #workTime="{ row }">
             <div class="rule-time">
               <span class="rule-time__main">{{ row.work_time }}</span>
-              <span v-if="row.flex_minutes" class="rule-time__flex">
+              <span v-if="row.attendance_mode === '排班制'" class="rule-time__flex">
+                共 {{ row.shift_count }} 个班次
+              </span>
+              <span v-else-if="row.flex_minutes" class="rule-time__flex">
                 弹性 {{ row.flex_minutes }} 分钟
               </span>
             </div>

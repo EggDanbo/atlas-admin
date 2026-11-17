@@ -217,13 +217,32 @@ function buildAttendanceRules(employees: Employee[]) {
   const today = toDateString(dateOffset(0))
   const tomorrow = toDateString(dateOffset(1))
 
-  const seeds = [
+  interface RuleSeed {
+    name: string
+    mode: string
+    depts: string[]
+    days: string
+    start: string
+    end: string
+    rest: string
+    flex: number
+    hours: number
+    late: number
+    early: number
+    state: string
+    date: string
+    utime: string
+    /** 排班制才有：班次库 */
+    shifts?: { name: string, start: string, end: string }[]
+  }
+
+  const seeds: RuleSeed[] = [
     { name: '总部标准班次', mode: '固定班次', depts: ['综合管理部', '财务管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-10-21 09:12' },
     { name: '研发弹性班次', mode: '固定班次', depts: ['技术研发部'], days: '周一至周五', start: '10:00', end: '19:00', rest: '13:00-14:00', flex: 30, hours: 8, late: 30, early: 5, state: '立即生效', date: today, utime: '2026-10-18 16:40' },
     { name: '销售外勤工时', mode: '自由工时', depts: ['市场运营部'], days: '周一至周六', start: '09:30', end: '18:30', rest: '12:00-13:00', flex: 60, hours: 8, late: 60, early: 30, state: '明日生效', date: tomorrow, utime: '2026-11-15 10:05' },
-    { name: '供应链轮班制', mode: '排班制', depts: ['采购供应部'], days: '按排班表', start: '08:00', end: '17:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 10, early: 10, state: '立即生效', date: today, utime: '2026-09-30 11:05' },
-    { name: '生产两班倒', mode: '排班制', depts: ['生产制造部'], days: '按排班表', start: '08:00', end: '20:00', rest: '12:00-13:00', flex: 0, hours: 11, late: 10, early: 10, state: '指定日期', date: toDateString(dateOffset(26)), utime: '2026-11-12 14:30' },
-    { name: '质量检验排班', mode: '排班制', depts: ['质量管理部'], days: '按排班表', start: '07:30', end: '16:30', rest: '11:30-12:30', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-08-08 09:00' },
+    { name: '供应链轮班制', mode: '排班制', depts: ['采购供应部'], days: '按排班表', start: '08:00', end: '17:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 10, early: 10, state: '立即生效', date: today, utime: '2026-09-30 11:05', shifts: [{ name: '早班', start: '08:00', end: '17:00' }, { name: '中班', start: '12:00', end: '21:00' }, { name: '晚班', start: '22:00', end: '06:00' }] },
+    { name: '生产两班倒', mode: '排班制', depts: ['生产制造部'], days: '按排班表', start: '08:00', end: '20:00', rest: '12:00-13:00', flex: 0, hours: 11, late: 10, early: 10, state: '指定日期', date: toDateString(dateOffset(26)), utime: '2026-11-12 14:30', shifts: [{ name: '白班', start: '08:00', end: '20:00' }, { name: '夜班', start: '20:00', end: '08:00' }] },
+    { name: '质量检验排班', mode: '排班制', depts: ['质量管理部'], days: '按排班表', start: '07:30', end: '16:30', rest: '11:30-12:30', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-08-08 09:00', shifts: [{ name: '早班', start: '07:30', end: '16:30' }, { name: '中班', start: '15:00', end: '23:30' }] },
     { name: '实习生标准班', mode: '固定班次', depts: ['人力资源部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '暂不生效', date: '', utime: '2026-11-14 17:20' },
     { name: '远程办公工时', mode: '自由工时', depts: ['综合管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 120, hours: 8, late: 120, early: 60, state: '暂不生效', date: '', utime: '2026-11-16 09:45' },
   ]
@@ -244,6 +263,10 @@ function buildAttendanceRules(employees: Employee[]) {
     early_limit: seed.early,
     start_time: seed.start,
     end_time: seed.end,
+    // 排班制的班次库：谁上哪个班由排班表决定，这里只存有哪几种班
+    shifts: seed.shifts ?? [],
+    shift_count: (seed.shifts ?? []).length,
+    handover_minutes: seed.shifts ? 30 : 0,
     // 覆盖人数按部门在职人数实时汇算，改部门时数字才对得上
     member_total: active.filter(item => seed.depts.includes(item.dept_name)).length,
     effective_state: seed.state,
