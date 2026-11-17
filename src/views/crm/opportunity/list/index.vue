@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: opportunity.listSearch },
   createQueryModel,
   columns: [
-    { field: 'opp_name', title: '商机名称', width: 220 },
+    { field: 'opp_name', title: '商机名称', minWidth: 220 },
     { field: 'customer_name', title: '客户', width: 180 },
     { field: 'expect_amount', title: '预计金额', width: 130, align: 'right' },
     { field: 'opp_stage', title: '阶段', width: 110, align: 'center', slots: { default: 'stage' } },

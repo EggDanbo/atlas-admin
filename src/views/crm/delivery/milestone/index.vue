@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: delivery.milestoneSearch },
   createQueryModel,
   columns: [
-    { field: 'project_name', title: '项目', width: 210 },
+    { field: 'project_name', title: '项目', minWidth: 210 },
     { field: 'customer_name', title: '客户', width: 170 },
     { field: 'milestone_node', title: '里程碑', width: 110, align: 'center' },
     { field: 'plan_date', title: '计划完成', width: 115, align: 'center' },

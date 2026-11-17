@@ -16,7 +16,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
   api: { search: analysis.indicatorSearch },
   createQueryModel,
   columns: [
-    { field: 'indicator', title: '指标', width: 200 },
+    { field: 'indicator', title: '指标', minWidth: 200 },
     { field: 'current_value', title: '本期', width: 130, align: 'right' },
     { field: 'previous_value', title: '上期', width: 130, align: 'right' },
     { field: 'industry_value', title: '行业均值', width: 130, align: 'right' },

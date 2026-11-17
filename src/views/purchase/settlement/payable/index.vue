@@ -31,7 +31,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'payable_no', title: '应付单号', width: 120, align: 'left' },
     { field: 'order_no', title: '采购订单', width: 115, align: 'left' },
-    { field: 'supplier_name', title: '供应商', width: 165, align: 'left' },
+    { field: 'supplier_name', title: '供应商', minWidth: 165, align: 'left' },
     { field: 'payable_amount', title: '应付金额', width: 115, align: 'right' },
     { field: 'paid_amount', title: '已付金额', width: 110, align: 'right' },
     { field: 'unpaid_amount', title: '未付金额', width: 115, align: 'right' },

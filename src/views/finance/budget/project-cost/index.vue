@@ -16,7 +16,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
   api: { search: budget.projectSearch },
   createQueryModel,
   columns: [
-    { field: 'project', title: '项目', width: 160 },
+    { field: 'project', title: '项目', minWidth: 160 },
     { field: 'contract_amount', title: '合同金额', width: 120, align: 'right' },
     { field: 'labor_cost', title: '人工成本', width: 110, align: 'right' },
     { field: 'purchase_cost', title: '采购成本', width: 110, align: 'right' },

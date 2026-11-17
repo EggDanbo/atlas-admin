@@ -25,7 +25,7 @@ const { tableRef, pageLoading, gridOptions, handleExportOrPrint, hasPermExport }
   api: { search: budget.quotaSearch },
   createQueryModel,
   columns: [
-    { field: 'expense_type', title: '费用类别', width: 150 },
+    { field: 'expense_type', title: '费用类别', minWidth: 150 },
     { field: 'year', title: '年度', width: 90, align: 'center' },
     { field: 'budget_amount', title: '年度预算', width: 140, align: 'right' },
     { field: 'used_amount', title: '已使用', width: 130, align: 'right' },

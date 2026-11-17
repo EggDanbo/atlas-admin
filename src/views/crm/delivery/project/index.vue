@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'project_no', title: '项目编号', width: 130 },
-    { field: 'project_name', title: '项目名称', width: 200 },
+    { field: 'project_name', title: '项目名称', minWidth: 200 },
     { field: 'customer_name', title: '客户', width: 170 },
     { field: 'contract_amount', title: '合同额', width: 120, align: 'right' },
     { field: 'progress', title: '交付进度', width: 140, align: 'center', slots: { default: 'progress' } },

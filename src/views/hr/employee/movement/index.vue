@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: employee.movementSearch },
   createQueryModel,
   columns: [
-    { field: 'employee_name', title: '员工', width: 100, align: 'center' },
+    { field: 'employee_name', title: '员工', minWidth: 100, align: 'center' },
     { field: 'employee_no', title: '工号', width: 100 },
     { field: 'movement_type', title: '异动类型', width: 110, align: 'center', slots: { default: 'type' } },
     { field: 'from_dept', title: '原部门', width: 140 },

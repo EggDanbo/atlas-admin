@@ -81,7 +81,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: attendance.ruleSearch },
   createQueryModel,
   columns: [
-    { field: 'rule_name', title: '规则名称', width: 140 },
+    { field: 'rule_name', title: '规则名称', minWidth: 140 },
     { field: 'attendance_mode', title: '考勤模式', width: 84, align: 'center', slots: { default: 'mode' } },
     { field: 'apply_dept', title: '适用部门', width: 170 },
     { field: 'work_days_text', title: '工作日', width: 88, align: 'center' },

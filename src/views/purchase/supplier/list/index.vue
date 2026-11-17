@@ -30,7 +30,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'supplier_no', title: '供应商编码', width: 110, align: 'left' },
-    { field: 'supplier_name', title: '供应商名称', width: 170, align: 'left' },
+    { field: 'supplier_name', title: '供应商名称', minWidth: 170, align: 'left' },
     { field: 'supplier_category', title: '供应品类', width: 95, align: 'center' },
     { field: 'credit_days', title: '账期(天)', width: 85, align: 'right' },
     { field: 'access_state', title: '准入状态', width: 105, align: 'center', slots: { default: 'access' } },

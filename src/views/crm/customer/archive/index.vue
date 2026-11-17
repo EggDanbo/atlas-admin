@@ -30,7 +30,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: customer.archiveSearch },
   createQueryModel,
   columns: [
-    { field: 'customer_name', title: '客户名称', width: 200 },
+    { field: 'customer_name', title: '客户名称', minWidth: 200 },
     { field: 'customer_level', title: '客户分级', width: 110, align: 'center', slots: { default: 'level' } },
     { field: 'owner', title: '负责人', width: 90, align: 'center' },
     { field: 'coop_state', title: '合作状态', width: 110, align: 'center', slots: { default: 'state' } },

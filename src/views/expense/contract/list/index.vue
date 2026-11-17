@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'contract_no', title: '合同编号', width: 140 },
-    { field: 'contract_name', title: '合同名称', width: 220 },
+    { field: 'contract_name', title: '合同名称', minWidth: 220 },
     { field: 'supplier', title: '供应商', width: 180 },
     { field: 'amount', title: '合同金额', width: 120, align: 'right' },
     { field: 'paid_amount', title: '已付款', width: 115, align: 'right' },

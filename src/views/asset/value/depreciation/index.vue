@@ -29,7 +29,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'dep_month', title: '计提月份', width: 100, align: 'center' },
     { field: 'asset_no', title: '资产编号', width: 130 },
-    { field: 'asset_name', title: '资产名称', width: 170 },
+    { field: 'asset_name', title: '资产名称', minWidth: 170 },
     { field: 'dept_name', title: '使用部门', width: 125 },
     { field: 'original_amount', title: '原值', width: 115, align: 'right' },
     { field: 'monthly_amount', title: '本月折旧', width: 105, align: 'right' },

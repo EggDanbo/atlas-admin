@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'asset_no', title: '资产编号', width: 135 },
-    { field: 'asset_name', title: '资产名称', width: 170 },
+    { field: 'asset_name', title: '资产名称', minWidth: 170 },
     { field: 'asset_category', title: '资产类别', width: 105, align: 'center' },
     { field: 'dept_name', title: '使用部门', width: 125 },
     { field: 'keeper', title: '使用人', width: 85, align: 'center' },

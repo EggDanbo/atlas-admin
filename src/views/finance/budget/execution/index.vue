@@ -16,7 +16,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
   api: { search: budget.executionSearch },
   createQueryModel,
   columns: [
-    { field: 'dept', title: '部门', width: 180 },
+    { field: 'dept', title: '部门', minWidth: 180 },
     { field: 'year', title: '年度', width: 90, align: 'center' },
     { field: 'budget_amount', title: '年度预算', width: 160, align: 'right' },
     { field: 'used_amount', title: '已使用', width: 160, align: 'right' },

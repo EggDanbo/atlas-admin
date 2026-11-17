@@ -31,7 +31,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'receipt_no', title: '验收单号', width: 125, align: 'left' },
     { field: 'order_no', title: '采购订单', width: 120, align: 'left' },
-    { field: 'supplier_name', title: '供应商', width: 170, align: 'left' },
+    { field: 'supplier_name', title: '供应商', minWidth: 170, align: 'left' },
     { field: 'arrival_qty', title: '到货数量', width: 90, align: 'right' },
     { field: 'qualified_qty', title: '合格数', width: 85, align: 'right' },
     { field: 'reject_qty', title: '不合格数', width: 90, align: 'right' },

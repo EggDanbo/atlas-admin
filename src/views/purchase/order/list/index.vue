@@ -30,7 +30,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'order_no', title: '订单号', width: 125, align: 'left' },
-    { field: 'supplier_name', title: '供应商', width: 170, align: 'left' },
+    { field: 'supplier_name', title: '供应商', minWidth: 170, align: 'left' },
     { field: 'item_category', title: '品类', width: 100, align: 'center' },
     { field: 'order_amount', title: '订单金额', width: 120, align: 'right' },
     { field: 'receipt_progress', title: '到货进度', width: 130, align: 'center', slots: { default: 'progress' } },

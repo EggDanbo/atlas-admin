@@ -16,7 +16,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
   api: { search: arap.payableSearch },
   createQueryModel,
   columns: [
-    { field: 'supplier', title: '供应商', width: 220 },
+    { field: 'supplier', title: '供应商', minWidth: 220 },
     { field: 'total_amount', title: '应付总额', width: 150, align: 'right' },
     { field: 'due_month_amount', title: '本月到期', width: 150, align: 'right' },
     { field: 'overdue_amount', title: '逾期未付', width: 150, align: 'right' },

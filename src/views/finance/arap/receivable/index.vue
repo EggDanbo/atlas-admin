@@ -16,7 +16,7 @@ const { tableRef, pageLoading, queryModel, gridOptions } = useListPage<QueryMode
   api: { search: arap.receivableSearch },
   createQueryModel,
   columns: [
-    { field: 'customer', title: '客户', width: 170, fixed: 'left' },
+    { field: 'customer', title: '客户', minWidth: 170, fixed: 'left' },
     { field: 'total_amount', title: '应收总额', width: 115, align: 'right' },
     { field: 'not_due_amount', title: '未到期', width: 105, align: 'right' },
     { field: 'overdue_m1_amount', title: '逾期 30 天内', width: 115, align: 'right' },

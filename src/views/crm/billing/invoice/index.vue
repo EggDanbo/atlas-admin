@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'invoice_no', title: '发票号码', width: 160 },
-    { field: 'customer_name', title: '客户', width: 170 },
+    { field: 'customer_name', title: '客户', minWidth: 170 },
     { field: 'project_name', title: '项目', width: 180 },
     { field: 'amount', title: '金额', width: 125, align: 'right' },
     { field: 'tax_rate', title: '税率(%)', width: 90, align: 'right' },

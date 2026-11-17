@@ -28,7 +28,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'work_date', title: '日期', width: 110, align: 'center' },
     { field: 'employee_name', title: '员工', width: 90, align: 'center' },
-    { field: 'dept_name', title: '部门', width: 140 },
+    { field: 'dept_name', title: '部门', minWidth: 140 },
     { field: 'check_in', title: '上班打卡', width: 100, align: 'center' },
     { field: 'check_out', title: '下班打卡', width: 100, align: 'center' },
     { field: 'work_hours', title: '工时(小时)', width: 100, align: 'right' },

@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: customer.contactSearch },
   createQueryModel,
   columns: [
-    { field: 'customer_name', title: '所属客户', width: 200 },
+    { field: 'customer_name', title: '所属客户', minWidth: 200 },
     { field: 'contact_name', title: '姓名', width: 90, align: 'center' },
     { field: 'job_title', title: '职务', width: 110, align: 'center' },
     { field: 'phone', title: '手机号', width: 130 },

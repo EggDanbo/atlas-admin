@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: billing.receiptSearch },
   createQueryModel,
   columns: [
-    { field: 'customer_name', title: '客户', width: 180 },
+    { field: 'customer_name', title: '客户', minWidth: 180 },
     { field: 'project_name', title: '项目', width: 190 },
     { field: 'invoice_no', title: '对应发票', width: 160 },
     { field: 'receipt_amount', title: '回款金额', width: 125, align: 'right' },

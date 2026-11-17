@@ -28,7 +28,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'employee_no', title: '工号', width: 100 },
     { field: 'employee_name', title: '姓名', width: 90, align: 'center' },
-    { field: 'dept_name', title: '部门', width: 130 },
+    { field: 'dept_name', title: '部门', minWidth: 130 },
     { field: 'position_name', title: '岗位', width: 120 },
     { field: 'job_grade', title: '职级', width: 80, align: 'center' },
     { field: 'staff_state', title: '状态', width: 90, align: 'center', slots: { default: 'state' } },

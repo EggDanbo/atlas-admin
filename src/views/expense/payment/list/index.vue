@@ -29,7 +29,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
     { field: 'payment_no', title: '支付单号', width: 140 },
     { field: 'claim_no', title: '关联申请单', width: 140 },
     { field: 'applicant', title: '收款人', width: 90, align: 'center' },
-    { field: 'dept_name', title: '部门', width: 130 },
+    { field: 'dept_name', title: '部门', minWidth: 130 },
     { field: 'amount', title: '支付金额', width: 120, align: 'right' },
     { field: 'pay_method', title: '支付方式', width: 110, align: 'center' },
     { field: 'pay_date', title: '支付日期', width: 110, align: 'center' },

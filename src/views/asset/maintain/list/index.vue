@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   createQueryModel,
   columns: [
     { field: 'maintain_no', title: '维保单号', width: 130 },
-    { field: 'asset_name', title: '资产名称', width: 180 },
+    { field: 'asset_name', title: '资产名称', minWidth: 180 },
     { field: 'maintain_type', title: '维保类型', width: 105, align: 'center', slots: { default: 'type' } },
     { field: 'plan_date', title: '计划日期', width: 110, align: 'center' },
     { field: 'last_date', title: '上次维保', width: 110, align: 'center' },

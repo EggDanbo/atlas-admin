@@ -27,7 +27,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: attendance.summarySearch },
   createQueryModel,
   columns: [
-    { field: 'employee_name', title: '员工', width: 100, align: 'center' },
+    { field: 'employee_name', title: '员工', minWidth: 100, align: 'center' },
     { field: 'dept_name', title: '部门', width: 140 },
     { field: 'should_days', title: '应出勤(天)', width: 110, align: 'right' },
     { field: 'actual_days', title: '实出勤(天)', width: 110, align: 'right' },

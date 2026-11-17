@@ -29,7 +29,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
     { field: 'claim_no', title: '申请单号', width: 150 },
     { field: 'expense_type', title: '费用类型', width: 110, align: 'center', slots: { default: 'type' } },
     { field: 'applicant', title: '申请人', width: 90, align: 'center' },
-    { field: 'dept_name', title: '部门', width: 130 },
+    { field: 'dept_name', title: '部门', minWidth: 130 },
     { field: 'amount', title: '金额', width: 120, align: 'right' },
     { field: 'apply_date', title: '申请日期', width: 110, align: 'center' },
     { field: 'claim_state', title: '状态', width: 100, align: 'center', slots: { default: 'state' } },

@@ -26,7 +26,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   api: { search: treasury.accountSearch },
   createQueryModel,
   columns: [
-    { field: 'account_name', title: '账户名称', width: 150, fixed: 'left' },
+    { field: 'account_name', title: '账户名称', minWidth: 150, fixed: 'left' },
     { field: 'bank_name', title: '开户行', width: 140 },
     { field: 'account_no', title: '账号', width: 155 },
     { field: 'currency', title: '币种', width: 80, align: 'center' },

@@ -28,7 +28,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'flow_no', title: '流水号', width: 140 },
     { field: 'flow_type', title: '类型', width: 90, align: 'center', slots: { default: 'type' } },
-    { field: 'asset_name', title: '资产', width: 180 },
+    { field: 'asset_name', title: '资产', minWidth: 180 },
     { field: 'handler', title: '经办人', width: 85, align: 'center' },
     { field: 'from_dept', title: '原部门', width: 120 },
     { field: 'to_dept', title: '新部门', width: 120 },

@@ -31,7 +31,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'request_no', title: '申请单号', width: 130, align: 'left' },
     { field: 'apply_dept', title: '申请部门', width: 110, align: 'left' },
-    { field: 'item_name', title: '物品名称', width: 130, align: 'left' },
+    { field: 'item_name', title: '物品名称', minWidth: 130, align: 'left' },
     { field: 'item_category', title: '品类', width: 100, align: 'center' },
     { field: 'quantity', title: '数量', width: 80, align: 'right' },
     { field: 'budget_amount', title: '预算金额', width: 120, align: 'right' },

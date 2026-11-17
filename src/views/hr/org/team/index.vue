@@ -25,7 +25,7 @@ const { tableRef, pageLoading, gridOptions, handleExportOrPrint, hasPermExport }
   api: { search: org.teamSearch },
   createQueryModel,
   columns: [
-    { field: 'dept_name', title: '部门', width: 160 },
+    { field: 'dept_name', title: '部门', minWidth: 160 },
     { field: 'manager', title: '负责人', width: 110, align: 'center' },
     { field: 'headcount', title: '编制人数', width: 100, align: 'right' },
     { field: 'on_job', title: '在职人数', width: 100, align: 'right' },

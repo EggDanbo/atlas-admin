@@ -26,7 +26,7 @@ const { tableRef, pageLoading, gridOptions, handleExportOrPrint, hasPermExport }
   createQueryModel,
   columns: [
     { field: 'check_no', title: '盘点单号', width: 130 },
-    { field: 'check_name', title: '盘点任务', width: 210 },
+    { field: 'check_name', title: '盘点任务', minWidth: 210 },
     { field: 'scope', title: '盘点范围', width: 170 },
     { field: 'checker', title: '盘点人', width: 90, align: 'center' },
     { field: 'plan_date', title: '计划日期', width: 110, align: 'center' },

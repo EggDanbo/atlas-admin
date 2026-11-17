@@ -29,7 +29,7 @@ const { tableRef, pageLoading, queryModel, gridOptions, handleExportOrPrint, has
   columns: [
     { field: 'pay_month', title: '月份', width: 95, align: 'center' },
     { field: 'employee_name', title: '员工', width: 90, align: 'center' },
-    { field: 'dept_name', title: '部门', width: 130 },
+    { field: 'dept_name', title: '部门', minWidth: 130 },
     { field: 'gross_amount', title: '应发工资', width: 115, align: 'right' },
     { field: 'social_amount', title: '社保', width: 100, align: 'right' },
     { field: 'fund_amount', title: '公积金', width: 100, align: 'right' },
