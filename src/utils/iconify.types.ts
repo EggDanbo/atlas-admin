@@ -1,8 +1,8 @@
 /**
  * Iconify 图标类型
  * 自动生成，请勿手动修改
- * 生成时间: 2026-11-17T17:46:36.493Z
- * 图标总数: 111
+ * 生成时间: 2026-11-17T18:45:55.938Z
+ * 图标总数: 112
  */
 
 /**
@@ -46,6 +46,7 @@ export type IconifyIcon
     | 'ant-design:download-outlined'
     | 'ant-design:edit-outlined'
     | 'ant-design:enter-outlined'
+    | 'ant-design:environment-outlined'
     | 'ant-design:expand-outlined'
     | 'ant-design:export-outlined'
     | 'ant-design:eye-outlined'
@@ -162,6 +163,7 @@ export const ICON_NAMES: IconifyIcon[] = [
   'ant-design:download-outlined',
   'ant-design:edit-outlined',
   'ant-design:enter-outlined',
+  'ant-design:environment-outlined',
   'ant-design:expand-outlined',
   'ant-design:export-outlined',
   'ant-design:eye-outlined',

@@ -241,6 +241,9 @@ function buildAttendanceRules(employees: Employee[]) {
     /** 自由工时：每天打几次卡、最晚几点下班 */
     freeTimes?: number
     latest?: string
+    /** 打卡校验：地点 / Wi-Fi */
+    checkLocation?: { name: string, address: string }
+    checkWifi?: string
     shifts: ShiftSeed[]
     /** 排班制：参与排班的人 */
     members?: string[]
@@ -258,6 +261,8 @@ function buildAttendanceRules(employees: Employee[]) {
       state: '立即生效',
       date: today,
       utime: '2026-10-21 09:12',
+      checkLocation: { name: '总部大厦', address: '创新大道 88 号' },
+      checkWifi: 'A4:5E:60:12:88:01',
       shifts: [{ name: '标准班', start: '09:00', end: '18:00', rest: '12:00-13:00', work_days: [1, 2, 3, 4, 5] }],
     },
     {
@@ -271,6 +276,7 @@ function buildAttendanceRules(employees: Employee[]) {
       state: '立即生效',
       date: today,
       utime: '2026-10-18 16:40',
+      checkWifi: '3C:52:82:0A:F1:7B',
       // 固定班次也能有多个：工作日错开，每天最多被一个班次占用
       shifts: [
         { name: '弹性班', start: '10:00', end: '19:00', rest: '13:00-14:00', work_days: [1, 2, 3, 4, 5] },
@@ -408,6 +414,11 @@ function buildAttendanceRules(employees: Employee[]) {
       standard_hours: seed.hours,
       free_times: seed.freeTimes ?? 0,
       latest: seed.latest ?? '',
+      check_location: !!seed.checkLocation,
+      location_name: seed.checkLocation?.name ?? '',
+      location_address: seed.checkLocation?.address ?? '',
+      check_wifi: !!seed.checkWifi,
+      wifi_mac: seed.checkWifi ?? '',
       late_limit: seed.late,
       early_limit: seed.early,
       shifts: seed.shifts,

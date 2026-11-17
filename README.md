@@ -309,7 +309,7 @@ skin.less      布局骨架皮肤：侧栏 / 顶栏 / 页签 / 卡片 / 表格
 | 类型检查 | `vue-tsc` 严格模式 + e2e 的 `tsc`，0 error |
 | 代码规范 | ESLint（含 Vue / TS / import 排序 / Prettier），0 error |
 | 单元测试 | Vitest，覆盖随机数可复现性、字段语义、列生成、权限匹配（44 个用例） |
-| 端到端 | Playwright：登录、工作台待办、列表增改查、考勤规则生效时间、全量路由巡检（96 个用例，约 2 分钟） |
+| 端到端 | Playwright：登录、工作台待办、列表增改查、考勤规则生效时间、全量路由巡检（97 个用例，约 2 分钟） |
 | 持续集成 | `.github/workflows/ci.yml`：lint → typecheck → test → build 与 e2e 并行 |
 
 ```bash

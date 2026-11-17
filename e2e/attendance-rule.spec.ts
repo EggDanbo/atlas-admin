@@ -175,6 +175,29 @@ test.describe('考勤规则', () => {
     await expect(form.locator('.rule-form__roster-meta')).toHaveText(/^[1-9]\d* 人/)
   })
 
+  test('其他参数：勾选后才出现打卡地点与 Wi-Fi，地图选点能回填', async ({ page }) => {
+    const form = await openCreateForm(page)
+
+    // 默认都不勾，两个字段都不在
+    await expect(form.locator('.rule-form__location')).toHaveCount(0)
+    await expect(form.locator('.rule-form__mac')).toHaveCount(0)
+
+    await form.locator('.n-checkbox').filter({ hasText: '验证打卡地点' }).click()
+    await expect(form.locator('.rule-form__location')).toBeVisible()
+
+    // 打开地图 → 点标注 → 确定 → 回填到只读输入框
+    await form.getByRole('button', { name: /地图选点/ }).click()
+    await expect(page.locator('.map')).toBeVisible()
+    await page.locator('.map__pin').nth(2).click()
+    await expect(page.locator('.map__picked')).toContainText('中心仓库')
+    await page.locator('.vxe-modal--footer').getByRole('button', { name: '确定' }).click()
+    await expect(form.locator('.rule-form__location input')).toHaveValue(/中心仓库/)
+
+    // Wi-Fi 是 6 段两位的输入组
+    await form.locator('.n-checkbox').filter({ hasText: '验证打卡 Wi-Fi' }).click()
+    await expect(form.locator('.rule-form__mac-cell')).toHaveCount(6)
+  })
+
   test('「指定日期」才出现日期选择', async ({ page }) => {
     // vxe 弹窗关闭后 DOM 会留在页面里，多个实例并存时只看可见的那个
     const form = page.locator('.rule-form__body:visible')

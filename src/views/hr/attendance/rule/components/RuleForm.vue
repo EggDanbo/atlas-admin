@@ -5,6 +5,7 @@ import { employee, org } from '@/service/api/hr'
 import { request } from '@/service/http'
 import toast from '@/utils/toast'
 import EffectivePicker from './EffectivePicker.vue'
+import LocationPicker from './LocationPicker.vue'
 
 /**
  * 考勤规则表单
@@ -76,6 +77,13 @@ const form = reactive({
   /** 自由工时：每天要打几次卡、最晚几点下班 */
   freeTimes: 2,
   latestTime: fromHm('21:00'),
+  /** 其他参数：是否校验打卡地点 / Wi-Fi */
+  checkLocation: false,
+  locationName: '',
+  locationAddress: '',
+  checkWifi: false,
+  /** MAC 地址按 6 段 2 位存，空字符串表示这格没填 */
+  wifi: ['', '', '', '', '', ''] as string[],
   lateLimit: 5,
   earlyLimit: 5,
   /** 班次库：固定班次每天一个班，排班制按人按天从这里挑 */
@@ -193,6 +201,36 @@ function addShift() {
 function removeShift(index: number) {
   if (form.shifts.length > 1)
     form.shifts.splice(index, 1)
+}
+
+/** 打卡地点：点地图图标打开选点弹窗，选中后才回填 */
+const locationPickerRef = ref<InstanceType<typeof LocationPicker> | null>(null)
+const wifiRefs = ref<any[]>([])
+
+function openLocationPicker() {
+  locationPickerRef.value?.open(
+    form.locationName
+      ? { id: 'picked', name: form.locationName, address: form.locationAddress, x: 0, y: 0 }
+      : null,
+  )
+}
+
+function onLocationConfirm(point: { name: string, address: string }) {
+  form.locationName = point.name
+  form.locationAddress = point.address
+}
+
+function setWifiRef(el: any, index: number) {
+  wifiRefs.value[index] = el
+}
+
+/** 每格只留两位十六进制，填满自动跳到下一格 */
+function onWifiInput(index: number, value: string) {
+  const clean = value.replace(/[^0-9a-f]/gi, '').slice(0, 2)
+  if (clean !== value)
+    form.wifi[index] = clean
+  if (clean.length === 2 && index < 5)
+    wifiRefs.value[index + 1]?.focus?.()
 }
 
 function parseDays(text?: string) {
@@ -328,6 +366,12 @@ function reset(row?: Recordable) {
   form.flex = Number(row?.flex_minutes ?? 0) > 0
   form.flexMinutes = Number(row?.flex_minutes ?? 30) || 30
   form.standardHours = Number(row?.standard_hours ?? 8)
+  form.checkLocation = !!row?.check_location
+  form.locationName = String(row?.location_name ?? '')
+  form.locationAddress = String(row?.location_address ?? '')
+  form.checkWifi = !!row?.check_wifi
+  const mac = String(row?.wifi_mac ?? '').split(':')
+  form.wifi = Array.from({ length: 6 }, (_, index) => mac[index] ?? '')
   form.freeTimes = Number(row?.free_times ?? 2)
   form.latestTime = fromHm(String(row?.latest ?? '')) ?? fromHm('21:00')
   form.lateLimit = Number(row?.late_limit ?? 5)
@@ -464,6 +508,11 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     flex_minutes: showFlex.value && form.flex ? form.flexMinutes : 0,
     standard_hours: form.standardHours,
     free_times: isFreeMode.value ? form.freeTimes : 0,
+    check_location: form.checkLocation,
+    location_name: form.checkLocation ? form.locationName : '',
+    location_address: form.checkLocation ? form.locationAddress : '',
+    check_wifi: form.checkWifi,
+    wifi_mac: form.checkWifi ? form.wifi.map(item => item.toUpperCase()).join(':') : '',
     latest: isFreeMode.value ? toHm(form.latestTime) : '',
     late_limit: form.lateLimit,
     early_limit: form.earlyLimit,
@@ -544,6 +593,18 @@ defineExpose({ open })
       </n-descriptions-item>
       <n-descriptions-item label="早退判定">
         超过 {{ form.earlyLimit }} 分钟
+      </n-descriptions-item>
+      <n-descriptions-item label="打卡校验" :span="2">
+        <div class="rule-form__checks">
+          <span v-if="form.checkLocation" class="rule-form__check">
+            <em>地点</em>{{ form.locationName || '未选择' }}
+            <small>{{ form.locationAddress }}</small>
+          </span>
+          <span v-if="form.checkWifi" class="rule-form__check">
+            <em>Wi-Fi</em>{{ form.wifi.join(':').toUpperCase() }}
+          </span>
+          <span v-if="!form.checkLocation && !form.checkWifi" class="rule-form__check-hint">不校验</span>
+        </div>
       </n-descriptions-item>
       <n-descriptions-item label="生效时间" :span="2">
         <EffectivePicker
@@ -841,6 +902,55 @@ defineExpose({ open })
           </div>
         </n-form-item-gi>
       </n-grid>
+
+      <div class="rule-form__group">
+        <span class="rule-form__group-title">其他参数</span>
+      </div>
+      <n-grid :cols="2" :x-gap="18">
+        <n-form-item-gi label="打卡校验" :span="2">
+          <n-space :size="24">
+            <n-checkbox v-model:checked="form.checkLocation" label="验证打卡地点" />
+            <n-checkbox v-model:checked="form.checkWifi" label="验证打卡 Wi-Fi" />
+          </n-space>
+        </n-form-item-gi>
+
+        <n-form-item-gi v-if="form.checkLocation" label="打卡地点" :span="2">
+          <div class="rule-form__location">
+            <n-input
+              :value="form.locationName ? `${form.locationName}（${form.locationAddress}）` : ''"
+              readonly
+              placeholder="点右侧按钮在地图上选一个地点"
+            />
+            <n-button class="rule-form__map-btn" @click="openLocationPicker">
+              <template #icon>
+                <Icon icon="ant-design:environment-outlined" />
+              </template>
+              地图选点
+            </n-button>
+          </div>
+        </n-form-item-gi>
+
+        <n-form-item-gi v-if="form.checkWifi" label="打卡 Wi-Fi" :span="2">
+          <div class="rule-form__mac">
+            <template v-for="(item, index) in form.wifi" :key="index">
+              <n-input
+                :ref="(el: any) => setWifiRef(el, index)"
+                v-model:value="form.wifi[index]"
+                maxlength="2"
+                placeholder="00"
+                class="rule-form__mac-cell"
+                @input="(value: string) => onWifiInput(index, value)"
+              />
+              <span v-if="index < 5" class="rule-form__mac-sep">:</span>
+            </template>
+          </div>
+          <template #feedback>
+            填办公路由器的 MAC 地址，连其它 Wi-Fi 打卡会被拦下
+          </template>
+        </n-form-item-gi>
+      </n-grid>
+
+      <LocationPicker ref="locationPickerRef" @confirm="onLocationConfirm" />
     </n-form>
   </SpModal>
 </template>
@@ -865,8 +975,7 @@ defineExpose({ open })
 
     &-title {
       flex: none;
-      width: 104px;
-      text-align: right;
+      text-align: left;
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.01em;
@@ -1001,6 +1110,32 @@ defineExpose({ open })
     text-align: center;
   }
 
+  &__checks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__check {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    em {
+      font-style: normal;
+      color: var(--atlas-text-tertiary);
+    }
+
+    small {
+      font-size: 12px;
+      color: var(--atlas-text-tertiary);
+    }
+  }
+
+  &__check-hint {
+    color: var(--atlas-text-tertiary);
+  }
+
   &__shift-list {
     display: flex;
     flex-direction: column;
@@ -1042,6 +1177,35 @@ defineExpose({ open })
 
   &__picker {
     width: 320px;
+  }
+
+  &__location {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  &__map-btn {
+    flex: none;
+  }
+
+  &__mac {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__mac-cell {
+    width: 52px;
+    flex: none;
+
+    :deep(input) {
+      text-align: center;
+    }
+  }
+
+  &__mac-sep {
+    color: var(--atlas-text-tertiary);
   }
 
   &__unit {

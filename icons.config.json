@@ -46,6 +46,7 @@
       "ant-design:download-outlined",
       "ant-design:edit-outlined",
       "ant-design:enter-outlined",
+      "ant-design:environment-outlined",
       "ant-design:expand-outlined",
       "ant-design:export-outlined",
       "ant-design:eye-outlined",
@@ -114,7 +115,7 @@
       "vaadin:ctrl-a",
       "vaadin:esc-a"
     ],
-    "lastScan": "2026-11-17T17:46:36.317Z",
+    "lastScan": "2026-11-17T18:45:55.720Z",
     "note": "扫描发现的图标，每次扫描会更新"
   },
   "discovered": {
@@ -134,9 +135,9 @@
     "note": "开发时发现的新图标，会自动保存"
   },
   "metadata": {
-    "totalIcons": 111,
+    "totalIcons": 112,
     "byCollection": {
-      "ant-design": 107,
+      "ant-design": 108,
       "circle-flags": 2,
       "vaadin": 2
     }
