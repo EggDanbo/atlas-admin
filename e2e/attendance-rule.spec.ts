@@ -185,13 +185,20 @@ test.describe('考勤规则', () => {
     await form.locator('.n-checkbox').filter({ hasText: '验证打卡地点' }).click()
     await expect(form.locator('.rule-form__location')).toBeVisible()
 
-    // 打开地图 → 点标注 → 确定 → 回填到只读输入框
+    // 打开地图 → 选点 → 确定 → 回填到只读输入框
     await form.getByRole('button', { name: /地图选点/ }).click()
     await expect(page.locator('.map')).toBeVisible()
-    await page.locator('.map__pin').nth(2).click()
-    await expect(page.locator('.map__picked')).toContainText('中心仓库')
+
+    // 真实地图（OpenLayers）点 canvas，示意地图点 SVG 标注
+    const canvas = page.locator('.map__real canvas').first()
+    if (await canvas.count())
+      await canvas.click({ position: { x: 420, y: 260 } })
+    else
+      await page.locator('.map__pin').nth(2).click()
+
+    await expect(page.locator('.map__picked')).not.toContainText('尚未选择地点')
     await page.locator('.vxe-modal--footer').getByRole('button', { name: '确定' }).click()
-    await expect(form.locator('.rule-form__location input')).toHaveValue(/中心仓库/)
+    await expect(form.locator('.rule-form__location input')).toHaveValue(/\S+/)
 
     // Wi-Fi 是 6 段两位的输入组
     await form.locator('.n-checkbox').filter({ hasText: '验证打卡 Wi-Fi' }).click()

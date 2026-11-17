@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ModalInst } from '@/components/SpModal'
 import { hasAMapKey, loadAMap } from '@/utils/amap'
+import { gaodeTileLayer } from '@/utils/map'
 import toast from '@/utils/toast'
+import 'ol/ol.css'
 
-/** 选中的打卡地点：示意地图给 x/y，真实地图给经纬度 */
+/** 选中的打卡地点 */
 export interface LocationPoint {
   id: string
   name: string
@@ -16,27 +18,46 @@ export interface LocationPoint {
 
 const emit = defineEmits<{ (e: 'confirm', value: LocationPoint): void }>()
 
-/** 示意地图上的几个地点（只在没有配置地图 Key 时使用） */
+/**
+ * 预置地点：示意地图用来摆标注，真实地图用来做逆地理编码的近似匹配
+ * （演示项目没有后端地理编码服务，就近取一个已知地点，够用且离线可跑）
+ */
 const POINTS: LocationPoint[] = [
-  { id: 'hq', name: '总部大厦', address: '创新大道 88 号', x: 318, y: 232, lng: 116.404, lat: 39.915 },
-  { id: 'rd', name: '研发中心', address: '科苑路 12 号 A 座', x: 642, y: 286, lng: 116.43, lat: 39.912 },
-  { id: 'wh', name: '中心仓库', address: '物流园 3 号库', x: 934, y: 512, lng: 116.45, lat: 39.9 },
-  { id: 'sc', name: '客户服务中心', address: '人民路 205 号', x: 452, y: 566, lng: 116.392, lat: 39.9 },
-  { id: 'pl', name: '生产线一厂', address: '工业大道 7 号', x: 762, y: 636, lng: 116.442, lat: 39.895 },
-  { id: 'br', name: '滨江办事处', address: '滨江路 66 号', x: 208, y: 448, lng: 116.38, lat: 39.905 },
+  { id: 'hq', name: '总部大厦', address: '北京市朝阳区创新大道 88 号', x: 318, y: 232, lng: 116.404, lat: 39.915 },
+  { id: 'rd', name: '研发中心', address: '北京市海淀区科苑路 12 号 A 座', x: 642, y: 286, lng: 116.43, lat: 39.912 },
+  { id: 'wh', name: '中心仓库', address: '北京市大兴区物流园 3 号库', x: 934, y: 512, lng: 116.45, lat: 39.9 },
+  { id: 'sc', name: '客户服务中心', address: '北京市东城区人民路 205 号', x: 452, y: 566, lng: 116.392, lat: 39.9 },
+  { id: 'pl', name: '生产线一厂', address: '北京市通州区工业大道 7 号', x: 762, y: 636, lng: 116.442, lat: 39.895 },
+  { id: 'br', name: '滨江办事处', address: '北京市西城区滨江路 66 号', x: 208, y: 448, lng: 116.38, lat: 39.905 },
 ]
 
 const modalRef = ref<ModalInst | null>(null)
 const picked = ref<LocationPoint | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
 
-/** 配了 Key 就用高德，没配或加载失败就用内置示意地图（CI、演示环境走这条） */
-const realMapFailed = ref(false)
-const isRealMap = computed(() => hasAMapKey() && !realMapFailed.value)
+/** ol = OpenLayers 拉瓦片（默认，不需要 Key）；amap = 高德 SDK（需要 Key）；svg = 示意地图 */
+const provider = (import.meta.env.VITE_MAP_PROVIDER || 'ol').toLowerCase()
+const renderFailed = ref(false)
 const mapLoading = ref(false)
 
+const mode = computed<'ol' | 'amap' | 'svg'>(() => {
+  if (renderFailed.value)
+    return 'svg'
+  if (provider === 'amap')
+    return hasAMapKey() ? 'amap' : 'svg'
+  if (provider === 'ol')
+    return 'ol'
+  return 'svg'
+})
+
+let olMap: any = null
+let markerSource: any = null
+/** ol 是动态引入的，构造器存下来给落点复用 */
+let OlFeatureCtor: any = null
+let OlPointCtor: any = null
+let olFromLonLat: ((coord: number[]) => number[]) | null = null
 let amap: any = null
-let marker: any = null
+let amapMarker: any = null
 let geocoder: any = null
 
 function open(current?: LocationPoint | null) {
@@ -50,15 +71,102 @@ function open(current?: LocationPoint | null) {
   })
   modalRef.value?.open()
 
-  if (isRealMap.value)
-    nextTick(() => initRealMap())
+  if (mode.value === 'ol')
+    nextTick(() => initOlMap())
+  else if (mode.value === 'amap')
+    nextTick(() => initAMap())
 }
 
 function pick(point: LocationPoint) {
   picked.value = point
 }
 
-async function initRealMap() {
+/* ==================== OpenLayers ==================== */
+
+async function initOlMap() {
+  if (!mapEl.value || olMap)
+    return
+
+  mapLoading.value = true
+
+  try {
+    const [
+      { default: OlMap },
+      { default: View },
+      { fromLonLat, toLonLat },
+      { default: VectorLayer },
+      { default: VectorSource },
+      { default: Feature },
+      { default: Point },
+      { Circle: CircleStyle, Fill, Stroke, Style },
+    ] = await Promise.all([
+      import('ol/Map'),
+      import('ol/View'),
+      import('ol/proj'),
+      import('ol/layer/Vector'),
+      import('ol/source/Vector'),
+      import('ol/Feature'),
+      import('ol/geom/Point'),
+      import('ol/style'),
+    ])
+
+    OlFeatureCtor = Feature
+    OlPointCtor = Point
+    olFromLonLat = fromLonLat
+
+    const center = [picked.value?.lng ?? 116.404, picked.value?.lat ?? 39.915]
+
+    markerSource = new VectorSource()
+    const markerLayer = new VectorLayer({
+      source: markerSource,
+      style: new Style({
+        image: new CircleStyle({
+          radius: 8,
+          fill: new Fill({ color: '#f97316' }),
+          stroke: new Stroke({ color: '#ffffff', width: 3 }),
+        }),
+      }),
+    })
+
+    olMap = new OlMap({
+      target: mapEl.value,
+      layers: [gaodeTileLayer(), markerLayer],
+      view: new View({ center: fromLonLat(center), zoom: 15, minZoom: 4, maxZoom: 18 }),
+    })
+
+    if (picked.value?.lng && picked.value?.lat)
+      setOlMarker(picked.value.lng, picked.value.lat)
+
+    // 点地图任意位置落点，再按就近原则给出地址
+    olMap.on('singleclick', (event: any) => {
+      const [lng, lat] = toLonLat(event.coordinate) as [number, number]
+      const point = { lng: Number(lng.toFixed(6)), lat: Number(lat.toFixed(6)) }
+      setOlMarker(point.lng, point.lat)
+      picked.value = describe(point.lng, point.lat)
+    })
+
+    // 弹窗刚展开时容器尺寸还没稳定，稍等再量一次
+    setTimeout(() => olMap?.updateSize(), 160)
+  }
+  catch (error) {
+    renderFailed.value = true
+    toast.warning(`${(error as Error).message || '地图加载失败'}，已切换为示意地图`)
+  }
+  finally {
+    mapLoading.value = false
+  }
+}
+
+function setOlMarker(lng: number, lat: number) {
+  if (!markerSource || !OlFeatureCtor || !OlPointCtor)
+    return
+  markerSource.clear()
+  markerSource.addFeature(new OlFeatureCtor({ geometry: new OlPointCtor(olFromLonLat!([lng, lat])) }))
+}
+
+/* ==================== 高德 SDK ==================== */
+
+async function initAMap() {
   if (!mapEl.value || amap)
     return
 
@@ -73,19 +181,31 @@ async function initRealMap() {
     })
 
     if (picked.value?.lng && picked.value?.lat)
-      dropMarker(picked.value.lng, picked.value.lat)
+      setAmapMarker(picked.value.lng, picked.value.lat)
 
-    // 点地图任意位置选点，再逆地理编码成地址
     amap.on('click', (event: any) => {
       const lng = Number(event.lnglat.getLng().toFixed(6))
       const lat = Number(event.lnglat.getLat().toFixed(6))
-      dropMarker(lng, lat)
-      reverseGeocode(lng, lat)
+      setAmapMarker(lng, lat)
+      geocoder.getAddress([lng, lat], (status: string, result: any) => {
+        if (status === 'complete' && result?.regeocode) {
+          const info = result.regeocode
+          picked.value = {
+            id: `${lng},${lat}`,
+            name: info.pois?.[0]?.name || info.formattedAddress || '自定义位置',
+            address: info.formattedAddress || `${lat}, ${lng}`,
+            lng,
+            lat,
+          }
+        }
+        else {
+          picked.value = describe(lng, lat)
+        }
+      })
     })
   }
   catch (error) {
-    // Key 无效或网络不通时退回示意地图，别让用户卡在空白弹窗里
-    realMapFailed.value = true
+    renderFailed.value = true
     amap = null
     toast.warning(`${(error as Error).message || '地图加载失败'}，已切换为示意地图`)
   }
@@ -94,32 +214,39 @@ async function initRealMap() {
   }
 }
 
-function dropMarker(lng: number, lat: number) {
+function setAmapMarker(lng: number, lat: number) {
   if (!amap)
     return
-  if (marker)
-    marker.setPosition([lng, lat])
+  if (amapMarker)
+    amapMarker.setPosition([lng, lat])
   else
-    marker = new (window as any).AMap.Marker({ position: [lng, lat], map: amap })
+    amapMarker = new (window as any).AMap.Marker({ position: [lng, lat], map: amap })
 }
 
-function reverseGeocode(lng: number, lat: number) {
-  if (!geocoder)
-    return
-  geocoder.getAddress([lng, lat], (status: string, result: any) => {
-    if (status !== 'complete' || !result?.regeocode) {
-      picked.value = { id: `${lng},${lat}`, name: '自定义位置', address: `${lng}, ${lat}`, lng, lat }
-      return
+/* ==================== 公共 ==================== */
+
+/** 没有后端地理编码服务时，就近匹配预置地点 */
+function describe(lng: number, lat: number): LocationPoint {
+  let nearest = POINTS[0]!
+  let min = Number.POSITIVE_INFINITY
+  for (const point of POINTS) {
+    const distance = (point.lng! - lng) ** 2 + (point.lat! - lat) ** 2
+    if (distance < min) {
+      min = distance
+      nearest = point
     }
-    const info = result.regeocode
-    picked.value = {
-      id: `${lng},${lat}`,
-      name: info.pois?.[0]?.name || info.formattedAddress || '自定义位置',
-      address: info.formattedAddress || `${lng}, ${lat}`,
-      lng,
-      lat,
-    }
-  })
+  }
+  // 约 3 公里内认为是同一个地点，再远就当自定义位置
+  if (min <= 0.0009) {
+    return { ...nearest, id: `${lng},${lat}`, lng, lat }
+  }
+  return {
+    id: `${lng},${lat}`,
+    name: '自定义位置',
+    address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+    lng,
+    lat,
+  }
 }
 
 /** 没选点就不让关，省得用户以为已经选上了 */
@@ -138,15 +265,15 @@ defineExpose({ open })
 
 <template>
   <SpModal ref="modalRef" @ok="handleOk">
-    <div class="map" :class="{ 'is-real': isRealMap }">
-      <!-- 真实地图：高德 -->
-      <div v-if="isRealMap" ref="mapEl" class="map__real" />
-      <div v-if="isRealMap && mapLoading" class="map__loading">
+    <div class="map" :class="`is-${mode}`">
+      <!-- 真实地图：OpenLayers 拉瓦片（默认）或高德 SDK -->
+      <div v-if="mode !== 'svg'" ref="mapEl" class="map__real" />
+      <div v-if="mode !== 'svg' && mapLoading" class="map__loading">
         地图加载中…
       </div>
 
-      <!-- 示意地图：没有配 Key 时使用 -->
-      <div v-else-if="!isRealMap" class="map__canvas">
+      <!-- 示意地图：没配 provider、或上面两种都失败时的兜底 -->
+      <div v-else class="map__canvas">
         <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" class="map__svg" role="img">
           <rect x="0" y="0" width="1200" height="800" class="map__bg" />
 
@@ -195,11 +322,11 @@ defineExpose({ open })
         </svg>
 
         <div class="map__legend">
-          点击标注选择打卡地点 · 未配置地图 Key，当前为示意地图
+          点击标注选择打卡地点 · 当前为示意地图
         </div>
       </div>
 
-      <div v-if="isRealMap && !mapLoading" class="map__legend">
+      <div v-if="mode !== 'svg' && !mapLoading" class="map__legend">
         点击地图任意位置选择打卡地点
       </div>
 
@@ -216,7 +343,7 @@ defineExpose({ open })
 
 <style scoped lang="less">
 .map {
-  // 地图用自己的配色，不跟页面卡片走：亮色下是浅色底图，暗色下是深蓝灰
+  // 示意地图的配色，暗色下走下面的覆盖
   --map-bg: #e8eef7;
   --map-road: #ffffff;
   --map-road-line: #dbe3ee;
@@ -234,6 +361,7 @@ defineExpose({ open })
     height: 100%;
     overflow: hidden;
     border-radius: var(--atlas-radius-sm);
+    background: var(--atlas-surface-soft);
   }
 
   &__loading {
@@ -371,6 +499,12 @@ defineExpose({ open })
 
 <!-- 暗色底图配色写在非 scoped 块里：scoped + :global 会被 less 压成 html.dark，丢掉选择器 -->
 <style lang="less">
+/* 暗色下真实地图压一点亮度，否则一整块亮底图糊在深色弹窗里很刺眼 */
+html.dark .map__real canvas,
+html[data-vxe-ui-theme='dark'] .map__real canvas {
+  filter: brightness(0.84) contrast(1.04) saturate(0.92);
+}
+
 html.dark .map,
 html[data-vxe-ui-theme='dark'] .map {
   --map-bg: #151a24;
