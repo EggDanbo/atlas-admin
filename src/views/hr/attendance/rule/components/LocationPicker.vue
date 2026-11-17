@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ModalInst } from '@/components/SpModal'
-import { hasAMapKey, loadAMap } from '@/utils/amap'
 import { gaodeTileLayer } from '@/utils/map'
 import toast from '@/utils/toast'
 import 'ol/ol.css'
@@ -35,20 +34,10 @@ const modalRef = ref<ModalInst | null>(null)
 const picked = ref<LocationPoint | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
 
-/** ol = OpenLayers 拉瓦片（默认，不需要 Key）；amap = 高德 SDK（需要 Key）；svg = 示意地图 */
-const provider = (import.meta.env.VITE_MAP_PROVIDER || 'ol').toLowerCase()
+/** 用 OpenLayers 直接拉瓦片；万一地图库或瓦片挂了，退回内置的示意地图 */
 const renderFailed = ref(false)
 const mapLoading = ref(false)
-
-const mode = computed<'ol' | 'amap' | 'svg'>(() => {
-  if (renderFailed.value)
-    return 'svg'
-  if (provider === 'amap')
-    return hasAMapKey() ? 'amap' : 'svg'
-  if (provider === 'ol')
-    return 'ol'
-  return 'svg'
-})
+const mode = computed<'ol' | 'svg'>(() => (renderFailed.value ? 'svg' : 'ol'))
 
 let olMap: any = null
 let markerSource: any = null
@@ -56,9 +45,6 @@ let markerSource: any = null
 let OlFeatureCtor: any = null
 let OlPointCtor: any = null
 let olFromLonLat: ((coord: number[]) => number[]) | null = null
-let amap: any = null
-let amapMarker: any = null
-let geocoder: any = null
 
 function open(current?: LocationPoint | null) {
   picked.value = current ?? null
@@ -73,8 +59,6 @@ function open(current?: LocationPoint | null) {
 
   if (mode.value === 'ol')
     nextTick(() => initOlMap())
-  else if (mode.value === 'amap')
-    nextTick(() => initAMap())
 }
 
 function pick(point: LocationPoint) {
@@ -164,65 +148,6 @@ function setOlMarker(lng: number, lat: number) {
   markerSource.addFeature(new OlFeatureCtor({ geometry: new OlPointCtor(olFromLonLat!([lng, lat])) }))
 }
 
-/* ==================== 高德 SDK ==================== */
-
-async function initAMap() {
-  if (!mapEl.value || amap)
-    return
-
-  mapLoading.value = true
-  try {
-    const AMap = await loadAMap(import.meta.env.VITE_MAP_KEY)
-    geocoder = new AMap.Geocoder({ radius: 200, extensions: 'all' })
-    amap = new AMap.Map(mapEl.value, {
-      zoom: 14,
-      center: [picked.value?.lng ?? 116.404, picked.value?.lat ?? 39.915],
-      viewMode: '2D',
-    })
-
-    if (picked.value?.lng && picked.value?.lat)
-      setAmapMarker(picked.value.lng, picked.value.lat)
-
-    amap.on('click', (event: any) => {
-      const lng = Number(event.lnglat.getLng().toFixed(6))
-      const lat = Number(event.lnglat.getLat().toFixed(6))
-      setAmapMarker(lng, lat)
-      geocoder.getAddress([lng, lat], (status: string, result: any) => {
-        if (status === 'complete' && result?.regeocode) {
-          const info = result.regeocode
-          picked.value = {
-            id: `${lng},${lat}`,
-            name: info.pois?.[0]?.name || info.formattedAddress || '自定义位置',
-            address: info.formattedAddress || `${lat}, ${lng}`,
-            lng,
-            lat,
-          }
-        }
-        else {
-          picked.value = describe(lng, lat)
-        }
-      })
-    })
-  }
-  catch (error) {
-    renderFailed.value = true
-    amap = null
-    toast.warning(`${(error as Error).message || '地图加载失败'}，已切换为示意地图`)
-  }
-  finally {
-    mapLoading.value = false
-  }
-}
-
-function setAmapMarker(lng: number, lat: number) {
-  if (!amap)
-    return
-  if (amapMarker)
-    amapMarker.setPosition([lng, lat])
-  else
-    amapMarker = new (window as any).AMap.Marker({ position: [lng, lat], map: amap })
-}
-
 /* ==================== 公共 ==================== */
 
 /** 没有后端地理编码服务时，就近匹配预置地点 */
@@ -266,13 +191,13 @@ defineExpose({ open })
 <template>
   <SpModal ref="modalRef" @ok="handleOk">
     <div class="map" :class="`is-${mode}`">
-      <!-- 真实地图：OpenLayers 拉瓦片（默认）或高德 SDK -->
-      <div v-if="mode !== 'svg'" ref="mapEl" class="map__real" />
-      <div v-if="mode !== 'svg' && mapLoading" class="map__loading">
+      <!-- 真实地图：OpenLayers 拉高德瓦片，不需要 Key -->
+      <div v-if="mode === 'ol'" ref="mapEl" class="map__real" />
+      <div v-if="mode === 'ol' && mapLoading" class="map__loading">
         地图加载中…
       </div>
 
-      <!-- 示意地图：没配 provider、或上面两种都失败时的兜底 -->
+      <!-- 示意地图：地图库加载失败时的兜底 -->
       <div v-else class="map__canvas">
         <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" class="map__svg" role="img">
           <rect x="0" y="0" width="1200" height="800" class="map__bg" />
@@ -326,7 +251,7 @@ defineExpose({ open })
         </div>
       </div>
 
-      <div v-if="mode !== 'svg' && !mapLoading" class="map__legend">
+      <div v-if="mode === 'ol' && !mapLoading" class="map__legend">
         点击地图任意位置选择打卡地点
       </div>
 

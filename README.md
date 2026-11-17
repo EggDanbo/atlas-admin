@@ -266,16 +266,14 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 
 考勤规则的「其他参数」里可以校验打卡地点，点「地图选点」打开 90vw×90vh 的地图弹窗：
 
-地图有三种模式，由 `VITE_MAP_PROVIDER` 决定：
+地图用 [OpenLayers](https://openlayers.org/) 直接按 XYZ 拉高德瓦片（`webrd` 路网样式），
+**不需要申请 Key、不需要任何环境变量配置**，和 `aio-pc` 的 `tencentTileLayer` 是同一套做法：
 
-| 取值 | 说明 | 是否需要 Key |
-| --- | --- | --- |
-| `ol`（默认） | OpenLayers 直接按 XYZ 拉高德瓦片，和 `aio-pc` 的 `tencentTileLayer` 同一套做法 | 否 |
-| `amap` | 高德 JS API 2.0，能力最全（POI 搜索、路况） | 是（`VITE_MAP_KEY`） |
-| 其它 / 失败 | 内置示意地图（SVG 画的河 / 路 / 街区 + 6 个标注） | 否 |
-
-三种模式回传的数据结构一致（`name / address / lng / lat`），保存时一并落库；
-渲染失败会自动降级到示意地图，不会卡在空白弹窗里。
+- 点地图任意位置落点，marker 跟随，左下角显示「地点名 / 地址」；
+- `ol` 按需动态引入（单独 chunk），不进主包；
+- 地图库或瓦片异常时自动降级到内置示意地图（SVG 画的河 / 路 / 街区 + 6 个标注），
+  不会卡在空白弹窗里；
+- 回传数据结构统一为 `name / address / lng / lat`，保存时一并落库。
 
 ### 打卡地点地图
 
