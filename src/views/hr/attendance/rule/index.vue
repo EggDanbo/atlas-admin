@@ -59,6 +59,18 @@ function effectiveTagType(state: string) {
   return 'default'
 }
 
+/** 班次时间列的第二行：班次数 / 排班人数 / 弹性，有哪个说哪个 */
+function shiftHint(row: Recordable) {
+  const parts: string[] = []
+  if (row.shift_count > 1)
+    parts.push(`${row.shift_count} 个班次`)
+  if (row.attendance_mode === '排班制')
+    parts.push(`${row.member_count ?? 0} 人排班`)
+  else if (row.flex_minutes)
+    parts.push(`弹性 ${row.flex_minutes} 分钟`)
+  return parts.join(' · ')
+}
+
 function modeTagType(mode: string) {
   if (mode === '固定班次')
     return 'info'
@@ -169,12 +181,7 @@ export default { name: 'HrAttendanceRule' }
           <template #workTime="{ row }">
             <div class="rule-time">
               <span class="rule-time__main">{{ row.work_time }}</span>
-              <span v-if="row.attendance_mode === '排班制'" class="rule-time__flex">
-                共 {{ row.shift_count }} 个班次
-              </span>
-              <span v-else-if="row.flex_minutes" class="rule-time__flex">
-                弹性 {{ row.flex_minutes }} 分钟
-              </span>
+              <span v-if="shiftHint(row)" class="rule-time__flex">{{ shiftHint(row) }}</span>
             </div>
           </template>
 

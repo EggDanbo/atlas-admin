@@ -217,14 +217,20 @@ function buildAttendanceRules(employees: Employee[]) {
   const today = toDateString(dateOffset(0))
   const tomorrow = toDateString(dateOffset(1))
 
+  interface ShiftSeed {
+    name: string
+    start: string
+    end: string
+    rest: string
+    /** 固定班次：这个班次上哪几天；排班制不看它 */
+    work_days?: number[]
+  }
+
   interface RuleSeed {
     name: string
     mode: string
     depts: string[]
-    days: string
-    start: string
-    end: string
-    rest: string
+    /** 固定班次的弹性分钟，0 表示不弹性 */
     flex: number
     hours: number
     late: number
@@ -232,47 +238,194 @@ function buildAttendanceRules(employees: Employee[]) {
     state: string
     date: string
     utime: string
-    /** 排班制才有：班次库 */
-    shifts?: { name: string, start: string, end: string }[]
+    shifts: ShiftSeed[]
+    /** 排班制：参与排班的人 */
+    members?: string[]
   }
 
   const seeds: RuleSeed[] = [
-    { name: '总部标准班次', mode: '固定班次', depts: ['综合管理部', '财务管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-10-21 09:12' },
-    { name: '研发弹性班次', mode: '固定班次', depts: ['技术研发部'], days: '周一至周五', start: '10:00', end: '19:00', rest: '13:00-14:00', flex: 30, hours: 8, late: 30, early: 5, state: '立即生效', date: today, utime: '2026-10-18 16:40' },
-    { name: '销售外勤工时', mode: '自由工时', depts: ['市场运营部'], days: '周一至周六', start: '09:30', end: '18:30', rest: '12:00-13:00', flex: 60, hours: 8, late: 60, early: 30, state: '明日生效', date: tomorrow, utime: '2026-11-15 10:05' },
-    { name: '供应链轮班制', mode: '排班制', depts: ['采购供应部'], days: '按排班表', start: '08:00', end: '17:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 10, early: 10, state: '立即生效', date: today, utime: '2026-09-30 11:05', shifts: [{ name: '早班', start: '08:00', end: '17:00' }, { name: '中班', start: '12:00', end: '21:00' }, { name: '晚班', start: '22:00', end: '06:00' }] },
-    { name: '生产两班倒', mode: '排班制', depts: ['生产制造部'], days: '按排班表', start: '08:00', end: '20:00', rest: '12:00-13:00', flex: 0, hours: 11, late: 10, early: 10, state: '指定日期', date: toDateString(dateOffset(26)), utime: '2026-11-12 14:30', shifts: [{ name: '白班', start: '08:00', end: '20:00' }, { name: '夜班', start: '20:00', end: '08:00' }] },
-    { name: '质量检验排班', mode: '排班制', depts: ['质量管理部'], days: '按排班表', start: '07:30', end: '16:30', rest: '11:30-12:30', flex: 0, hours: 8, late: 5, early: 5, state: '立即生效', date: today, utime: '2026-08-08 09:00', shifts: [{ name: '早班', start: '07:30', end: '16:30' }, { name: '中班', start: '15:00', end: '23:30' }] },
-    { name: '实习生标准班', mode: '固定班次', depts: ['人力资源部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 0, hours: 8, late: 5, early: 5, state: '暂不生效', date: '', utime: '2026-11-14 17:20' },
-    { name: '远程办公工时', mode: '自由工时', depts: ['综合管理部'], days: '周一至周五', start: '09:00', end: '18:00', rest: '12:00-13:00', flex: 120, hours: 8, late: 120, early: 60, state: '暂不生效', date: '', utime: '2026-11-16 09:45' },
+    {
+      name: '总部标准班次',
+      mode: '固定班次',
+      depts: ['综合管理部', '财务管理部'],
+      flex: 0,
+      hours: 8,
+      late: 5,
+      early: 5,
+      state: '立即生效',
+      date: today,
+      utime: '2026-10-21 09:12',
+      shifts: [{ name: '标准班', start: '09:00', end: '18:00', rest: '12:00-13:00', work_days: [1, 2, 3, 4, 5] }],
+    },
+    {
+      name: '研发弹性班次',
+      mode: '固定班次',
+      depts: ['技术研发部'],
+      flex: 30,
+      hours: 8,
+      late: 30,
+      early: 5,
+      state: '立即生效',
+      date: today,
+      utime: '2026-10-18 16:40',
+      // 固定班次也能有多个：工作日错开，每天最多被一个班次占用
+      shifts: [
+        { name: '弹性班', start: '10:00', end: '19:00', rest: '13:00-14:00', work_days: [1, 2, 3, 4, 5] },
+        { name: '周六值班', start: '10:00', end: '16:00', rest: '13:00-14:00', work_days: [6] },
+      ],
+    },
+    {
+      name: '销售外勤工时',
+      mode: '自由工时',
+      depts: ['市场运营部'],
+      flex: 60,
+      hours: 8,
+      late: 60,
+      early: 30,
+      state: '明日生效',
+      date: tomorrow,
+      utime: '2026-11-15 10:05',
+      shifts: [{ name: '外勤班', start: '09:30', end: '18:30', rest: '12:00-13:00' }],
+    },
+    {
+      name: '供应链轮班制',
+      mode: '排班制',
+      depts: ['采购供应部'],
+      flex: 0,
+      hours: 8,
+      late: 10,
+      early: 10,
+      state: '立即生效',
+      date: today,
+      utime: '2026-09-30 11:05',
+      shifts: [
+        { name: '早班', start: '08:00', end: '17:00', rest: '12:00-13:00' },
+        { name: '中班', start: '12:00', end: '21:00', rest: '16:00-17:00' },
+        { name: '晚班', start: '22:00', end: '06:00', rest: '01:30-02:30' },
+      ],
+    },
+    {
+      name: '生产两班倒',
+      mode: '排班制',
+      depts: ['生产制造部'],
+      flex: 0,
+      hours: 11,
+      late: 10,
+      early: 10,
+      state: '指定日期',
+      date: toDateString(dateOffset(26)),
+      utime: '2026-11-12 14:30',
+      shifts: [
+        { name: '白班', start: '08:00', end: '20:00', rest: '12:00-13:00' },
+        { name: '夜班', start: '20:00', end: '08:00', rest: '00:00-01:00' },
+      ],
+    },
+    {
+      name: '质量检验排班',
+      mode: '排班制',
+      depts: ['质量管理部'],
+      flex: 0,
+      hours: 8,
+      late: 5,
+      early: 5,
+      state: '立即生效',
+      date: today,
+      utime: '2026-08-08 09:00',
+      shifts: [
+        { name: '早班', start: '07:30', end: '16:30', rest: '11:30-12:30' },
+        { name: '中班', start: '15:00', end: '23:30', rest: '18:00-19:00' },
+      ],
+    },
+    {
+      name: '实习生标准班',
+      mode: '固定班次',
+      depts: ['人力资源部'],
+      flex: 0,
+      hours: 8,
+      late: 5,
+      early: 5,
+      state: '暂不生效',
+      date: '',
+      utime: '2026-11-14 17:20',
+      shifts: [{ name: '标准班', start: '09:00', end: '18:00', rest: '12:00-13:00', work_days: [1, 2, 3, 4, 5] }],
+    },
+    {
+      name: '远程办公工时',
+      mode: '自由工时',
+      depts: ['综合管理部'],
+      flex: 120,
+      hours: 8,
+      late: 120,
+      early: 60,
+      state: '暂不生效',
+      date: '',
+      utime: '2026-11-16 09:45',
+      shifts: [{ name: '远程班', start: '09:00', end: '18:00', rest: '12:00-13:00' }],
+    },
   ]
 
-  return seeds.map((seed, index) => ({
-    id: `HR${String(index + 1).padStart(4, '0')}`,
-    rule_name: seed.name,
-    attendance_mode: seed.mode,
-    apply_dept: seed.depts.join('、'),
-    work_days_text: seed.days,
-    work_time: `${seed.start} - ${seed.end}`,
-    rest_time: seed.rest,
-    flex_text: seed.flex ? `弹性 ${seed.flex} 分钟` : '不弹性',
-    // 下面三个是表单回填用的原始值，列表不展示
-    flex_minutes: seed.flex,
-    standard_hours: seed.hours,
-    late_limit: seed.late,
-    early_limit: seed.early,
-    start_time: seed.start,
-    end_time: seed.end,
-    // 排班制的班次库：谁上哪个班由排班表决定，这里只存有哪几种班
-    shifts: seed.shifts ?? [],
-    shift_count: (seed.shifts ?? []).length,
-    handover_minutes: seed.shifts ? 30 : 0,
-    // 覆盖人数按部门在职人数实时汇算，改部门时数字才对得上
-    member_total: active.filter(item => seed.depts.includes(item.dept_name)).length,
-    effective_state: seed.state,
-    effective_date: seed.date,
-    utime: seed.utime,
-  }))
+  /** 排班表：未来两周按人轮流排班，休息日和班次交替 */
+  function buildAssignments(members: string[], shiftNames: string[]) {
+    const rows: { member: string, date: string, shift: string }[] = []
+    members.forEach((member, memberIndex) => {
+      for (let offset = 0; offset < 14; offset++) {
+        const date = toDateString(dateOffset(offset))
+        const weekday = new Date(date).getDay()
+        // 周末给一部分人排休息，工作日正常轮班
+        const rest = weekday === 0 || (weekday === 6 && memberIndex % 2 === 0)
+        const name = rest ? '休息' : shiftNames[(memberIndex + offset) % shiftNames.length]!
+        rows.push({ member, date, shift: name })
+      }
+    })
+    return rows
+  }
+
+  return seeds.map((seed, index) => {
+    const members = seed.members ?? active.filter(item => seed.depts.includes(item.dept_name)).slice(0, 6).map(item => item.employee_name)
+    const shiftNames = seed.shifts.map(item => item.name)
+    const assignments = seed.mode === '排班制' ? buildAssignments(members, shiftNames) : []
+    const first = seed.shifts[0]
+    const workDays = seed.mode === '排班制'
+      ? '按排班表'
+      : workDaysLabel(first?.work_days ?? [])
+    return {
+      id: `HR${String(index + 1).padStart(4, '0')}`,
+      rule_name: seed.name,
+      attendance_mode: seed.mode,
+      apply_dept: seed.depts.join('、'),
+      work_days_text: workDays,
+      work_time: first ? `${first.start} - ${first.end}` : '按排班表',
+      rest_time: first?.rest ?? '不休息',
+      flex_text: seed.flex ? `弹性 ${seed.flex} 分钟` : '不弹性',
+      flex_minutes: seed.flex,
+      standard_hours: seed.hours,
+      late_limit: seed.late,
+      early_limit: seed.early,
+      shifts: seed.shifts,
+      shift_count: seed.shifts.length,
+      members: seed.mode === '排班制' ? members : [],
+      member_count: seed.mode === '排班制' ? members.length : 0,
+      assignments,
+      assignment_count: assignments.length,
+      handover_minutes: seed.mode === '排班制' ? 30 : 0,
+      member_total: active.filter(item => seed.depts.includes(item.dept_name)).length,
+      effective_state: seed.state,
+      effective_date: seed.date,
+      utime: seed.utime,
+    }
+  })
+}
+
+/** [1,2,3,4,5] → 周一至周五 */
+function workDaysLabel(days: number[]) {
+  if (!days.length)
+    return '—'
+  const names = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日']
+  const sorted = [...days].sort((a, b) => a - b)
+  const continuous = sorted.every((value, index) => index === 0 || value === sorted[index - 1]! + 1)
+  if (continuous && sorted.length > 2)
+    return `${names[sorted[0]!]}至${names[sorted.at(-1)!]}`
+  return sorted.map(day => names[day]).join('、')
 }
 
 function dataset(): HrDataset {

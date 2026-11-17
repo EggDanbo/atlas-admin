@@ -1,4 +1,38 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from './support/fixtures'
+
+/**
+ * 打开「新增规则」弹窗
+ *
+ * 首屏 chunk 刚执行完时，按钮已经渲染但事件可能还没挂上，
+ * 第一次点击会落空。这里点一次没反应就再点一次，避免偶发失败。
+ */
+async function openEditForm(page: Page, index = 0) {
+  const form = page.locator('.rule-form__body:visible')
+  const buttons = page.getByRole('button', { name: /编\s*辑/ })
+  await expect.poll(async () => {
+    if (await form.count())
+      return true
+    await buttons.nth(index).click()
+    await page.waitForTimeout(500)
+    return (await form.count()) > 0
+  }, { timeout: 20_000 }).toBe(true)
+  return form
+}
+
+async function openCreateForm(page: Page) {
+  const form = page.locator('.rule-form__body:visible')
+  const button = page.getByRole('button', { name: '新增规则' })
+  await expect(button).toBeEnabled()
+  await expect.poll(async () => {
+    if (await form.count())
+      return true
+    await button.click()
+    await page.waitForTimeout(500)
+    return (await form.count()) > 0
+  }, { timeout: 20_000 }).toBe(true)
+  return form
+}
 
 /**
  * 考勤规则
@@ -28,8 +62,7 @@ test.describe('考勤规则', () => {
     const form = page.locator('.rule-form__body:visible')
 
     await expect(page.getByRole('button', { name: '新增规则' })).toBeEnabled()
-    await page.getByRole('button', { name: '新增规则' }).click()
-    await expect(form).toBeVisible()
+    await openCreateForm(page)
 
     // 规则名称
     await form.getByPlaceholder('如：总部标准班次').fill('E2E 弹性班次')
@@ -60,8 +93,7 @@ test.describe('考勤规则', () => {
     // 编辑：把生效时间改回立即生效，淡化应该消失。
     // 表格有固定列时会拆成两张表渲染，按行过滤拿不到操作按钮，
     // 新增的行固定在第一行，直接点第一个「编辑」
-    await page.getByRole('button', { name: /编\s*辑/ }).first().click()
-    await expect(form).toBeVisible()
+    await openEditForm(page)
     await form.locator('.eff').click()
     await expect(picker).toBeVisible()
     await picker.locator('.eff-option').filter({ hasText: '立即生效' }).click()
@@ -99,10 +131,27 @@ test.describe('考勤规则', () => {
     await expect(form.locator('.rule-form__shift')).toHaveCount(1)
     await expect(form.locator('.rule-form__shift').first().getByRole('button', { name: /删\s*除/ })).toBeDisabled()
 
-    // 切回固定班次，班次编辑器收起、交接间隔消失
+    // 切回固定班次：班次还在（固定班次同样支持多个），但排班表与交接间隔收起
     await form.locator('.n-radio-button').filter({ hasText: '固定班次' }).click()
-    await expect(form.locator('.rule-form__shift')).toHaveCount(0)
+    await expect(form.getByText('排班表')).toHaveCount(0)
     await expect(form.getByText('交接间隔')).toHaveCount(0)
+  })
+
+  test('固定班次支持多个班次，工作日不能重复占用', async ({ page }) => {
+    const form = await openCreateForm(page)
+
+    // 新建默认一个班次，周一到周五
+    await expect(form.locator('.rule-form__shift')).toHaveCount(1)
+    const first = form.locator('.rule-form__shift').first()
+    await expect(first.locator('.n-checkbox').first()).toHaveClass(/n-checkbox--checked/)
+
+    await form.getByRole('button', { name: '添加班次' }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(2)
+
+    // 第二个班次里，第一个班次已经占掉的周一不能再选，周日还空着
+    const second = form.locator('.rule-form__shift').nth(1)
+    await expect(second.locator('.n-checkbox').first()).toHaveClass(/n-checkbox--disabled/)
+    await expect(second.locator('.n-checkbox').last()).not.toHaveClass(/n-checkbox--disabled/)
   })
 
   test('「指定日期」才出现日期选择', async ({ page }) => {
