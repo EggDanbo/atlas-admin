@@ -154,6 +154,27 @@ test.describe('考勤规则', () => {
     await expect(second.locator('.n-checkbox').last()).not.toHaveClass(/n-checkbox--disabled/)
   })
 
+  test('自由工时只配工时与打卡；排班制自动带出所选部门的人员', async ({ page }) => {
+    const form = await openCreateForm(page)
+
+    // 先选一个部门
+    await form.locator('.n-base-selection').first().click()
+    await page.locator('.n-base-select-option').first().click()
+    await page.keyboard.press('Escape')
+
+    // 自由工时：班次整段消失，换成工时与打卡次数
+    await form.locator('.n-radio-button').filter({ hasText: '自由工时' }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(0)
+    await expect(form.getByText('工时与打卡')).toBeVisible()
+    await expect(form.getByText('每日打卡')).toBeVisible()
+    await expect(form.getByText('班次设置')).toHaveCount(0)
+
+    // 排班制：班次回来，人员按所选部门自动带出
+    await form.locator('.n-radio-button').filter({ hasText: '排班制' }).click()
+    await expect(form.locator('.rule-form__shift')).toHaveCount(1)
+    await expect(form.locator('.rule-form__roster-meta')).toHaveText(/^[1-9]\d* 人/)
+  })
+
   test('「指定日期」才出现日期选择', async ({ page }) => {
     // vxe 弹窗关闭后 DOM 会留在页面里，多个实例并存时只看可见的那个
     const form = page.locator('.rule-form__body:visible')

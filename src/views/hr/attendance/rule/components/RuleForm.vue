@@ -73,6 +73,9 @@ const form = reactive({
   flex: false,
   flexMinutes: 30,
   standardHours: 8,
+  /** 自由工时：每天要打几次卡、最晚几点下班 */
+  freeTimes: 2,
+  latestTime: fromHm('21:00'),
   lateLimit: 5,
   earlyLimit: 5,
   /** 班次库：固定班次每天一个班，排班制按人按天从这里挑 */
@@ -92,6 +95,7 @@ const readonly = computed(() => mode.value === 'view')
 const title = computed(() => ({ create: '新增考勤规则', edit: '编辑考勤规则', view: '考勤规则详情' })[mode.value])
 const isShiftMode = computed(() => form.attendance_mode === '排班制')
 const showFlex = computed(() => form.attendance_mode === '固定班次')
+const isFreeMode = computed(() => form.attendance_mode === '自由工时')
 
 const memberTotal = computed(() =>
   form.depts.reduce((sum, dept) => sum + (deptOptions.value.find(item => item.value === dept)?.count ?? 0), 0),
@@ -205,6 +209,8 @@ function parseDays(text?: string) {
 
 /** 排班人员候选：所选部门里的在职员工 */
 const staffOptions = ref<{ name: string, dept: string }[]>([])
+/** 手动改过人员之后就不再自动带出，避免把用户的选择冲掉 */
+const membersTouched = ref(false)
 const candidateMembers = computed(() =>
   staffOptions.value.filter(item => form.depts.includes(item.dept)).map(item => item.name),
 )
@@ -218,10 +224,27 @@ async function loadStaff() {
   staffOptions.value = (data.list ?? [])
     .filter((item: Recordable) => item.staff_state !== '离职')
     .map((item: Recordable) => ({ name: String(item.employee_name ?? ''), dept: String(item.dept_name ?? '') }))
+  autoFillMembers()
 }
 
+// 部门或模式变了都可能需要带出人员（新建时先选部门再切排班制）
+watch([() => [...form.depts], () => form.attendance_mode], () => autoFillMembers())
+
 /** 多选人员变化的统一入口：被取消的人连同排班记录一起清掉 */
+/** 排班人员默认带出第一个部门的前 10 人，不够就全选 */
+function autoFillMembers() {
+  if (!isShiftMode.value || form.members.length || membersTouched.value)
+    return
+  const firstDept = form.depts[0]
+  if (!firstDept)
+    return
+  const picked = staffOptions.value.filter(item => item.dept === firstDept).slice(0, 10)
+  if (picked.length)
+    form.members = picked.map(item => item.name)
+}
+
 function syncMembers(next: string[]) {
+  membersTouched.value = true
   const removed = form.members.filter(name => !next.includes(name))
   form.members = next
   if (removed.length)
@@ -305,6 +328,8 @@ function reset(row?: Recordable) {
   form.flex = Number(row?.flex_minutes ?? 0) > 0
   form.flexMinutes = Number(row?.flex_minutes ?? 30) || 30
   form.standardHours = Number(row?.standard_hours ?? 8)
+  form.freeTimes = Number(row?.free_times ?? 2)
+  form.latestTime = fromHm(String(row?.latest ?? '')) ?? fromHm('21:00')
   form.lateLimit = Number(row?.late_limit ?? 5)
   form.earlyLimit = Number(row?.early_limit ?? 5)
   form.effectiveMode = String(row?.effective_state ?? '立即生效')
@@ -323,6 +348,7 @@ function reset(row?: Recordable) {
       workDays: Array.isArray(item.work_days) ? item.work_days.map(Number) : [],
     }
   })
+  membersTouched.value = false
   form.members = Array.isArray(row?.members) ? (row.members as string[]).map(String) : []
   form.assignments = Array.isArray(row?.assignments)
     ? (row.assignments as Recordable[]).map(item => ({
@@ -437,6 +463,8 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     flex_text: flexText.value,
     flex_minutes: showFlex.value && form.flex ? form.flexMinutes : 0,
     standard_hours: form.standardHours,
+    free_times: isFreeMode.value ? form.freeTimes : 0,
+    latest: isFreeMode.value ? toHm(form.latestTime) : '',
     late_limit: form.lateLimit,
     early_limit: form.earlyLimit,
     start_time: toHm(form.shifts[0]?.start ?? null),
@@ -477,7 +505,7 @@ defineExpose({ open })
         {{ form.depts.join('、') || '—' }}
       </n-descriptions-item>
 
-      <n-descriptions-item label="班次" :span="2">
+      <n-descriptions-item v-if="!isFreeMode" label="班次" :span="2">
         <div class="rule-form__shift-list">
           <div v-for="(shift, index) in form.shifts" :key="index" class="rule-form__shift-tag">
             <b>{{ shift.name }}</b>
@@ -501,6 +529,12 @@ defineExpose({ open })
       </n-descriptions-item>
       <n-descriptions-item label="标准工时">
         {{ form.standardHours }} 小时
+      </n-descriptions-item>
+      <n-descriptions-item v-if="isFreeMode" label="每日打卡">
+        {{ form.freeTimes }} 次
+      </n-descriptions-item>
+      <n-descriptions-item v-if="isFreeMode" label="最晚下班">
+        {{ toHm(form.latestTime) }}
       </n-descriptions-item>
       <n-descriptions-item v-if="isShiftMode" label="交接间隔">
         {{ form.handoverMinutes }} 分钟
@@ -557,94 +591,115 @@ defineExpose({ open })
           </template>
         </n-form-item-gi>
       </n-grid>
-      <div class="rule-form__group">
-        <span class="rule-form__group-title">班次设置</span>
-      </div>
-
-      <!-- 班次库：一行一个字段，左侧带标题，比横着塞一排好读 -->
-      <div class="rule-form__shifts">
-        <div v-for="(shift, index) in form.shifts" :key="index" class="rule-form__shift">
-          <div class="rule-form__shift-row">
-            <span class="rule-form__shift-label">班次名称</span>
-            <n-input
-              v-model:value="shift.name"
-              placeholder="如：早班"
-              maxlength="10"
-              class="rule-form__shift-name"
-            />
-            <n-button text type="error" :disabled="form.shifts.length <= 1" @click="removeShift(index)">
-              删除
-            </n-button>
-          </div>
-
-          <div class="rule-form__shift-row">
-            <span class="rule-form__shift-label">上下班</span>
-            <n-time-picker v-model:value="shift.start" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
-            <span class="rule-form__unit">至</span>
-            <n-time-picker v-model:value="shift.end" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
-          </div>
-
-          <div class="rule-form__shift-row">
-            <span class="rule-form__shift-label">休息时段</span>
-            <template v-if="shift.restEnabled">
-              <n-time-picker
-                v-model:value="shift.restStart"
-                format="HH:mm"
-                :clearable="false"
-                class="rule-form__shift-time"
-              />
-              <span class="rule-form__unit">至</span>
-              <n-time-picker
-                v-model:value="shift.restEnd"
-                format="HH:mm"
-                :clearable="false"
-                class="rule-form__shift-time"
-              />
-            </template>
-            <span v-else class="rule-form__unit rule-form__unit--muted">不休息</span>
-            <n-switch v-model:value="shift.restEnabled" size="small" class="rule-form__shift-switch" />
-          </div>
-
-          <!-- 固定班次：同一天只能被一个班次占用，被占的置灰 -->
-          <div v-if="!isShiftMode" class="rule-form__shift-row">
-            <span class="rule-form__shift-label">工作日</span>
-            <n-space :size="14">
-              <n-checkbox
-                v-for="item in WEEKDAYS"
-                :key="item.value"
-                :label="item.label"
-                :checked="shift.workDays.includes(item.value)"
-                :disabled="dayLockedBy(item.value, index)"
-                @update:checked="() => toggleShiftDay(index, item.value)"
-              />
-            </n-space>
-          </div>
+      <template v-if="!isFreeMode">
+        <div class="rule-form__group">
+          <span class="rule-form__group-title">班次设置</span>
         </div>
 
-        <n-button text type="primary" class="rule-form__add-shift" @click="addShift">
-          + 添加班次
-        </n-button>
+        <!-- 班次库：一行一个字段，左侧带标题，比横着塞一排好读 -->
+        <div class="rule-form__shifts">
+          <div v-for="(shift, index) in form.shifts" :key="index" class="rule-form__shift">
+            <div class="rule-form__shift-row">
+              <span class="rule-form__shift-label">班次名称</span>
+              <n-input
+                v-model:value="shift.name"
+                placeholder="如：早班"
+                maxlength="10"
+                class="rule-form__shift-name"
+              />
+              <n-button text type="error" :disabled="form.shifts.length <= 1" @click="removeShift(index)">
+                删除
+              </n-button>
+            </div>
 
-        <div v-if="!isShiftMode" class="rule-form__flex-row">
-          <span class="rule-form__shift-label">弹性打卡</span>
-          <n-switch v-model:value="form.flex" size="small" />
-          <template v-if="form.flex">
+            <div class="rule-form__shift-row">
+              <span class="rule-form__shift-label">上下班</span>
+              <n-time-picker v-model:value="shift.start" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
+              <span class="rule-form__unit">至</span>
+              <n-time-picker v-model:value="shift.end" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
+            </div>
+
+            <div class="rule-form__shift-row">
+              <span class="rule-form__shift-label">休息时段</span>
+              <template v-if="shift.restEnabled">
+                <n-time-picker
+                  v-model:value="shift.restStart"
+                  format="HH:mm"
+                  :clearable="false"
+                  class="rule-form__shift-time"
+                />
+                <span class="rule-form__unit">至</span>
+                <n-time-picker
+                  v-model:value="shift.restEnd"
+                  format="HH:mm"
+                  :clearable="false"
+                  class="rule-form__shift-time"
+                />
+              </template>
+              <span v-else class="rule-form__unit rule-form__unit--muted">不休息</span>
+              <n-switch v-model:value="shift.restEnabled" size="small" class="rule-form__shift-switch" />
+            </div>
+
+            <!-- 固定班次：同一天只能被一个班次占用，被占的置灰 -->
+            <div v-if="!isShiftMode" class="rule-form__shift-row">
+              <span class="rule-form__shift-label">工作日</span>
+              <n-space :size="14">
+                <n-checkbox
+                  v-for="item in WEEKDAYS"
+                  :key="item.value"
+                  :label="item.label"
+                  :checked="shift.workDays.includes(item.value)"
+                  :disabled="dayLockedBy(item.value, index)"
+                  @update:checked="() => toggleShiftDay(index, item.value)"
+                />
+              </n-space>
+            </div>
+          </div>
+
+          <n-button class="rule-form__add-shift" @click="addShift">
+            + 添加班次
+          </n-button>
+        </div>
+      </template>
+
+      <!-- 自由工时：不排班次，只定工时和打卡次数 -->
+      <template v-if="isFreeMode">
+        <div class="rule-form__group">
+          <span class="rule-form__group-title">工时与打卡</span>
+        </div>
+        <n-grid :cols="2" :x-gap="18">
+          <n-form-item-gi label="每日工时">
             <n-input-number
-              v-model:value="form.flexMinutes"
-              :min="5"
-              :max="240"
-              :step="5"
+              v-model:value="form.standardHours"
+              :min="1"
+              :max="24"
+              :step="0.5"
               :show-button="false"
               class="rule-form__number"
             >
               <template #suffix>
-                分钟
+                小时
               </template>
             </n-input-number>
-            <span class="rule-form__hint-inline">上下班时间前后各放宽该区间</span>
-          </template>
-        </div>
-      </div>
+          </n-form-item-gi>
+          <n-form-item-gi label="每日打卡">
+            <n-input-number
+              v-model:value="form.freeTimes"
+              :min="1"
+              :max="6"
+              :show-button="false"
+              class="rule-form__number"
+            >
+              <template #suffix>
+                次
+              </template>
+            </n-input-number>
+          </n-form-item-gi>
+          <n-form-item-gi label="最晚下班">
+            <n-time-picker v-model:value="form.latestTime" format="HH:mm" :clearable="false" class="rule-form__time" />
+          </n-form-item-gi>
+        </n-grid>
+      </template>
 
       <!-- 排班表：排班制才有，按人按天排 -->
       <template v-if="isShiftMode">
@@ -725,7 +780,7 @@ defineExpose({ open })
           </n-space>
         </n-form-item-gi>
 
-        <n-form-item-gi label="标准工时">
+        <n-form-item-gi v-if="!isFreeMode" label="标准工时">
           <n-input-number
             v-model:value="form.standardHours"
             :min="1"
@@ -884,8 +939,23 @@ defineExpose({ open })
     padding: 8px 16px 0;
   }
 
+  // 整条虚线按钮：一眼能看出是「往列表里追加」
   &__add-shift {
-    align-self: flex-start;
+    width: 100%;
+    height: 34px;
+    border-style: dashed;
+    border-color: var(--atlas-border-strong);
+    color: var(--atlas-text-secondary);
+
+    &:hover {
+      border-color: var(--atlas-brand);
+      color: var(--atlas-brand);
+      background: var(--atlas-brand-soft);
+    }
+  }
+
+  &__time {
+    width: 160px;
   }
 
   &__roster-bar {

@@ -238,6 +238,9 @@ function buildAttendanceRules(employees: Employee[]) {
     state: string
     date: string
     utime: string
+    /** 自由工时：每天打几次卡、最晚几点下班 */
+    freeTimes?: number
+    latest?: string
     shifts: ShiftSeed[]
     /** 排班制：参与排班的人 */
     members?: string[]
@@ -282,6 +285,8 @@ function buildAttendanceRules(employees: Employee[]) {
       hours: 8,
       late: 60,
       early: 30,
+      freeTimes: 2,
+      latest: '22:00',
       state: '明日生效',
       date: tomorrow,
       utime: '2026-11-15 10:05',
@@ -357,6 +362,8 @@ function buildAttendanceRules(employees: Employee[]) {
       hours: 8,
       late: 120,
       early: 60,
+      freeTimes: 2,
+      latest: '21:30',
       state: '暂不生效',
       date: '',
       utime: '2026-11-16 09:45',
@@ -399,6 +406,8 @@ function buildAttendanceRules(employees: Employee[]) {
       flex_text: seed.flex ? `弹性 ${seed.flex} 分钟` : '不弹性',
       flex_minutes: seed.flex,
       standard_hours: seed.hours,
+      free_times: seed.freeTimes ?? 0,
+      latest: seed.latest ?? '',
       late_limit: seed.late,
       early_limit: seed.early,
       shifts: seed.shifts,
