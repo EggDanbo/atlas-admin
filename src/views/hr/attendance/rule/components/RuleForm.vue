@@ -561,44 +561,52 @@ defineExpose({ open })
         <span class="rule-form__group-title">班次设置</span>
       </div>
 
-      <!-- 班次库：固定班次给每个班次单独勾工作日，排班制只维护班次本身 -->
+      <!-- 班次库：一行一个字段，左侧带标题，比横着塞一排好读 -->
       <div class="rule-form__shifts">
         <div v-for="(shift, index) in form.shifts" :key="index" class="rule-form__shift">
-          <div class="rule-form__shift-main">
+          <div class="rule-form__shift-row">
+            <span class="rule-form__shift-label">班次名称</span>
             <n-input
               v-model:value="shift.name"
-              placeholder="班次名称"
+              placeholder="如：早班"
               maxlength="10"
               class="rule-form__shift-name"
             />
+            <n-button text type="error" :disabled="form.shifts.length <= 1" @click="removeShift(index)">
+              删除
+            </n-button>
+          </div>
+
+          <div class="rule-form__shift-row">
+            <span class="rule-form__shift-label">上下班</span>
             <n-time-picker v-model:value="shift.start" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
             <span class="rule-form__unit">至</span>
             <n-time-picker v-model:value="shift.end" format="HH:mm" :clearable="false" class="rule-form__shift-time" />
+          </div>
 
-            <span class="rule-form__unit rule-form__unit--gap">休息</span>
+          <div class="rule-form__shift-row">
+            <span class="rule-form__shift-label">休息时段</span>
             <template v-if="shift.restEnabled">
               <n-time-picker
                 v-model:value="shift.restStart"
                 format="HH:mm"
                 :clearable="false"
-                class="rule-form__shift-time rule-form__shift-time--rest"
+                class="rule-form__shift-time"
               />
               <span class="rule-form__unit">至</span>
               <n-time-picker
                 v-model:value="shift.restEnd"
                 format="HH:mm"
                 :clearable="false"
-                class="rule-form__shift-time rule-form__shift-time--rest"
+                class="rule-form__shift-time"
               />
             </template>
-            <n-switch v-model:value="shift.restEnabled" size="small" />
-            <n-button text type="error" :disabled="form.shifts.length <= 1" @click="removeShift(index)">
-              删除
-            </n-button>
+            <span v-else class="rule-form__unit rule-form__unit--muted">不休息</span>
+            <n-switch v-model:value="shift.restEnabled" size="small" class="rule-form__shift-switch" />
           </div>
 
           <!-- 固定班次：同一天只能被一个班次占用，被占的置灰 -->
-          <div v-if="!isShiftMode" class="rule-form__shift-days">
+          <div v-if="!isShiftMode" class="rule-form__shift-row">
             <span class="rule-form__shift-label">工作日</span>
             <n-space :size="14">
               <n-checkbox
@@ -618,7 +626,7 @@ defineExpose({ open })
         </n-button>
 
         <div v-if="!isShiftMode" class="rule-form__flex-row">
-          <span class="rule-form__shift-label rule-form__shift-label--wide">弹性打卡</span>
+          <span class="rule-form__shift-label">弹性打卡</span>
           <n-switch v-model:value="form.flex" size="small" />
           <template v-if="form.flex">
             <n-input-number
@@ -802,9 +810,9 @@ defineExpose({ open })
       flex: none;
       width: 104px;
       text-align: right;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       color: var(--atlas-text);
     }
 
@@ -827,55 +835,53 @@ defineExpose({ open })
   &__shift {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 14px 16px;
     border: 1px solid var(--atlas-border);
     border-radius: var(--atlas-radius-sm);
     background: var(--atlas-surface-soft);
   }
 
-  &__shift-main {
+  // 卡片内一行一个字段：左侧标题 + 右侧控件，标题右对齐到同一条线
+  &__shift-row {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-
-  &__shift-name {
-    width: 128px;
-    flex: none;
-  }
-
-  &__shift-time {
-    width: 112px;
-    flex: none;
-
-    &--rest {
-      width: 104px;
-    }
-  }
-
-  &__shift-days {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-top: 2px;
   }
 
   &__shift-label {
     flex: none;
+    width: 88px;
+    margin-right: 6px;
+    text-align: right;
     font-size: 12px;
     color: var(--atlas-text-tertiary);
+  }
 
-    &--wide {
-      width: 60px;
-    }
+  &__shift-switch {
+    margin-left: 6px;
+  }
+
+  &__shift-name {
+    width: 190px;
+    flex: none;
+  }
+
+  // 删除靠卡片右侧，不和名称挤在一起
+  &__shift-row .n-button {
+    margin-left: auto;
+  }
+
+  &__shift-time {
+    width: 128px;
+    flex: none;
   }
 
   &__flex-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding-left: 12px;
+    gap: 8px;
+    padding: 8px 16px 0;
   }
 
   &__add-shift {
@@ -970,6 +976,10 @@ defineExpose({ open })
 
     &--gap {
       margin-left: 10px;
+    }
+
+    &--muted {
+      color: var(--atlas-text-tertiary);
     }
   }
 }
