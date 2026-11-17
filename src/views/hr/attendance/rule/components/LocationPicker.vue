@@ -2,6 +2,7 @@
 import type { ModalInst } from '@/components/SpModal'
 import { gaodeTileLayer } from '@/utils/map'
 import toast from '@/utils/toast'
+import { formatDistance, nearestLandmark } from './landmarks'
 import 'ol/ol.css'
 
 /** 选中的打卡地点 */
@@ -9,6 +10,10 @@ export interface LocationPoint {
   id: string
   name: string
   address: string
+  /** 地名介绍，点完就知道选的是哪儿 */
+  intro?: string
+  /** 距点击点的距离（米），只用于弹窗里展示 */
+  distance?: number
   lng?: number
   lat?: number
   x?: number
@@ -18,17 +23,22 @@ export interface LocationPoint {
 const emit = defineEmits<{ (e: 'confirm', value: LocationPoint): void }>()
 
 /**
- * 预置地点：示意地图用来摆标注，真实地图用来做逆地理编码的近似匹配
- * （演示项目没有后端地理编码服务，就近取一个已知地点，够用且离线可跑）
+ * 示意地图里的标注位置
+ *
+ * 真实地名与介绍统一来自 landmarks，这里只规定它们在示意图上的坐标，
+ * 这样两种地图点出来的结果是一致的。
  */
-const POINTS: LocationPoint[] = [
-  { id: 'hq', name: '总部大厦', address: '北京市朝阳区创新大道 88 号', x: 318, y: 232, lng: 116.404, lat: 39.915 },
-  { id: 'rd', name: '研发中心', address: '北京市海淀区科苑路 12 号 A 座', x: 642, y: 286, lng: 116.43, lat: 39.912 },
-  { id: 'wh', name: '中心仓库', address: '北京市大兴区物流园 3 号库', x: 934, y: 512, lng: 116.45, lat: 39.9 },
-  { id: 'sc', name: '客户服务中心', address: '北京市东城区人民路 205 号', x: 452, y: 566, lng: 116.392, lat: 39.9 },
-  { id: 'pl', name: '生产线一厂', address: '北京市通州区工业大道 7 号', x: 762, y: 636, lng: 116.442, lat: 39.895 },
-  { id: 'br', name: '滨江办事处', address: '北京市西城区滨江路 66 号', x: 208, y: 448, lng: 116.38, lat: 39.905 },
-]
+const SVG_PINS = [
+  { x: 318, y: 232, lng: 116.397, lat: 39.9163 },
+  { x: 642, y: 286, lng: 116.4605, lat: 39.9087 },
+  { x: 934, y: 512, lng: 116.4957, lat: 39.9843 },
+  { x: 452, y: 566, lng: 116.3975, lat: 39.9087 },
+  { x: 762, y: 636, lng: 116.3975, lat: 39.9928 },
+  { x: 208, y: 448, lng: 116.3833, lat: 39.9403 },
+].map((pin) => {
+  const { landmark } = nearestLandmark(pin.lng, pin.lat)
+  return { ...pin, id: landmark.id, name: landmark.name }
+})
 
 const modalRef = ref<ModalInst | null>(null)
 const picked = ref<LocationPoint | null>(null)
@@ -61,8 +71,8 @@ function open(current?: LocationPoint | null) {
     nextTick(() => initOlMap())
 }
 
-function pick(point: LocationPoint) {
-  picked.value = point
+function pick(point: { lng: number, lat: number }) {
+  picked.value = describe(point.lng, point.lat)
 }
 
 /* ==================== OpenLayers ==================== */
@@ -150,25 +160,34 @@ function setOlMarker(lng: number, lat: number) {
 
 /* ==================== 公共 ==================== */
 
-/** 没有后端地理编码服务时，就近匹配预置地点 */
+/**
+ * 点完地图立刻给出「最近的已知地名 + 介绍」
+ *
+ * 演示项目没有逆地理编码服务，用预置地标做最近邻匹配；
+ * 接后端时把这个函数换成 geocode 接口即可，上层不用动。
+ */
 function describe(lng: number, lat: number): LocationPoint {
-  let nearest = POINTS[0]!
-  let min = Number.POSITIVE_INFINITY
-  for (const point of POINTS) {
-    const distance = (point.lng! - lng) ** 2 + (point.lat! - lat) ** 2
-    if (distance < min) {
-      min = distance
-      nearest = point
+  const { landmark, distance } = nearestLandmark(lng, lat)
+
+  // 超出 20 公里认为不在收录范围，只回坐标，避免误导
+  if (distance > 20000) {
+    return {
+      id: `${lng},${lat}`,
+      name: '未收录区域',
+      address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+      intro: '这里暂未收录地名，只记录了坐标。',
+      distance,
+      lng,
+      lat,
     }
   }
-  // 约 3 公里内认为是同一个地点，再远就当自定义位置
-  if (min <= 0.0009) {
-    return { ...nearest, id: `${lng},${lat}`, lng, lat }
-  }
+
   return {
-    id: `${lng},${lat}`,
-    name: '自定义位置',
-    address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+    id: landmark.id,
+    name: landmark.name,
+    address: landmark.address,
+    intro: landmark.intro,
+    distance,
     lng,
     lat,
   }
@@ -232,7 +251,7 @@ defineExpose({ open })
           </g>
 
           <g
-            v-for="point in POINTS"
+            v-for="point in SVG_PINS"
             :key="point.id"
             class="map__pin"
             :class="{ 'is-active': picked?.id === point.id }"
@@ -257,10 +276,16 @@ defineExpose({ open })
 
       <div class="map__picked" :class="{ 'is-empty': !picked }">
         <template v-if="picked">
-          <b>{{ picked.name }}</b>
-          <span>{{ picked.address }}</span>
+          <div class="map__picked-head">
+            <b>{{ picked.name }}</b>
+            <em v-if="picked.distance !== undefined">{{ formatDistance(picked.distance) }}</em>
+          </div>
+          <span class="map__picked-addr">{{ picked.address }}</span>
+          <p v-if="picked.intro" class="map__picked-intro">
+            {{ picked.intro }}
+          </p>
         </template>
-        <span v-else>尚未选择地点</span>
+        <span v-else>点击地图任意位置，这里会显示最近的地名</span>
       </div>
     </div>
   </SpModal>
@@ -402,20 +427,49 @@ defineExpose({ open })
     left: 12px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 8px 14px;
+    gap: 4px;
+    width: 320px;
+    padding: 12px 14px;
     border-radius: var(--atlas-radius-sm);
     font-size: 12px;
     color: var(--atlas-text-secondary);
-    background: color-mix(in srgb, var(--atlas-canvas) 92%, transparent);
-    box-shadow: 0 4px 16px rgb(0 0 0 / 8%);
+    background: color-mix(in srgb, var(--atlas-canvas) 94%, transparent);
+    box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
+    backdrop-filter: blur(6px);
 
-    b {
-      font-size: 14px;
-      color: var(--atlas-text);
+    &-head {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+
+      b {
+        font-size: 15px;
+        color: var(--atlas-text);
+      }
+
+      em {
+        font-style: normal;
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        color: var(--atlas-brand);
+        background: var(--atlas-brand-soft);
+      }
+    }
+
+    &-addr {
+      color: var(--atlas-text-secondary);
+    }
+
+    &-intro {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--atlas-text-tertiary);
     }
 
     &.is-empty {
+      width: auto;
       color: var(--atlas-text-tertiary);
     }
   }

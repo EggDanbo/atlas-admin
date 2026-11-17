@@ -83,6 +83,7 @@ const form = reactive({
   locationAddress: '',
   locationLng: 0,
   locationLat: 0,
+  locationIntro: '',
   checkWifi: false,
   /** MAC 地址按 6 段 2 位存，空字符串表示这格没填 */
   wifi: ['', '', '', '', '', ''] as string[],
@@ -217,9 +218,10 @@ function openLocationPicker() {
   )
 }
 
-function onLocationConfirm(point: { name: string, address: string, lng?: number, lat?: number }) {
+function onLocationConfirm(point: { name: string, address: string, intro?: string, lng?: number, lat?: number }) {
   form.locationName = point.name
   form.locationAddress = point.address
+  form.locationIntro = point.intro ?? ''
   form.locationLng = point.lng ?? 0
   form.locationLat = point.lat ?? 0
 }
@@ -375,6 +377,7 @@ function reset(row?: Recordable) {
   form.locationAddress = String(row?.location_address ?? '')
   form.locationLng = Number(row?.location_lng ?? 0)
   form.locationLat = Number(row?.location_lat ?? 0)
+  form.locationIntro = String(row?.location_intro ?? '')
   form.checkWifi = !!row?.check_wifi
   const mac = String(row?.wifi_mac ?? '').split(':')
   form.wifi = Array.from({ length: 6 }, (_, index) => mac[index] ?? '')
@@ -519,6 +522,7 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     location_address: form.checkLocation ? form.locationAddress : '',
     location_lng: form.checkLocation ? form.locationLng : 0,
     location_lat: form.checkLocation ? form.locationLat : 0,
+    location_intro: form.checkLocation ? form.locationIntro : '',
     check_wifi: form.checkWifi,
     wifi_mac: form.checkWifi ? form.wifi.map(item => item.toUpperCase()).join(':') : '',
     latest: isFreeMode.value ? toHm(form.latestTime) : '',
@@ -604,10 +608,15 @@ defineExpose({ open })
       </n-descriptions-item>
       <n-descriptions-item label="打卡校验" :span="2">
         <div class="rule-form__checks">
-          <span v-if="form.checkLocation" class="rule-form__check">
-            <em>地点</em>{{ form.locationName || '未选择' }}
-            <small>{{ form.locationAddress }}</small>
-          </span>
+          <div v-if="form.checkLocation" class="rule-form__check-block">
+            <span class="rule-form__check">
+              <em>地点</em>{{ form.locationName || '未选择' }}
+              <small>{{ form.locationAddress }}</small>
+            </span>
+            <p v-if="form.locationIntro" class="rule-form__check-intro">
+              {{ form.locationIntro }}
+            </p>
+          </div>
           <span v-if="form.checkWifi" class="rule-form__check">
             <em>Wi-Fi</em>{{ form.wifi.join(':').toUpperCase() }}
           </span>
@@ -1138,6 +1147,19 @@ defineExpose({ open })
       font-size: 12px;
       color: var(--atlas-text-tertiary);
     }
+  }
+
+  &__check-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__check-intro {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--atlas-text-tertiary);
   }
 
   &__check-hint {
