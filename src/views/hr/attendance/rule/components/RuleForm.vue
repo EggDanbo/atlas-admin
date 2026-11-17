@@ -196,7 +196,13 @@ async function open(options: { opt: FormMode, row?: Recordable }) {
   }
   modalRef.value?.setProps({
     title: title.value,
-    width: 860,
+    width: 800,
+    // 表单单比通用记录表单长（班次 + 参数 + 生效三段），给足高度让三组字段
+    // 一屏看完；详情只有一张描述表，高度跟着内容走就行
+    height: readonly.value ? 'auto' : 700,
+    // 表单单比通用记录表单长（班次 + 参数 + 生效三段），给足高度让三组字段
+    // 一屏看完；详情只有一张描述表，高度跟着内容走就行
+    height: readonly.value ? 'auto' : 700,
     showOk: !readonly.value,
     okText: '保存',
     cancelText: readonly.value ? '关闭' : '取消',
@@ -265,7 +271,7 @@ defineExpose({ open })
 </script>
 
 <template>
-  <SpModal ref="modalRef" :width="860" @ok="handleOk">
+  <SpModal ref="modalRef" :width="800" @ok="handleOk">
     <!-- 只读详情 -->
     <n-descriptions v-if="readonly" bordered :column="2" label-placement="left" size="small">
       <n-descriptions-item label="规则名称" :span="2">
@@ -315,11 +321,10 @@ defineExpose({ open })
       v-else
       class="rule-form__body"
       label-placement="left"
-      :label-width="96"
+      :label-width="104"
       size="small"
-      :show-feedback="false"
     >
-      <div class="rule-form__section">
+      <div class="rule-form__group">
         基本信息
       </div>
       <n-grid :cols="2" :x-gap="18">
@@ -336,31 +341,29 @@ defineExpose({ open })
         </n-form-item-gi>
 
         <n-form-item-gi label="适用部门" :span="2">
-          <div class="rule-form__stack">
-            <n-select
-              v-model:value="form.depts"
-              :options="deptOptions"
-              multiple
-              filterable
-              placeholder="选择适用部门，可多选"
-            />
-            <div class="rule-form__hint">
-              覆盖 <b>{{ memberTotal }}</b> 人（按所选部门在职人数汇总）
-            </div>
-          </div>
+          <n-select
+            v-model:value="form.depts"
+            :options="deptOptions"
+            multiple
+            filterable
+            placeholder="选择适用部门，可多选"
+          />
+          <template #feedback>
+            已选 {{ form.depts.length }} 个部门 · 覆盖 {{ memberTotal }} 人
+          </template>
         </n-form-item-gi>
       </n-grid>
 
-      <div class="rule-form__section">
+      <div class="rule-form__group">
         班次设置
       </div>
       <n-grid :cols="2" :x-gap="18">
         <n-form-item-gi label="工作日" :span="2">
-          <div v-if="isShiftMode" class="rule-form__hint rule-form__hint--inline">
+          <div v-if="isShiftMode" class="rule-form__hint">
             排班制按排班表执行，不需要固定工作日
           </div>
           <n-checkbox-group v-else v-model:value="form.days">
-            <n-space :size="16">
+            <n-space :size="18">
               <n-checkbox v-for="item in WEEKDAYS" :key="item.value" :value="item.value" :label="item.label" />
             </n-space>
           </n-checkbox-group>
@@ -379,81 +382,71 @@ defineExpose({ open })
         <n-form-item-gi label="休息结束">
           <n-time-picker v-model:value="form.restEnd" format="HH:mm" class="w-full" placeholder="不休息" />
         </n-form-item-gi>
-
-        <template v-if="showFlex">
-          <n-form-item-gi label="弹性打卡">
-            <n-space align="center" :size="10">
-              <n-switch v-model:value="form.flex" />
-              <n-input-number
-                v-if="form.flex"
-                v-model:value="form.flexMinutes"
-                :min="5"
-                :max="240"
-                :step="5"
-                :show-button="false"
-                class="rule-form__number"
-              />
-              <span v-if="form.flex" class="rule-form__unit">分钟</span>
-            </n-space>
-          </n-form-item-gi>
-          <n-form-item-gi label="标准工时">
-            <n-space align="center" :size="8">
-              <n-input-number
-                v-model:value="form.standardHours"
-                :min="1"
-                :max="24"
-                :step="0.5"
-                :show-button="false"
-                class="rule-form__number"
-              />
-              <span class="rule-form__unit">小时/天</span>
-            </n-space>
-          </n-form-item-gi>
-        </template>
-
-        <n-form-item-gi v-else label="标准工时">
-          <n-space align="center" :size="8">
-            <n-input-number
-              v-model:value="form.standardHours"
-              :min="1"
-              :max="24"
-              :step="0.5"
-              :show-button="false"
-              class="rule-form__number"
-            />
-            <span class="rule-form__unit">小时/天</span>
-          </n-space>
-        </n-form-item-gi>
       </n-grid>
 
-      <div class="rule-form__section">
-        异常判定与生效
+      <div class="rule-form__group">
+        参数与生效
       </div>
       <n-grid :cols="2" :x-gap="18">
-        <n-form-item-gi label="迟到判定">
+        <n-form-item-gi v-if="showFlex" label="弹性打卡">
           <n-space align="center" :size="8">
-            <span class="rule-form__unit">超过</span>
-            <n-input-number v-model:value="form.lateLimit" :min="0" :max="120" :show-button="false" class="rule-form__number" />
-            <span class="rule-form__unit">分钟</span>
+            <n-switch v-model:value="form.flex" />
+            <n-input-number
+              v-if="form.flex"
+              v-model:value="form.flexMinutes"
+              :min="5"
+              :max="240"
+              :step="5"
+              :show-button="false"
+              class="rule-form__number"
+            >
+              <template #suffix>
+                分钟
+              </template>
+            </n-input-number>
           </n-space>
         </n-form-item-gi>
-        <n-form-item-gi label="早退判定">
-          <n-space align="center" :size="8">
-            <span class="rule-form__unit">超过</span>
-            <n-input-number v-model:value="form.earlyLimit" :min="0" :max="120" :show-button="false" class="rule-form__number" />
-            <span class="rule-form__unit">分钟</span>
+
+        <n-form-item-gi label="标准工时">
+          <n-input-number
+            v-model:value="form.standardHours"
+            :min="1"
+            :max="24"
+            :step="0.5"
+            :show-button="false"
+            class="rule-form__number"
+          >
+            <template #suffix>
+              小时
+            </template>
+          </n-input-number>
+        </n-form-item-gi>
+
+        <n-form-item-gi label="异常判定" :span="2">
+          <n-space align="center" :size="10">
+            <span class="rule-form__unit">迟到</span>
+            <n-input-number v-model:value="form.lateLimit" :min="0" :max="120" :show-button="false" class="rule-form__number">
+              <template #suffix>
+                分钟
+              </template>
+            </n-input-number>
+            <span class="rule-form__unit rule-form__unit--gap">早退</span>
+            <n-input-number v-model:value="form.earlyLimit" :min="0" :max="120" :show-button="false" class="rule-form__number">
+              <template #suffix>
+                分钟
+              </template>
+            </n-input-number>
           </n-space>
         </n-form-item-gi>
 
         <n-form-item-gi label="生效时间" :span="2">
-          <EffectivePicker
-            :mode="form.effectiveMode"
-            :date="form.effectiveDate"
-            @update:mode="(value: string) => (form.effectiveMode = value)"
-            @update:date="(value: string) => (form.effectiveDate = value)"
-          />
-          <div class="rule-form__hint">
-            选「暂不生效」的规则会先存进列表，整行淡化显示，需要时再改回来
+          <div class="rule-form__picker">
+            <EffectivePicker
+              :mode="form.effectiveMode"
+              :date="form.effectiveDate"
+              @update:mode="(value: string) => (form.effectiveMode = value)"
+              @update:date="(value: string) => (form.effectiveDate = value)"
+            />
           </div>
         </n-form-item-gi>
       </n-grid>
@@ -463,54 +456,62 @@ defineExpose({ open })
 
 <style lang="less" scoped>
 .rule-form {
-  &__section {
-    margin: 2px 0 10px;
-    padding-left: 8px;
-    border-left: 3px solid var(--atlas-brand);
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 16px;
-    color: var(--atlas-text);
+  &__body {
+    padding-right: 4px;
+  }
 
-    &:not(:first-child) {
-      margin-top: 12px;
+  // 分组标题做成「小字 + 一条延伸到右边的细线」：能分段，又不至于像三个大标题
+  // 把表单切成三块 —— 视觉上仍是一个连续的表单
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--atlas-text-secondary);
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--atlas-divider);
     }
   }
 
   &__hint {
-    margin-top: 4px;
     font-size: 12px;
+    line-height: 32px;
     color: var(--atlas-text-tertiary);
-
-    b {
-      color: var(--atlas-brand);
-      font-weight: 600;
-    }
-
-    &--inline {
-      margin-top: 0;
-      line-height: 32px;
-    }
   }
 
   &__number {
-    width: 92px;
+    width: 110px;
     flex: none;
   }
 
-  &__stack {
-    width: 100%;
+  // 生效时间不是「填内容」而是「选一个开关」，宽度收到和输入框相当即可
+  &__picker {
+    width: 320px;
   }
 
-  &__body {
-    max-height: 58vh;
-    overflow-y: auto;
-    padding-right: 8px;
+  // 生效时间不是「填内容」而是「选一个开关」，宽度收到和输入框相当即可
+  &__picker {
+    width: 320px;
   }
 
   &__unit {
     font-size: 12px;
     color: var(--atlas-text-secondary);
+
+    &--gap {
+      margin-left: 10px;
+    }
   }
 }
 </style>
