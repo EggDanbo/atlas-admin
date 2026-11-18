@@ -15,7 +15,7 @@ import VectorSource from 'ol/source/Vector'
 import XYZ from 'ol/source/XYZ'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
 import View from 'ol/View'
-import { formatDistance, searchByKeyword, searchNearby } from '@/utils/geocode'
+import { formatDistance, hasAmapKey, searchByKeyword, searchNearby, setAmapKey, verifyAmapKey } from '@/utils/geocode'
 import toast from '@/utils/toast'
 import 'ol/ol.css'
 
@@ -46,6 +46,10 @@ const selectedId = ref('')
 const manualName = ref('')
 const keyword = ref('')
 const loading = ref(false)
+/** 数据源：配了高德 Key 就用高德，精度高一个量级 */
+const usingAmap = ref(hasAmapKey())
+const keyInput = ref('')
+const keySaving = ref(false)
 
 const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
 const hasPoint = ref(false)
@@ -253,6 +257,42 @@ function select(item: PlaceCandidate) {
   applyPoint(item.lng, item.lat, { keepSelection: true })
 }
 
+/* ==================== 数据源 ==================== */
+
+async function saveKey() {
+  const value = keyInput.value.trim()
+
+  if (!value) {
+    setAmapKey('')
+    usingAmap.value = false
+    toast.success('已切回 OpenStreetMap 数据')
+    reloadCandidates()
+    return
+  }
+
+  keySaving.value = true
+  try {
+    const result = await verifyAmapKey(value)
+    if (!result.ok) {
+      toast.error(result.message)
+      return
+    }
+    setAmapKey(value)
+    usingAmap.value = true
+    keyInput.value = ''
+    toast.success('已切换到高德数据，地名会精确到门牌')
+    reloadCandidates()
+  }
+  finally {
+    keySaving.value = false
+  }
+}
+
+function reloadCandidates() {
+  if (hasPoint.value)
+    loadNearby(current.value.lng, current.value.lat)
+}
+
 /* ==================== 确定 ==================== */
 
 function confirm() {
@@ -321,6 +361,43 @@ defineExpose({ open })
           {{ current.lng.toFixed(5) }}, {{ current.lat.toFixed(5) }}
         </span>
 
+        <n-popover trigger="click" placement="bottom-end" :width="340">
+          <template #trigger>
+            <n-button text type="primary" size="small" class="picker__source">
+              <template #icon>
+                <Icon :icon="usingAmap ? 'ant-design:check-circle-filled' : 'ant-design:info-circle-outlined'" />
+              </template>
+              {{ usingAmap ? '高德数据' : 'OSM 数据' }}
+            </n-button>
+          </template>
+
+          <div class="source">
+            <p class="source__title">
+              地名数据源
+            </p>
+            <p class="source__desc">
+              <template v-if="usingAmap">
+                当前走高德，门牌级地址 + 周边 POI。
+              </template>
+              <template v-else>
+                当前走 OpenStreetMap 免费服务，国内 POI 覆盖有限，只能到街区 / 路名。
+                填一个高德「Web 服务」Key 即可精确到门牌，免费额度够日常使用。
+              </template>
+            </p>
+            <n-input-group>
+              <n-input v-model:value="keyInput" placeholder="粘贴高德 Web 服务 Key" size="small" />
+              <n-button type="primary" ghost size="small" :loading="keySaving" @click="saveKey">
+                {{ keyInput.trim() ? '保存' : '清除' }}
+              </n-button>
+            </n-input-group>
+            <p class="source__foot">
+              在
+              <a href="https://console.amap.com/dev/key/app" target="_blank" rel="noreferrer">高德控制台</a>
+              创建应用时，服务平台选「Web 服务」
+            </p>
+          </div>
+        </n-popover>
+
         <div class="picker__actions">
           <n-button @click="close">
             取消
@@ -350,7 +427,8 @@ defineExpose({ open })
           </div>
           <div v-else-if="!candidates.length" class="picker__empty">
             这里没查到地名。<br>
-            可以直接点确定保存坐标，或手动填一个名字。
+            可以直接点确定保存坐标，或手动填一个名字。<br>
+            <em v-if="!usingAmap">配一个高德 Key 能显著提升命中率</em>
           </div>
           <ul v-else class="place-list">
             <li
@@ -417,6 +495,11 @@ defineExpose({ open })
     font-size: 12px;
     font-variant-numeric: tabular-nums;
     color: var(--atlas-text-tertiary);
+  }
+
+  &__source {
+    font-size: 12px;
+    font-weight: 400;
   }
 
   &__actions {
@@ -505,6 +588,41 @@ defineExpose({ open })
     padding-top: 10px;
     border-top: 1px solid var(--atlas-border);
   }
+}
+
+.source {
+  padding: 4px 2px;
+
+  &__title {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--atlas-text);
+  }
+
+  &__desc {
+    margin: 0 0 10px;
+    font-size: 12px;
+    line-height: 1.65;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__foot {
+    margin: 8px 0 0;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--atlas-text-tertiary);
+
+    a {
+      color: var(--atlas-brand);
+      text-decoration: none;
+    }
+  }
+}
+
+.picker__empty em {
+  font-style: normal;
+  color: var(--atlas-brand);
 }
 
 .place-list {
