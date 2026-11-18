@@ -97,10 +97,8 @@ function pick(point: { lng: number, lat: number }) {
         return
 
       // 查不到就保留本地地标的结果，不把面板清空
-      if (!result) {
-        locating.value = false
+      if (!result)
         return
-      }
 
       const near = nearestLandmark(result.lng, result.lat)
       picked.value = {
@@ -114,10 +112,14 @@ function pick(point: { lng: number, lat: number }) {
         lng: point.lng,
         lat: point.lat,
       }
-      locating.value = false
     })
     .catch(() => {
-      locating.value = false
+      // 网络异常同样保留本地结果
+    })
+    .finally(() => {
+      // 被后来的点击取代时不要动状态，否则会把新请求的 loading 关掉
+      if (pendingAbort === controller)
+        locating.value = false
     })
 }
 
@@ -213,13 +215,13 @@ function setOlMarker(lng: number, lat: number) {
 function describe(lng: number, lat: number): LocationPoint {
   const { landmark, distance } = nearestLandmark(lng, lat)
 
-  // 超出 20 公里认为不在收录范围，只回坐标，避免误导
-  if (distance > 20000) {
+  // 只有真的贴近这个地标才用它的名字；离着 1 公里还硬套就是张冠李戴
+  if (distance <= 800) {
     return {
-      id: `${lng},${lat}`,
-      name: '未收录区域',
-      address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
-      intro: '这里暂未收录地名，只记录了坐标。',
+      id: landmark.id,
+      name: landmark.name,
+      address: landmark.address,
+      intro: landmark.intro,
       distance,
       lng,
       lat,
@@ -227,10 +229,10 @@ function describe(lng: number, lat: number): LocationPoint {
   }
 
   return {
-    id: landmark.id,
-    name: landmark.name,
-    address: landmark.address,
-    intro: landmark.intro,
+    id: `${lng},${lat}`,
+    name: '未识别地点',
+    address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+    intro: '暂时没解析出这里的名字，可以在表单里手动填写。',
     distance,
     lng,
     lat,
