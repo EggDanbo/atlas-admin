@@ -1,143 +1,151 @@
 /**
- * 逆地理编码
+ * 地点检索（逆地理 + 关键字搜索）
  *
- * 同时打两个免费的 OSM 服务，谁先给出「具体地名」用谁：
- * - Photon（komoot）偏向返回 POI 名称，点学校就是学校、点酒店就是酒店；
- * - Nominatim 偏向返回行政区划层级，用来补地址。
+ * 数据来自免费的 OSM 服务，都不需要 Key：
+ * - Photon（komoot）：按距离返回附近多个 POI，点完能给一串候选让人挑；
+ * - Nominatim：兜底，返回地址层级。
  *
- * 两者都免 Key。公共实例有频率限制，演示项目够用；上生产建议自建或换付费服务，
- * 只需要替换 reverseGeocode 的实现，上层不用动。
+ * 关键设计：逆地理不「猜一个」，而是返回候选列表 —— 点在自忠小学，
+ * 列表里就有那一带的真实地名，用户点哪个就是哪个，不会张冠李戴。
+ *
+ * 公共实例有频率限制，演示项目够用；上生产建议自建或换付费服务，
+ * 只需替换本文件的实现，上层不用动。
  */
-export interface ReverseResult {
-  /** 主名称：具体的 POI 名，没有则退到道路 / 街区 */
+export interface PlaceCandidate {
+  id: string
   name: string
-  /** 从大到小的地址 */
   address: string
-  /** 命中要素的中心坐标，用于算「离点击点多远」 */
   lng: number
   lat: number
-  /** 结果来源，排查问题时有用 */
-  source: 'photon' | 'nominatim'
+  /** 距查询点的距离（米） */
+  distance: number
+  source: 'photon' | 'nominatim' | 'local'
 }
 
-const PHOTON = 'https://photon.komoot.io/reverse'
-const NOMINATIM = 'https://nominatim.openstreetmap.org/reverse'
+const PHOTON = 'https://photon.komoot.io'
+const NOMINATIM = 'https://nominatim.openstreetmap.org'
 
-/** 同一个点附近反复点击时直接用上次结果，少打几次公共接口 */
-const cache = new Map<string, ReverseResult>()
-const CACHE_KEY_PRECISION = 4
+/** 同名结果去重用的缓存：同一坐标反复点击不再打公共接口 */
+const nearbyCache = new Map<string, PlaceCandidate[]>()
+const CACHE_PRECISION = 4
 
-export async function reverseGeocode(
+/** 附近有哪些地方：逆地理返回候选列表 */
+export async function searchNearby(
   lng: number,
   lat: number,
-  options: { signal?: AbortSignal, timeout?: number } = {},
-): Promise<ReverseResult | null> {
-  const { signal, timeout = 8000 } = options
+  options: { limit?: number, signal?: AbortSignal, timeout?: number } = {},
+): Promise<PlaceCandidate[]> {
+  const { limit = 8, signal, timeout = 8000 } = options
 
-  const key = `${lng.toFixed(CACHE_KEY_PRECISION)},${lat.toFixed(CACHE_KEY_PRECISION)}`
-  const hit = cache.get(key)
+  const key = `${lng.toFixed(CACHE_PRECISION)},${lat.toFixed(CACHE_PRECISION)},${limit}`
+  const hit = nearbyCache.get(key)
   if (hit)
     return hit
 
-  const attempt = () => Promise.any([
-    withTimeout(photonReverse(lng, lat, signal), timeout),
-    withTimeout(nominatimReverse(lng, lat, signal), timeout),
-  ])
+  const attempt = async () => {
+    const list = await photonNearby(lng, lat, limit, signal, timeout)
+    if (list.length)
+      return list
+    // Photon 这一带没数据时用 Nominatim 拼一条出来
+    const single = await nominatimReverse(lng, lat, signal, timeout)
+    return single ? [single] : []
+  }
 
+  let list: PlaceCandidate[] = []
   try {
-    // 谁先拿到「有名字」的结果用谁，任一源被墙另一个还能兜住
-    const result = await attempt()
-    remember(key, result)
-    return result
+    list = await attempt()
+    if (!list.length && !signal?.aborted) {
+      await delay(600)
+      list = await attempt()
+    }
   }
   catch {
-    if (signal?.aborted)
-      return null
-
-    // 第一次多半是冷启动（DNS / TLS 握手），隔一下再补一次
-    try {
-      await new Promise(resolve => setTimeout(resolve, 600))
-      const result = await attempt()
-      remember(key, result)
-      return result
-    }
-    catch {
-      return null
-    }
+    list = []
   }
+
+  if (!list.length)
+    return []
+
+  if (nearbyCache.size > 100)
+    nearbyCache.clear()
+  nearbyCache.set(key, list)
+  return list
 }
 
-function remember(key: string, result: ReverseResult) {
-  if (cache.size > 200)
-    cache.clear()
-  cache.set(key, result)
-}
+/** 按关键字搜地点，用于「搜索名称」 */
+export async function searchByKeyword(
+  keyword: string,
+  center: { lng: number, lat: number },
+  options: { limit?: number, signal?: AbortSignal, timeout?: number } = {},
+): Promise<PlaceCandidate[]> {
+  const { limit = 8, signal, timeout = 8000 } = options
+  if (!keyword.trim())
+    return []
 
-function withTimeout<T>(task: Promise<T>, timeout: number) {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('timeout')), timeout)
-    task.then(
-      (value) => {
-        clearTimeout(timer)
-        resolve(value)
-      },
-      (error) => {
-        clearTimeout(timer)
-        reject(error)
-      },
-    )
-  })
+  const url = `${PHOTON}/api?q=${encodeURIComponent(keyword)}&lat=${center.lat}&lon=${center.lng}&limit=${limit}`
+  try {
+    const data = await fetchJson(url, signal, timeout)
+    return mapFeatures(data, center)
+  }
+  catch {
+    return []
+  }
 }
 
 /* ==================== Photon ==================== */
 
-async function photonReverse(lng: number, lat: number, signal?: AbortSignal): Promise<ReverseResult> {
-  // 注意：Photon 只支持 default/de/en/fr，带 lang=zh 会直接返回错误
-  const url = `${PHOTON}?lat=${lat}&lon=${lng}&limit=1`
-  const response = await fetch(url, { signal })
-  if (!response.ok)
-    throw new Error('photon failed')
+async function photonNearby(
+  lng: number,
+  lat: number,
+  limit: number,
+  signal?: AbortSignal,
+  timeout = 8000,
+) {
+  // 注意：Photon 只支持 default/de/en/fr，带 lang=zh 会直接报错
+  const url = `${PHOTON}/reverse?lat=${lat}&lon=${lng}&limit=${limit}`
+  const data = await fetchJson(url, signal, timeout)
+  return mapFeatures(data, { lng, lat })
+}
 
-  const data = await response.json() as any
-  const feature = data?.features?.[0]
-  if (!feature)
-    throw new Error('photon empty')
+function mapFeatures(data: any, center: { lng: number, lat: number }): PlaceCandidate[] {
+  const features = Array.isArray(data?.features) ? data.features : []
+  const list: PlaceCandidate[] = []
 
-  const props = feature.properties ?? {}
-  const name = String(props.name ?? '').trim()
-  // 没名字的要素（纯道路）交给 Nominatim，那边能拼出地址
-  if (!name)
-    throw new Error('photon no name')
+  for (const feature of features) {
+    const props = feature.properties ?? {}
+    const name = String(props.name ?? '').trim()
+    // 没名字的要素（纯道路、行政区）跳过，选了也没意义
+    if (!name)
+      continue
 
-  const address = [
-    props.street,
-    props.locality,
-    props.district,
-    props.city,
-    props.state,
-  ]
-    .map((item: any) => String(item ?? '').trim())
-    .filter((item: string) => item && item !== name)
-    .join(' ')
+    const coords = feature.geometry?.coordinates ?? [center.lng, center.lat]
+    const lng = Number(coords[0])
+    const lat = Number(coords[1])
 
-  return {
-    name,
-    address: address || String(props.city ?? ''),
-    lng: Number(feature.geometry?.coordinates?.[0] ?? lng),
-    lat: Number(feature.geometry?.coordinates?.[1] ?? lat),
-    source: 'photon',
+    list.push({
+      id: `${props.osm_type ?? 'N'}${props.osm_id ?? `${lng},${lat}`}`,
+      name,
+      address: buildAddress(props, name),
+      lng,
+      lat,
+      distance: Math.round(distanceInMeters(center.lng, center.lat, lng, lat)),
+      source: 'photon',
+    })
   }
+
+  return list.sort((a, b) => a.distance - b.distance)
+}
+
+function buildAddress(props: any, name: string) {
+  return [props.street, props.locality, props.district, props.city, props.state]
+    .map(item => String(item ?? '').trim())
+    .filter(item => item && item !== name)
+    .filter((item, index, arr) => arr.indexOf(item) === index)
+    .join(' ')
 }
 
 /* ==================== Nominatim ==================== */
 
-/**
- * 名称取值优先级：具体 > 笼统
- *
- * 先看这儿是不是某个具体场所（写字楼、商场、景点），再退到路名、街区，
- * 最后才是「北京商务中心区」这种一整片的商圈名 —— 商圈名优先级太高的话，
- * CBD 里点哪儿都叫同一个名字，等于没定位。
- */
 const NAME_KEYS = [
   'amenity',
   'office',
@@ -154,34 +162,43 @@ const NAME_KEYS = [
   'city_district',
 ]
 
-async function nominatimReverse(lng: number, lat: number, signal?: AbortSignal): Promise<ReverseResult> {
-  const url = `${NOMINATIM}?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=zh-CN&zoom=18`
-  const response = await fetch(url, { signal, headers: { Accept: 'application/json' } })
-  if (!response.ok)
-    throw new Error('nominatim failed')
+async function nominatimReverse(
+  lng: number,
+  lat: number,
+  signal?: AbortSignal,
+  timeout = 8000,
+): Promise<PlaceCandidate | null> {
+  const url = `${NOMINATIM}/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=zh-CN&zoom=18`
+  try {
+    const data = await fetchJson(url, signal, timeout)
+    const address = (data.address ?? {}) as Recordable
+    const name = String(data.name ?? '')
+      || NAME_KEYS.map(key => String(address[key] ?? '')).find(Boolean)
+      || String(data.display_name ?? '').split(',')[0]
+      || ''
+    if (!name)
+      return null
 
-  const data = await response.json() as Recordable
-  const address = (data.address ?? {}) as Recordable
+    const hitLng = Number(data.lon ?? lng)
+    const hitLat = Number(data.lat ?? lat)
 
-  const name = String(data.name ?? '')
-    || NAME_KEYS.map(key => String(address[key] ?? '')).find(Boolean)
-    || String(data.display_name ?? '').split(',')[0]
-    || ''
-
-  if (!name)
-    throw new Error('nominatim no name')
-
-  return {
-    name,
-    address: simplify(String(data.display_name ?? ''), name),
-    lng: Number(data.lon ?? lng),
-    lat: Number(data.lat ?? lat),
-    source: 'nominatim',
+    return {
+      id: `${hitLng},${hitLat}`,
+      name,
+      address: simplifyDisplayName(String(data.display_name ?? ''), name),
+      lng: hitLng,
+      lat: hitLat,
+      distance: Math.round(distanceInMeters(lng, lat, hitLng, hitLat)),
+      source: 'nominatim',
+    }
+  }
+  catch {
+    return null
   }
 }
 
 /** "北京商务中心区, 建外街道, 朝阳区, 北京市, 100022, 中国" → "北京市 朝阳区 建外街道" */
-function simplify(displayName: string, name: string) {
+function simplifyDisplayName(displayName: string, name: string) {
   const parts = displayName
     .split(',')
     .map(item => item.trim())
@@ -189,4 +206,43 @@ function simplify(displayName: string, name: string) {
 
   const rest = parts.filter(item => item !== name)
   return rest.reverse().join(' ')
+}
+
+/* ==================== 工具 ==================== */
+
+async function fetchJson(url: string, signal?: AbortSignal, timeout = 8000) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeout)
+  const onAbort = () => controller.abort()
+  signal?.addEventListener('abort', onAbort)
+
+  try {
+    const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } })
+    if (!response.ok)
+      throw new Error(`HTTP ${response.status}`)
+    return await response.json()
+  }
+  finally {
+    clearTimeout(timer)
+    signal?.removeEventListener('abort', onAbort)
+  }
+}
+
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+/** 两点间的近似距离（米）：小范围下平面近似足够 */
+export function distanceInMeters(aLng: number, aLat: number, bLng: number, bLat: number) {
+  const rad = Math.PI / 180
+  const x = (bLng - aLng) * rad * 6378137 * Math.cos(((aLat + bLat) / 2) * rad)
+  const y = (bLat - aLat) * rad * 6378137
+  return Math.sqrt(x * x + y * y)
+}
+
+/** 320 米 / 1.2 公里 */
+export function formatDistance(meters: number) {
+  if (meters < 1000)
+    return `${meters} 米`
+  return `${(meters / 1000).toFixed(1)} 公里`
 }

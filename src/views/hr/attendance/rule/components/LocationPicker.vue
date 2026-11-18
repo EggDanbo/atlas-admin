@@ -1,557 +1,603 @@
 <script setup lang="ts">
 import type { ModalInst } from '@/components/SpModal'
-import { reverseGeocode } from '@/utils/geocode'
-import { gaodeTileLayer } from '@/utils/map'
+import type { PlaceCandidate } from '@/utils/geocode'
+import { Collection } from 'ol'
+import { defaults as defaultControls, Zoom } from 'ol/control'
+import Feature from 'ol/Feature'
+import Circle from 'ol/geom/Circle'
+import Point from 'ol/geom/Point'
+import Translate from 'ol/interaction/Translate'
+import TileLayer from 'ol/layer/Tile'
+import VectorLayer from 'ol/layer/Vector'
+import Map from 'ol/Map'
+import { fromLonLat, toLonLat } from 'ol/proj'
+import VectorSource from 'ol/source/Vector'
+import XYZ from 'ol/source/XYZ'
+import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
+import View from 'ol/View'
+import { formatDistance, searchByKeyword, searchNearby } from '@/utils/geocode'
 import toast from '@/utils/toast'
-import { distanceInMeters, formatDistance, nearestLandmark } from './landmarks'
 import 'ol/ol.css'
 
-/** 选中的打卡地点 */
+/**
+ * 打卡地点选择
+ *
+ * 交互参考 aio-pc 的 scope 组件（ol 地图 + 落点 + 半径圈 + 拖拽微调），
+ * 但那边的地址来自后端 regeo，这里改成同时打 Photon / Nominatim 拿到
+ * 「附近的一串候选」，点哪个算哪个 —— 不再由程序猜一个地名。
+ */
 export interface LocationPoint {
-  id: string
   name: string
   address: string
-  /** 地名介绍，点完就知道选的是哪儿 */
-  intro?: string
-  /** 距点击点的距离（米），只用于弹窗里展示 */
-  distance?: number
-  /** 结果来源：逆地理编码 / 本地地标兜底 */
-  source?: 'geocode' | 'local'
-  lng?: number
-  lat?: number
-  x?: number
-  y?: number
+  lng: number
+  lat: number
+  /** 打卡范围（米） */
+  radius?: number
 }
 
 const emit = defineEmits<{ (e: 'confirm', value: LocationPoint): void }>()
 
-/**
- * 示意地图里的标注位置
- *
- * 真实地名与介绍统一来自 landmarks，这里只规定它们在示意图上的坐标，
- * 这样两种地图点出来的结果是一致的。
- */
-const SVG_PINS = [
-  { x: 318, y: 232, lng: 116.397, lat: 39.9163 },
-  { x: 642, y: 286, lng: 116.4605, lat: 39.9087 },
-  { x: 934, y: 512, lng: 116.4957, lat: 39.9843 },
-  { x: 452, y: 566, lng: 116.3975, lat: 39.9087 },
-  { x: 762, y: 636, lng: 116.3975, lat: 39.9928 },
-  { x: 208, y: 448, lng: 116.3833, lat: 39.9403 },
-].map((pin) => {
-  const { landmark } = nearestLandmark(pin.lng, pin.lat)
-  return { ...pin, id: landmark.id, name: landmark.name }
-})
-
 const modalRef = ref<ModalInst | null>(null)
-const picked = ref<LocationPoint | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
 
-/** 用 OpenLayers 直接拉瓦片；万一地图库或瓦片挂了，退回内置的示意地图 */
-const renderFailed = ref(false)
-const mapLoading = ref(false)
-const mode = computed<'ol' | 'svg'>(() => (renderFailed.value ? 'svg' : 'ol'))
+const radius = ref(300)
+const candidates = ref<PlaceCandidate[]>([])
+const selectedId = ref('')
+const manualName = ref('')
+const keyword = ref('')
+const loading = ref(false)
 
-let olMap: any = null
-let markerSource: any = null
-/** ol 是动态引入的，构造器存下来给落点复用 */
-let OlFeatureCtor: any = null
-let OlPointCtor: any = null
-let olFromLonLat: ((coord: number[]) => number[]) | null = null
+const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
+const hasPoint = ref(false)
 
-function open(current?: LocationPoint | null) {
-  picked.value = current ?? null
+let olMap: Map | null = null
+let markerFeature: Feature<Point> | null = null
+let circleFeature: Feature<Circle> | null = null
+
+function open(point?: LocationPoint | null) {
+  reset(point)
   modalRef.value?.setProps({
     title: '选择打卡地点',
     width: '90vw',
     height: '90vh',
-    okText: '确定',
-    cancelText: '取消',
+    showFooter: false,
   })
   modalRef.value?.open()
-
-  if (mode.value === 'ol')
-    nextTick(() => initOlMap())
+  nextTick(() => initMap())
 }
 
-/** 请求中的小状态：地图上点一下会先给本地结果，再被真实地址替换 */
-const locating = ref(false)
-let pendingAbort: AbortController | null = null
-
-function pick(point: { lng: number, lat: number }) {
-  if (mode.value === 'ol')
-    setOlMarker(point.lng, point.lat)
-
-  // 先用最近地标给个即时结果，面板不会空着等网络
-  const local = { ...describe(point.lng, point.lat), source: 'local' as const }
-  picked.value = local
-  locating.value = true
-
-  pendingAbort?.abort()
-  const controller = new AbortController()
-  pendingAbort = controller
-
-  reverseGeocode(point.lng, point.lat, { signal: controller.signal })
-    .then((result) => {
-      if (controller.signal.aborted)
-        return
-
-      // 查不到就保留本地地标的结果，不把面板清空
-      if (!result)
-        return
-
-      const near = nearestLandmark(result.lng, result.lat)
-      picked.value = {
-        id: `${point.lng},${point.lat}`,
-        name: result.name,
-        address: result.address,
-        // 只有确实贴近某个知名地点时才带介绍，避免张冠李戴
-        intro: near.distance <= 800 ? near.landmark.intro : '',
-        distance: Math.round(distanceInMeters(point.lng, point.lat, result.lng, result.lat)),
-        source: 'geocode',
-        lng: point.lng,
-        lat: point.lat,
-      }
-    })
-    .catch(() => {
-      // 网络异常同样保留本地结果
-    })
-    .finally(() => {
-      // 被后来的点击取代时不要动状态，否则会把新请求的 loading 关掉
-      if (pendingAbort === controller)
-        locating.value = false
-    })
+function reset(point?: LocationPoint | null) {
+  candidates.value = []
+  selectedId.value = ''
+  manualName.value = point?.name ?? ''
+  keyword.value = ''
+  radius.value = point?.radius ?? 300
+  hasPoint.value = Boolean(point?.lng)
+  current.value = {
+    lng: point?.lng ?? 116.404,
+    lat: point?.lat ?? 39.915,
+  }
 }
 
-/* ==================== OpenLayers ==================== */
+/* ==================== 地图 ==================== */
 
-async function initOlMap() {
-  if (!mapEl.value || olMap)
+function initMap() {
+  if (!mapEl.value)
     return
 
-  mapLoading.value = true
+  if (olMap) {
+    olMap.setTarget(mapEl.value)
+    setTimeout(() => olMap?.updateSize(), 120)
+    return
+  }
 
-  try {
-    const [
-      { default: OlMap },
-      { default: View },
-      { fromLonLat, toLonLat },
-      { default: VectorLayer },
-      { default: VectorSource },
-      { default: Feature },
-      { default: Point },
-      { Circle: CircleStyle, Fill, Stroke, Style },
-    ] = await Promise.all([
-      import('ol/Map'),
-      import('ol/View'),
-      import('ol/proj'),
-      import('ol/layer/Vector'),
-      import('ol/source/Vector'),
-      import('ol/Feature'),
-      import('ol/geom/Point'),
-      import('ol/style'),
-    ])
-
-    OlFeatureCtor = Feature
-    OlPointCtor = Point
-    olFromLonLat = fromLonLat
-
-    const center = [picked.value?.lng ?? 116.404, picked.value?.lat ?? 39.915]
-
-    markerSource = new VectorSource()
-    const markerLayer = new VectorLayer({
-      source: markerSource,
-      style: new Style({
+  const source = new VectorSource()
+  const layer = new VectorLayer({
+    source,
+    style: (feature) => {
+      if (feature.get('kind') === 'circle') {
+        return new Style({
+          stroke: new Stroke({ width: 2, color: 'rgba(249, 115, 22, 0.6)' }),
+          fill: new Fill({ color: 'rgba(249, 115, 22, 0.12)' }),
+        })
+      }
+      return new Style({
         image: new CircleStyle({
-          radius: 8,
+          radius: 9,
           fill: new Fill({ color: '#f97316' }),
           stroke: new Stroke({ color: '#ffffff', width: 3 }),
         }),
-      }),
-    })
+      })
+    },
+  })
 
-    olMap = new OlMap({
-      target: mapEl.value,
-      layers: [gaodeTileLayer(), markerLayer],
-      view: new View({ center: fromLonLat(center), zoom: 15, minZoom: 4, maxZoom: 18 }),
-    })
+  const tileLayer = new TileLayer({
+    source: new XYZ({
+      url: 'https://webrd0{1-4}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+      crossOrigin: 'Anonymous',
+      wrapX: true,
+    }),
+  })
 
-    if (picked.value?.lng && picked.value?.lat)
-      setOlMarker(picked.value.lng, picked.value.lat)
+  olMap = new Map({
+    target: mapEl.value,
+    layers: [tileLayer, layer],
+    controls: defaultControls({ zoom: false, rotate: false, attribution: false }).extend([
+      new Zoom({ zoomInTipLabel: '放大', zoomOutTipLabel: '缩小' }),
+    ]),
+    view: new View({
+      center: fromLonLat([current.value.lng, current.value.lat]),
+      zoom: 16,
+      minZoom: 4,
+      maxZoom: 18,
+    }),
+  })
 
-    // 点地图任意位置落点，再按就近原则给出地址
-    olMap.on('singleclick', (event: any) => {
-      const [lng, lat] = toLonLat(event.coordinate) as [number, number]
-      pick({ lng: Number(lng.toFixed(6)), lat: Number(lat.toFixed(6)) })
-    })
+  markerFeature = new Feature({ kind: 'marker' })
+  circleFeature = new Feature({ kind: 'circle' })
+  source.addFeature(circleFeature)
+  source.addFeature(markerFeature)
 
-    // 弹窗刚展开时容器尺寸还没稳定，稍等再量一次
-    setTimeout(() => olMap?.updateSize(), 160)
-  }
-  catch (error) {
-    renderFailed.value = true
-    toast.warning(`${(error as Error).message || '地图加载失败'}，已切换为示意地图`)
-  }
-  finally {
-    mapLoading.value = false
-  }
+  // 拖拽 marker 微调位置（aio-pc 的 scope 组件也是这么做的）
+  const translate = new Translate({ features: new Collection([markerFeature]) })
+  translate.on('translateend', () => {
+    const geometry = markerFeature?.getGeometry()
+    if (!geometry)
+      return
+    const [lng, lat] = toLonLat(geometry.getCoordinates())
+    applyPoint(Number(lng.toFixed(6)), Number(lat.toFixed(6)), { moveMarker: false })
+  })
+  olMap.addInteraction(translate)
+
+  olMap.on('singleclick', (event) => {
+    const [lng, lat] = toLonLat(event.coordinate)
+    applyPoint(Number(lng.toFixed(6)), Number(lat.toFixed(6)))
+  })
+
+  setTimeout(() => olMap?.updateSize(), 150)
+
+  if (hasPoint.value)
+    applyPoint(current.value.lng, current.value.lat, { moveMarker: true })
+  else
+    setCircle(current.value.lng, current.value.lat)
 }
 
-function setOlMarker(lng: number, lat: number) {
-  if (!markerSource || !OlFeatureCtor || !OlPointCtor)
+/** 落点 + 圆 + 拉候选 */
+function applyPoint(lng: number, lat: number, options: { moveMarker?: boolean, keepSelection?: boolean } = {}) {
+  const { moveMarker = true, keepSelection = false } = options
+
+  current.value = { lng, lat }
+  hasPoint.value = true
+
+  if (moveMarker && markerFeature) {
+    const coord = fromLonLat([lng, lat])
+    markerFeature.setGeometry(new Point(coord))
+    olMap?.getView().setCenter(coord)
+  }
+
+  setCircle(lng, lat)
+
+  if (!keepSelection) {
+    selectedId.value = ''
+    manualName.value = ''
+  }
+
+  loadNearby(lng, lat)
+}
+
+function setCircle(lng: number, lat: number) {
+  if (!circleFeature)
     return
-  markerSource.clear()
-  markerSource.addFeature(new OlFeatureCtor({ geometry: new OlPointCtor(olFromLonLat!([lng, lat])) }))
+  circleFeature.setGeometry(new Circle(fromLonLat([lng, lat]), radius.value))
 }
 
-/* ==================== 公共 ==================== */
+function updateCircle(value: number | null) {
+  radius.value = value ?? 300
+  if (hasPoint.value)
+    setCircle(current.value.lng, current.value.lat)
+}
 
-/**
- * 点完地图立刻给出「最近的已知地名 + 介绍」
- *
- * 演示项目没有逆地理编码服务，用预置地标做最近邻匹配；
- * 接后端时把这个函数换成 geocode 接口即可，上层不用动。
- */
-function describe(lng: number, lat: number): LocationPoint {
-  const { landmark, distance } = nearestLandmark(lng, lat)
+/* ==================== 候选 ==================== */
 
-  // 只有真的贴近这个地标才用它的名字；离着 1 公里还硬套就是张冠李戴
-  if (distance <= 800) {
-    return {
-      id: landmark.id,
-      name: landmark.name,
-      address: landmark.address,
-      intro: landmark.intro,
-      distance,
-      lng,
-      lat,
+let controller: AbortController | null = null
+
+async function loadNearby(lng: number, lat: number) {
+  controller?.abort()
+  const currentController = new AbortController()
+  controller = currentController
+
+  loading.value = true
+  try {
+    const list = await searchNearby(lng, lat, { signal: currentController.signal, limit: 8 })
+    if (currentController.signal.aborted)
+      return
+    candidates.value = list
+    // 默认选中最近的一个，但不写回名称 —— 由用户确认
+    if (list.length) {
+      selectedId.value = list[0]!.id
+      manualName.value = list[0]!.name
     }
   }
-
-  return {
-    id: `${lng},${lat}`,
-    name: '未识别地点',
-    address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
-    intro: '暂时没解析出这里的名字，可以在表单里手动填写。',
-    distance,
-    lng,
-    lat,
+  finally {
+    if (controller === currentController)
+      loading.value = false
   }
 }
 
-/** 没选点就不让关，省得用户以为已经选上了 */
-function handleOk({ done }: { done: (close?: boolean) => void }) {
-  if (!picked.value) {
-    toast.warning('请先在地图上选择打卡地点')
-    done(false)
+async function doSearch() {
+  if (!keyword.value.trim()) {
+    toast.info('输入地点名称再搜索')
     return
   }
-  emit('confirm', picked.value)
-  done()
+  loading.value = true
+  try {
+    const list = await searchByKeyword(keyword.value.trim(), current.value, { limit: 8 })
+    candidates.value = list
+    if (!list.length) {
+      toast.warning('没搜到，换个关键词试试')
+      return
+    }
+    selectedId.value = list[0]!.id
+    manualName.value = list[0]!.name
+    olMap?.getView().setCenter(fromLonLat([list[0]!.lng, list[0]!.lat]))
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+function select(item: PlaceCandidate) {
+  selectedId.value = item.id
+  manualName.value = item.name
+  // 选中候选后把点挪到它的真实位置，半径圈跟着走
+  applyPoint(item.lng, item.lat, { keepSelection: true })
+}
+
+/* ==================== 确定 ==================== */
+
+function confirm() {
+  if (!hasPoint.value) {
+    toast.warning('请先在地图上点一个位置')
+    return
+  }
+
+  const selected = candidates.value.find(item => item.id === selectedId.value)
+  const name = manualName.value.trim() || selected?.name || '自定义位置'
+  const address = selected?.address
+    || `${current.value.lat.toFixed(5)}, ${current.value.lng.toFixed(5)}`
+
+  emit('confirm', {
+    name,
+    address,
+    lng: current.value.lng,
+    lat: current.value.lat,
+    radius: radius.value,
+  })
+  modalRef.value?.close()
+}
+
+function close() {
+  modalRef.value?.close()
 }
 
 defineExpose({ open })
 </script>
 
 <template>
-  <SpModal ref="modalRef" @ok="handleOk">
-    <div class="map" :class="`is-${mode}`">
-      <!-- 真实地图：OpenLayers 拉高德瓦片，不需要 Key -->
-      <div v-if="mode === 'ol'" ref="mapEl" class="map__real" />
-      <div v-if="mode === 'ol' && mapLoading" class="map__loading">
-        地图加载中…
-      </div>
+  <SpModal ref="modalRef" :show-footer="false" :mask-closable="false" @close="controller?.abort()">
+    <div class="picker">
+      <!-- 顶部工具条：搜索 / 范围 / 坐标 / 操作 -->
+      <div class="picker__bar">
+        <n-input
+          v-model:value="keyword"
+          placeholder="搜索地点名称，如「国贸」"
+          clearable
+          class="picker__search"
+          @keyup.enter="doSearch"
+        />
+        <n-button secondary type="primary" @click="doSearch">
+          搜索
+        </n-button>
 
-      <!-- 示意地图：地图库加载失败时的兜底 -->
-      <div v-else class="map__canvas">
-        <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" class="map__svg" role="img">
-          <rect x="0" y="0" width="1200" height="800" class="map__bg" />
-
-          <path
-            class="map__water"
-            d="M0,120 C160,150 240,220 300,320 C360,420 420,470 520,500 C640,535 760,520 880,560 C980,592 1080,640 1200,660 L1200,800 L0,800 Z"
-          />
-          <path class="map__river" d="M0,120 C160,150 240,220 300,320 C360,420 420,470 520,500 C640,535 760,520 880,560 C980,592 1080,640 1200,660" />
-
-          <rect x="120" y="180" width="200" height="130" rx="12" class="map__park" />
-          <rect x="820" y="120" width="240" height="150" rx="12" class="map__park" />
-
-          <g class="map__blocks">
-            <rect x="360" y="140" width="180" height="120" rx="8" />
-            <rect x="580" y="150" width="200" height="110" rx="8" />
-            <rect x="360" y="300" width="150" height="130" rx="8" />
-            <rect x="560" y="330" width="200" height="120" rx="8" />
-            <rect x="820" y="420" width="180" height="120" rx="8" />
-            <rect x="130" y="520" width="170" height="140" rx="8" />
-            <rect x="340" y="600" width="180" height="130" rx="8" />
-            <rect x="600" y="560" width="150" height="120" rx="8" />
-          </g>
-
-          <g class="map__roads">
-            <path d="M0,470 L1200,470" />
-            <path d="M0,300 L520,300" />
-            <path d="M700,0 L700,470" />
-            <path d="M350,0 L350,800" />
-            <path d="M0,620 L1200,700" />
-            <path d="M980,0 L1120,470" />
-          </g>
-
-          <g
-            v-for="point in SVG_PINS"
-            :key="point.id"
-            class="map__pin"
-            :class="{ 'is-active': picked?.id === point.id }"
-            :transform="`translate(${point.x}, ${point.y})`"
-            @click="pick(point)"
+        <span class="picker__field">
+          <span class="picker__label">打卡范围</span>
+          <n-input-number
+            v-model:value="radius"
+            :min="50"
+            :max="5000"
+            :step="50"
+            :show-button="false"
+            class="picker__radius"
+            @update:value="updateCircle"
           >
-            <circle class="map__pin-halo" r="26" />
-            <circle class="map__pin-dot" r="11" />
-            <circle class="map__pin-core" r="4" />
-            <text class="map__pin-label" y="-26" text-anchor="middle">{{ point.name }}</text>
-          </g>
-        </svg>
+            <template #suffix>
+              米
+            </template>
+          </n-input-number>
+        </span>
 
-        <div class="map__legend">
-          点击标注选择打卡地点 · 当前为示意地图
+        <span class="picker__coord">
+          {{ current.lng.toFixed(5) }}, {{ current.lat.toFixed(5) }}
+        </span>
+
+        <div class="picker__actions">
+          <n-button @click="close">
+            取消
+          </n-button>
+          <n-button type="primary" @click="confirm">
+            确定
+          </n-button>
         </div>
       </div>
 
-      <div v-if="mode === 'ol' && !mapLoading" class="map__legend">
-        点击地图任意位置选择打卡地点
-      </div>
-
-      <div class="map__picked" :class="{ 'is-empty': !picked }">
-        <template v-if="picked">
-          <div class="map__picked-head">
-            <b>{{ picked.name }}</b>
-            <em v-if="picked.distance !== undefined && picked.distance >= 30">{{ formatDistance(picked.distance) }}</em>
-            <span v-if="locating" class="map__picked-loading">定位中…</span>
+      <div class="picker__body">
+        <div class="picker__map-wrap">
+          <div ref="mapEl" class="picker__map" />
+          <div class="picker__hint">
+            点击地图选点，圆点是打卡范围，标记可拖动微调
           </div>
-          <span class="map__picked-addr">{{ picked.address }}</span>
-          <p v-if="picked.intro" class="map__picked-intro">
-            {{ picked.intro }}
-          </p>
-          <span v-if="picked.source === 'local'" class="map__picked-note">
-            未取到实时地址，以上为最近的已知地标
-          </span>
-        </template>
-        <span v-else>点击地图任意位置，这里会显示最近的地名</span>
+        </div>
+
+        <aside class="picker__side">
+          <header class="picker__side-head">
+            <span>附近地点</span>
+            <em v-if="candidates.length">{{ candidates.length }}</em>
+          </header>
+
+          <div v-if="loading" class="picker__empty">
+            正在查找附近的地点…
+          </div>
+          <div v-else-if="!candidates.length" class="picker__empty">
+            这里没查到地名。<br>
+            可以直接点确定保存坐标，或手动填一个名字。
+          </div>
+          <ul v-else class="place-list">
+            <li
+              v-for="item in candidates"
+              :key="item.id"
+              class="place-item"
+              :class="{ 'is-active': item.id === selectedId }"
+              @click="select(item)"
+            >
+              <div class="place-item__head">
+                <b>{{ item.name }}</b>
+                <em>{{ formatDistance(item.distance) }}</em>
+              </div>
+              <span class="place-item__addr">
+                {{ item.address || '—' }}
+              </span>
+            </li>
+          </ul>
+
+          <div class="picker__manual">
+            <span class="picker__label">地点名称</span>
+            <n-input v-model:value="manualName" placeholder="选中候选，或直接填一个名字" />
+          </div>
+        </aside>
       </div>
     </div>
   </SpModal>
 </template>
 
 <style scoped lang="less">
-.map {
-  // 示意地图的配色，暗色下走下面的覆盖
-  --map-bg: #e8eef7;
-  --map-road: #ffffff;
-  --map-road-line: #dbe3ee;
-  --map-block: #d6e0ec;
-  --map-water: rgb(59 130 246 / 8%);
-  --map-park: rgb(34 197 94 / 15%);
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: calc(90vh - 96px);
 
-  // 弹窗 90vh 减去 header / footer / 内边距，剩下的都给地图
-  position: relative;
-  height: calc(90vh - 130px);
-  min-height: 420px;
+  &__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 
-  &__real {
+  &__search {
+    width: 260px;
+  }
+
+  &__field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__label {
+    font-size: 12px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__radius {
+    width: 120px;
+  }
+
+  &__coord {
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  &__body {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__map-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--atlas-border);
+    border-radius: var(--atlas-radius-sm);
+    overflow: hidden;
+  }
+
+  &__map {
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    border-radius: var(--atlas-radius-sm);
     background: var(--atlas-surface-soft);
   }
 
-  &__loading {
+  &__hint {
     position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    color: var(--atlas-text-tertiary);
-    background: var(--map-bg);
-  }
-
-  &__canvas {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-    border-radius: var(--atlas-radius-sm);
-    background: var(--map-bg);
-  }
-
-  &__svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  &__bg {
-    fill: var(--map-bg);
-  }
-
-  &__water {
-    fill: var(--map-water);
-  }
-
-  &__river {
-    fill: none;
-    stroke: var(--map-water);
-    stroke-width: 18;
-    stroke-linecap: round;
-  }
-
-  &__park {
-    fill: var(--map-park);
-  }
-
-  &__blocks rect {
-    fill: var(--map-block);
-  }
-
-  &__roads path {
-    fill: none;
-    stroke: var(--map-road);
-    stroke-width: 22;
-    stroke-linecap: round;
-  }
-
-  &__pin {
-    cursor: pointer;
-
-    &-halo {
-      fill: color-mix(in srgb, var(--atlas-brand) 18%, transparent);
-      transition: fill 0.2s ease;
-    }
-
-    &-dot {
-      fill: var(--atlas-brand);
-      stroke: var(--map-bg);
-      stroke-width: 3;
-    }
-
-    &-core {
-      fill: #fff;
-    }
-
-    &-label {
-      font-size: 15px;
-      fill: var(--atlas-text);
-      paint-order: stroke;
-      stroke: var(--map-bg);
-      stroke-width: 4;
-      stroke-linejoin: round;
-    }
-
-    &:hover &-halo {
-      fill: color-mix(in srgb, var(--atlas-brand) 30%, transparent);
-    }
-
-    &.is-active &-halo {
-      fill: color-mix(in srgb, var(--atlas-brand) 34%, transparent);
-    }
-
-    &.is-active &-label {
-      font-weight: 600;
-    }
-  }
-
-  &__legend {
-    position: absolute;
-    top: 12px;
     left: 12px;
+    bottom: 12px;
     padding: 5px 10px;
     border-radius: 999px;
     font-size: 12px;
     color: var(--atlas-text-secondary);
-    background: color-mix(in srgb, var(--atlas-canvas) 88%, transparent);
+    background: color-mix(in srgb, var(--atlas-canvas) 90%, transparent);
     backdrop-filter: blur(4px);
+    pointer-events: none;
   }
 
-  &__picked {
-    position: absolute;
-    bottom: 12px;
-    left: 12px;
+  &__side {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    width: 360px;
-    padding: 14px 16px;
+    gap: 10px;
+    width: 320px;
+    flex: none;
+    min-height: 0;
+  }
+
+  &__side-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--atlas-text);
+
+    em {
+      font-style: normal;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      color: var(--atlas-text-tertiary);
+      background: var(--atlas-surface-soft);
+    }
+  }
+
+  &__empty {
+    padding: 16px;
+    border: 1px dashed var(--atlas-border);
     border-radius: var(--atlas-radius-sm);
     font-size: 12px;
-    color: var(--atlas-text-secondary);
-    background: color-mix(in srgb, var(--atlas-canvas) 94%, transparent);
-    box-shadow: 0 6px 20px rgb(0 0 0 / 12%);
-    backdrop-filter: blur(6px);
+    line-height: 1.7;
+    color: var(--atlas-text-tertiary);
+    text-align: center;
+  }
 
-    &-head {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
+  &__manual {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid var(--atlas-border);
+  }
+}
 
-      b {
-        font-size: 16px;
-        color: var(--atlas-text);
-      }
+.place-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0 2px 0 0;
+  overflow-y: auto;
+  list-style: none;
+}
 
-      em {
-        font-style: normal;
-        font-size: 11px;
-        padding: 1px 6px;
-        border-radius: 999px;
-        color: var(--atlas-brand);
-        background: var(--atlas-brand-soft);
-      }
+.place-item {
+  padding: 9px 12px;
+  border: 1px solid var(--atlas-border);
+  border-radius: var(--atlas-radius-sm);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    b {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--atlas-text);
     }
 
-    &-addr {
-      line-height: 1.5;
-      color: var(--atlas-text-secondary);
-    }
-
-    &-note {
+    em {
+      margin-left: auto;
+      font-style: normal;
       font-size: 11px;
       color: var(--atlas-text-tertiary);
     }
+  }
 
-    &-loading {
-      font-size: 11px;
-      color: var(--atlas-text-tertiary);
-    }
+  &__addr {
+    display: block;
+    margin-top: 3px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--atlas-text-tertiary);
+  }
 
-    &-intro {
-      margin: 0;
-      font-size: 12px;
-      line-height: 1.6;
-      color: var(--atlas-text-tertiary);
-    }
+  &:hover {
+    border-color: var(--atlas-brand-ring);
+    background: var(--atlas-surface-soft);
+  }
 
-    &.is-empty {
-      width: auto;
-      color: var(--atlas-text-tertiary);
+  &.is-active {
+    border-color: var(--atlas-brand);
+    background: var(--atlas-brand-soft);
+
+    b {
+      color: var(--atlas-brand);
     }
   }
 }
 </style>
 
-<!-- 暗色底图配色写在非 scoped 块里：scoped + :global 会被 less 压成 html.dark，丢掉选择器 -->
+<!-- ol 自带的缩放控件在暗色下是白底，压一层适配 -->
 <style lang="less">
-/* 暗色下真实地图压一点亮度，否则一整块亮底图糊在深色弹窗里很刺眼 */
-html.dark .map__real canvas,
-html[data-vxe-ui-theme='dark'] .map__real canvas {
-  filter: brightness(0.84) contrast(1.04) saturate(0.92);
+.picker__map .ol-zoom {
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  padding: 0;
+
+  button {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--atlas-text-secondary);
+    background: color-mix(in srgb, var(--atlas-canvas) 92%, transparent);
+    border: 1px solid var(--atlas-border);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 8%);
+
+    &:hover {
+      color: var(--atlas-brand);
+      border-color: var(--atlas-brand);
+    }
+  }
 }
 
-html.dark .map,
-html[data-vxe-ui-theme='dark'] .map {
-  --map-bg: #151a24;
-  --map-road: #333d4f;
-  --map-road-line: #384457;
-  --map-block: #1e2633;
-  --map-water: rgb(56 132 255 / 12%);
-  --map-park: rgb(34 197 94 / 18%);
+/* 暗色下瓦片压一点亮度 */
+html.dark .picker__map canvas,
+html[data-vxe-ui-theme='dark'] .picker__map canvas {
+  filter: brightness(0.84) contrast(1.04) saturate(0.92);
 }
 </style>

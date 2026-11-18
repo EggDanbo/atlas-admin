@@ -242,7 +242,7 @@ function buildAttendanceRules(employees: Employee[]) {
     freeTimes?: number
     latest?: string
     /** 打卡校验：地点 / Wi-Fi */
-    checkLocation?: { name: string, address: string, intro: string, lng: number, lat: number }
+    checkLocation?: { name: string, address: string, lng: number, lat: number, radius: number }
     checkWifi?: string
     shifts: ShiftSeed[]
     /** 排班制：参与排班的人 */
@@ -264,9 +264,9 @@ function buildAttendanceRules(employees: Employee[]) {
       checkLocation: {
         name: '国贸 CBD',
         address: '北京市朝阳区建国门外大街 1 号',
-        intro: '中央商务区核心，甲级写字楼与跨国企业总部集中，早高峰 8:30—9:30 最拥挤。',
         lng: 116.4605,
         lat: 39.9087,
+        radius: 300,
       },
       checkWifi: 'A4:5E:60:12:88:01',
       shifts: [{ name: '标准班', start: '09:00', end: '18:00', rest: '12:00-13:00', work_days: [1, 2, 3, 4, 5] }],
@@ -425,7 +425,7 @@ function buildAttendanceRules(employees: Employee[]) {
       location_address: seed.checkLocation?.address ?? '',
       location_lng: seed.checkLocation?.lng ?? 0,
       location_lat: seed.checkLocation?.lat ?? 0,
-      location_intro: seed.checkLocation?.intro ?? '',
+      location_radius: seed.checkLocation?.radius ?? 0,
       check_wifi: !!seed.checkWifi,
       wifi_mac: seed.checkWifi ?? '',
       late_limit: seed.late,

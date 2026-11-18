@@ -185,22 +185,19 @@ test.describe('考勤规则', () => {
     await form.locator('.n-checkbox').filter({ hasText: '验证打卡地点' }).click()
     await expect(form.locator('.rule-form__location')).toBeVisible()
 
-    // 打开地图 → 选点 → 确定 → 回填到只读输入框
+    // 打开地图 → 点地图落点 → 选候选 → 确定 → 回填
     await form.getByRole('button', { name: /地图选点/ }).click()
-    await expect(page.locator('.map')).toBeVisible()
+    await expect(page.locator('.picker')).toBeVisible()
 
-    // 真实地图（OpenLayers）点 canvas，示意地图点 SVG 标注
-    const canvas = page.locator('.map__real canvas').first()
-    if (await canvas.count())
-      await canvas.click({ position: { x: 420, y: 260 } })
-    else
-      await page.locator('.map__pin').nth(2).click()
+    await page.locator('.picker__map canvas').first().click({ position: { x: 320, y: 220 } })
 
-    // 点完立刻给出地名（介绍是加分项，取决于该点附近有没有知名地标）
-    await expect(page.locator('.map__picked')).not.toContainText('尚未选择地点')
-    await expect(page.locator('.map__picked-head b')).toHaveText(/\S+/)
+    // 候选来自外部服务，网络不通时列表为空，此时直接确定也能存坐标
+    const items = page.locator('.place-item')
+    await page.waitForTimeout(2000)
+    if (await items.count())
+      await items.first().click()
 
-    await page.locator('.vxe-modal--footer').getByRole('button', { name: '确定' }).click()
+    await page.locator('.picker__actions').getByRole('button', { name: '确定' }).click()
     await expect(form.locator('.rule-form__location input')).toHaveValue(/\S+/)
 
     // Wi-Fi 是 6 段两位的输入组

@@ -83,7 +83,7 @@ const form = reactive({
   locationAddress: '',
   locationLng: 0,
   locationLat: 0,
-  locationIntro: '',
+  locationRadius: 300,
   checkWifi: false,
   /** MAC 地址按 6 段 2 位存，空字符串表示这格没填 */
   wifi: ['', '', '', '', '', ''] as string[],
@@ -218,12 +218,12 @@ function openLocationPicker() {
   )
 }
 
-function onLocationConfirm(point: { name: string, address: string, intro?: string, lng?: number, lat?: number }) {
+function onLocationConfirm(point: { name: string, address: string, lng?: number, lat?: number, radius?: number }) {
   form.locationName = point.name
   form.locationAddress = point.address
-  form.locationIntro = point.intro ?? ''
   form.locationLng = point.lng ?? 0
   form.locationLat = point.lat ?? 0
+  form.locationRadius = point.radius ?? 300
 }
 
 function setWifiRef(el: any, index: number) {
@@ -377,7 +377,7 @@ function reset(row?: Recordable) {
   form.locationAddress = String(row?.location_address ?? '')
   form.locationLng = Number(row?.location_lng ?? 0)
   form.locationLat = Number(row?.location_lat ?? 0)
-  form.locationIntro = String(row?.location_intro ?? '')
+  form.locationRadius = Number(row?.location_radius ?? 300)
   form.checkWifi = !!row?.check_wifi
   const mac = String(row?.wifi_mac ?? '').split(':')
   form.wifi = Array.from({ length: 6 }, (_, index) => mac[index] ?? '')
@@ -522,7 +522,7 @@ async function handleOk({ done }: { done: (close?: boolean) => void }) {
     location_address: form.checkLocation ? form.locationAddress : '',
     location_lng: form.checkLocation ? form.locationLng : 0,
     location_lat: form.checkLocation ? form.locationLat : 0,
-    location_intro: form.checkLocation ? form.locationIntro : '',
+    location_radius: form.checkLocation ? form.locationRadius : 0,
     check_wifi: form.checkWifi,
     wifi_mac: form.checkWifi ? form.wifi.map(item => item.toUpperCase()).join(':') : '',
     latest: isFreeMode.value ? toHm(form.latestTime) : '',
@@ -613,8 +613,8 @@ defineExpose({ open })
               <em>地点</em>{{ form.locationName || '未选择' }}
               <small>{{ form.locationAddress }}</small>
             </span>
-            <p v-if="form.locationIntro" class="rule-form__check-intro">
-              {{ form.locationIntro }}
+            <p v-if="form.locationRadius" class="rule-form__check-intro">
+              打卡范围 {{ form.locationRadius }} 米
             </p>
           </div>
           <span v-if="form.checkWifi" class="rule-form__check">
