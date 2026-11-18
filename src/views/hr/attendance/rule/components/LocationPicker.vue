@@ -15,6 +15,7 @@ import VectorSource from 'ol/source/Vector'
 import XYZ from 'ol/source/XYZ'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
 import View from 'ol/View'
+import { getAmapJsConfig, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
 import { formatDistance, hasAmapKey, searchByKeyword, searchNearby, setAmapKey, verifyAmapKey } from '@/utils/geocode'
 import toast from '@/utils/toast'
 import 'ol/ol.css'
@@ -46,9 +47,11 @@ const selectedId = ref('')
 const manualName = ref('')
 const keyword = ref('')
 const loading = ref(false)
-/** 数据源：配了高德 Key 就用高德，精度高一个量级 */
-const usingAmap = ref(hasAmapKey())
+/** 数据源：js = Web端 JS API（Key+安全密钥），rest = Web服务 Key，空 = OSM */
+const amapMode = ref<'js' | 'rest' | ''>(getAmapJsConfig() ? 'js' : (hasAmapKey() ? 'rest' : ''))
+const usingAmap = computed(() => Boolean(amapMode.value))
 const keyInput = ref('')
+const securityInput = ref('')
 const keySaving = ref(false)
 
 const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
@@ -260,11 +263,13 @@ function select(item: PlaceCandidate) {
 /* ==================== 数据源 ==================== */
 
 async function saveKey() {
-  const value = keyInput.value.trim()
+  const key = keyInput.value.trim()
+  const security = securityInput.value.trim()
 
-  if (!value) {
+  if (!key) {
     setAmapKey('')
-    usingAmap.value = false
+    setAmapJsConfig(null)
+    amapMode.value = ''
     toast.success('已切回 OpenStreetMap 数据')
     reloadCandidates()
     return
@@ -272,14 +277,30 @@ async function saveKey() {
 
   keySaving.value = true
   try {
-    const result = await verifyAmapKey(value)
-    if (!result.ok) {
-      toast.error(result.message)
-      return
+    // 填了安全密钥说明是「Web 端 (JS API)」类型的 Key，走 SDK
+    if (security) {
+      const result = await verifyAmapJs({ key, securityCode: security })
+      if (!result.ok) {
+        toast.error(result.message)
+        return
+      }
+      setAmapJsConfig({ key, securityCode: security })
+      setAmapKey('')
+      amapMode.value = 'js'
     }
-    setAmapKey(value)
-    usingAmap.value = true
+    else {
+      const result = await verifyAmapKey(key)
+      if (!result.ok) {
+        toast.error(`${result.message}。如果 Key 是「Web 端 (JS API)」类型，请同时填安全密钥`)
+        return
+      }
+      setAmapKey(key)
+      setAmapJsConfig(null)
+      amapMode.value = 'rest'
+    }
+
     keyInput.value = ''
+    securityInput.value = ''
     toast.success('已切换到高德数据，地名会精确到门牌')
     reloadCandidates()
   }
@@ -367,7 +388,7 @@ defineExpose({ open })
               <template #icon>
                 <Icon :icon="usingAmap ? 'ant-design:check-circle-filled' : 'ant-design:info-circle-outlined'" />
               </template>
-              {{ usingAmap ? '高德数据' : 'OSM 数据' }}
+              {{ amapMode === 'js' ? '高德 · JS API' : (amapMode === 'rest' ? '高德 · Web服务' : 'OSM 数据') }}
             </n-button>
           </template>
 
@@ -384,17 +405,20 @@ defineExpose({ open })
                 填一个高德「Web 服务」Key 即可精确到门牌，免费额度够日常使用。
               </template>
             </p>
-            <n-input-group>
-              <n-input v-model:value="keyInput" placeholder="粘贴高德 Web 服务 Key" size="small" />
-              <n-button type="primary" ghost size="small" :loading="keySaving" @click="saveKey">
-                {{ keyInput.trim() ? '保存' : '清除' }}
+            <div class="source__form">
+              <n-input v-model:value="keyInput" placeholder="Key" size="small" />
+              <n-input v-model:value="securityInput" placeholder="安全密钥（Web端 JS API 必填）" size="small" />
+            </div>
+            <div class="source__actions">
+              <n-button size="small" :loading="keySaving" type="primary" ghost @click="saveKey">
+                {{ keyInput.trim() ? '保存并验证' : '清除' }}
               </n-button>
-            </n-input-group>
-            <p class="source__foot">
-              在
-              <a href="https://console.amap.com/dev/key/app" target="_blank" rel="noreferrer">高德控制台</a>
-              创建应用时，服务平台选「Web 服务」
-            </p>
+              <span class="source__hint">
+                Key 与安全密钥都在
+                <a href="https://console.amap.com/dev/key/app" target="_blank" rel="noreferrer">高德控制台</a>
+                的 Key 详情里
+              </span>
+            </div>
           </div>
         </n-popover>
 
@@ -607,10 +631,22 @@ defineExpose({ open })
     color: var(--atlas-text-tertiary);
   }
 
-  &__foot {
-    margin: 8px 0 0;
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  &__hint {
     font-size: 11px;
-    line-height: 1.6;
+    line-height: 1.5;
     color: var(--atlas-text-tertiary);
 
     a {

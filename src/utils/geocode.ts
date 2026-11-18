@@ -11,6 +11,11 @@
  * 关键设计：逆地理不「猜一个」，而是返回候选列表 —— 用户点哪个就是哪个，
  * 不会把 1 公里外的地标安到点击位置上。
  */
+import { amapJsNearby, amapJsSearch, getAmapJsConfig } from './amap-js'
+import { distanceInMeters } from './geo-calc'
+
+export { distanceInMeters, formatDistance } from './geo-calc'
+
 export interface PlaceCandidate {
   id: string
   name: string
@@ -41,7 +46,10 @@ export function getAmapKey(): string {
   catch {
     // localStorage 不可用（隐私模式）时忽略
   }
-  return String(import.meta.env.VITE_MAP_KEY ?? '')
+  const envKey = String(import.meta.env.VITE_MAP_KEY ?? '')
+  const envSecurity = String(import.meta.env.VITE_MAP_SECURITY_CODE ?? '')
+  // 配了安全密钥说明这个 Key 是 JS API 类型，不能拿去调 restapi
+  return envSecurity ? '' : envKey
 }
 
 export function setAmapKey(key: string) {
@@ -96,12 +104,28 @@ export async function searchNearby(
   const { limit = 8, signal, timeout = 8000 } = options
 
   const amapKey = getAmapKey()
-  const key = `${lng.toFixed(CACHE_PRECISION)},${lat.toFixed(CACHE_PRECISION)},${limit},${amapKey ? 'amap' : 'osm'}`
+  const source = getAmapJsConfig() ? 'amap-js' : (amapKey ? 'amap' : 'osm')
+  const key = `${lng.toFixed(CACHE_PRECISION)},${lat.toFixed(CACHE_PRECISION)},${limit},${source}`
   const hit = nearbyCache.get(key)
   if (hit)
     return hit
 
-  // 配了高德就先用高德：门牌级地址 + 周边 POI，比 OSM 准得多
+  // 1) 高德 JS API（Web 端 Key + 安全密钥）：数据最全
+  const jsConfig = getAmapJsConfig()
+  if (jsConfig) {
+    try {
+      const list = await amapJsNearby(lng, lat, jsConfig, limit)
+      if (list.length) {
+        remember(key, list)
+        return list
+      }
+    }
+    catch {
+      // 落到下一条链路
+    }
+  }
+
+  // 2) 高德 Web 服务 Key
   if (amapKey) {
     try {
       const list = await amapNearby(lng, lat, amapKey, limit, signal, timeout)
@@ -218,6 +242,18 @@ export async function searchByKeyword(
   const word = keyword.trim()
   if (!word)
     return []
+
+  const jsConfig = getAmapJsConfig()
+  if (jsConfig) {
+    try {
+      const list = await amapJsSearch(word, center, jsConfig, limit)
+      if (list.length)
+        return list
+    }
+    catch {
+      // 落到 Web 服务 / Photon
+    }
+  }
 
   const amapKey = getAmapKey()
   if (amapKey) {
@@ -400,19 +436,4 @@ async function fetchJson(url: string, signal?: AbortSignal, timeout = 8000) {
 
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-/** 两点间的近似距离（米）：小范围下平面近似足够 */
-export function distanceInMeters(aLng: number, aLat: number, bLng: number, bLat: number) {
-  const rad = Math.PI / 180
-  const x = (bLng - aLng) * rad * 6378137 * Math.cos(((aLat + bLat) / 2) * rad)
-  const y = (bLat - aLat) * rad * 6378137
-  return Math.sqrt(x * x + y * y)
-}
-
-/** 320 米 / 1.2 公里 */
-export function formatDistance(meters: number) {
-  if (meters < 1000)
-    return `${meters} 米`
-  return `${(meters / 1000).toFixed(1)} 公里`
 }

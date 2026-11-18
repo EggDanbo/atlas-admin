@@ -25,8 +25,10 @@ interface ImportMetaEnv {
   readonly VITE_APP_SHORT_NAME: string
   readonly VITE_API_AUTH_PREFIX: string
   readonly VITE_API_MESSAGE_KIND: string
-  /** 高德 Web 服务 Key（可选）：配了就用高德做逆地理，否则用 OSM */
+  /** 高德 Key（可选）：配了就用高德做逆地理，否则用 OSM */
   readonly VITE_MAP_KEY?: string
+  /** 高德安全密钥：与 Web端 JS API 类型的 Key 搭配使用，两个都配才走 SDK 链路 */
+  readonly VITE_MAP_SECURITY_CODE?: string
 }
 
 interface ImportMeta {

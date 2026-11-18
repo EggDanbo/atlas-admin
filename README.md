@@ -273,9 +273,13 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 
 - **逆地理返回候选列表，不猜**：点地图后拿到附近的 8 个地点列在右侧
   （名称 / 距离 / 地址），点哪个算哪个，不会硬套成几公里外的地标；
-- **数据源可选**：工具栏的「OSM 数据」入口里填一个高德「Web 服务」Key，
-  就能切到高德（门牌级地址 + 周边 POI，浏览器直连、CORS 已开），
-  不填则用免费的 OSM（Photon + Nominatim），精度到街区 / 路名；
+- **数据源可选**：工具栏的「OSM 数据」入口里填高德 Key 即可切到高德，返回门牌级地址
+  + 周边 POI（写字楼、商场、地铁出入口都能对上）；两种 Key 都支持：
+  - 「Web 端 (JS API)」类型 → Key + 安全密钥一起填，走 SDK 的 Geocoder；
+  - 「Web 服务」类型 → 只填 Key，走 restapi。
+  也可以在 `.env.local`（已在 .gitignore 里）配 `VITE_MAP_KEY` 与
+  `VITE_MAP_SECURITY_CODE`，两者都配即按 JS API 处理；
+- 不配 Key 时用免费的 OSM（Photon + Nominatim），精度到街区 / 路名；
 - 顶部可搜索地点名称（Photon 搜索）、调整打卡范围（100–5000 米）；
 - 橙色标记可拖动微调，半径圈随之移动并重新拉候选；
 - 地图库或接口异常时自动降级到内置示意地图，不会卡在空白弹窗里；
