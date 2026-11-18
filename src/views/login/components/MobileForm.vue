@@ -231,18 +231,17 @@ onMounted(async () => {
       </div>
     </n-form-item>
     <n-form-item path="password">
-      <div class="w-full flex">
-        <n-input-otp v-model:value="formModel.password" :allow-input="onlyAllowNumber" :length="4" style="width: 100%;" />
+      <n-input-group class="w-full">
+        <n-input-otp v-model:value="formModel.password" :allow-input="onlyAllowNumber" :length="4" />
         <n-button
           :disabled="sendingCode || countdown > 0"
-          class="ml-3 rounded-lg"
-          text
           type="primary"
+          ghost
           @click="sendCaptchaCode"
         >
-          {{ countdown > 0 ? `${countdown}秒后重发` : '点击获取短信验证码' }}
+          {{ countdown > 0 ? `${countdown} 秒后重发` : '获取验证码' }}
         </n-button>
-      </div>
+      </n-input-group>
     </n-form-item>
 
     <n-button

@@ -288,16 +288,17 @@ defineExpose({ open })
     <div class="picker">
       <!-- 顶部工具条：搜索 / 范围 / 坐标 / 操作 -->
       <div class="picker__bar">
-        <n-input
-          v-model:value="keyword"
-          placeholder="搜索地点名称，如「国贸」"
-          clearable
-          class="picker__search"
-          @keyup.enter="doSearch"
-        />
-        <n-button secondary type="primary" @click="doSearch">
-          搜索
-        </n-button>
+        <n-input-group class="picker__search">
+          <n-input
+            v-model:value="keyword"
+            placeholder="搜索地点名称，如「国贸」"
+            clearable
+            @keyup.enter="doSearch"
+          />
+          <n-button type="primary" ghost @click="doSearch">
+            搜索
+          </n-button>
+        </n-input-group>
 
         <span class="picker__field">
           <span class="picker__label">打卡范围</span>

@@ -932,15 +932,15 @@ defineExpose({ open })
         </n-form-item-gi>
 
         <n-form-item-gi v-if="form.checkLocation" label="打卡地点" :span="2">
-          <div class="rule-form__location">
+          <n-input-group class="rule-form__location">
             <n-input v-model:value="form.locationName" placeholder="地图选点，或直接填写地点名称" />
-            <n-button class="rule-form__map-btn" @click="openLocationPicker">
+            <n-button type="primary" ghost @click="openLocationPicker">
               <template #icon>
                 <Icon icon="ant-design:environment-outlined" />
               </template>
               地图选点
             </n-button>
-          </div>
+          </n-input-group>
           <template #feedback>
             {{ form.locationAddress || '点地图选点会自动带出名称和地址，也可以手动改' }}
           </template>
@@ -1209,13 +1209,7 @@ defineExpose({ open })
   }
 
   &__location {
-    display: flex;
-    gap: 8px;
     width: 100%;
-  }
-
-  &__map-btn {
-    flex: none;
   }
 
   &__mac {
