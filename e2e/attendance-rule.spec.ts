@@ -189,6 +189,7 @@ test.describe('考勤规则', () => {
     await form.getByRole('button', { name: /地图选点/ }).click()
     await expect(page.locator('.picker')).toBeVisible()
 
+    // CI 没有高德 Key，走 ol 兜底，直接点渲染画布
     await page.locator('.picker__map canvas').first().click({ position: { x: 320, y: 220 } })
 
     // 候选来自外部服务，网络不通时列表为空，此时直接确定也能存坐标

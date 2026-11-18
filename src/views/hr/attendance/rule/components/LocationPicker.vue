@@ -15,7 +15,7 @@ import VectorSource from 'ol/source/Vector'
 import XYZ from 'ol/source/XYZ'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
 import View from 'ol/View'
-import { getAmapJsConfig, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
+import { getAmapJsConfig, loadAMapJs, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
 import { formatDistance, hasAmapKey, searchByKeyword, searchNearby, setAmapKey, verifyAmapKey } from '@/utils/geocode'
 import toast from '@/utils/toast'
 import 'ol/ol.css'
@@ -23,9 +23,13 @@ import 'ol/ol.css'
 /**
  * 打卡地点选择
  *
- * 交互参考 aio-pc 的 scope 组件（ol 地图 + 落点 + 半径圈 + 拖拽微调），
- * 但那边的地址来自后端 regeo，这里改成同时打 Photon / Nominatim 拿到
- * 「附近的一串候选」，点哪个算哪个 —— 不再由程序猜一个地名。
+ * 地图有两套实现，按有没有高德 Key 自动切：
+ * 1. 配了高德「Web 端 JS API」Key → 用高德原生地图（AMap.Map），
+ *    标记可拖拽、半径圈用 AMap.Circle，坐标和逆地理都在同一套体系里；
+ * 2. 没有 Key（CI、离线演示）→ 退回 OpenLayers 拉高德瓦片，逻辑参考
+ *    aio-pc 的 scope 组件。
+ *
+ * 无论哪套，右侧都给「附近的一串候选」，点哪个算哪个，不由程序猜地名。
  */
 export interface LocationPoint {
   name: string
@@ -39,7 +43,10 @@ export interface LocationPoint {
 const emit = defineEmits<{ (e: 'confirm', value: LocationPoint): void }>()
 
 const modalRef = ref<ModalInst | null>(null)
-const mapEl = ref<HTMLElement | null>(null)
+/** 高德原生地图容器 */
+const amapEl = ref<HTMLElement | null>(null)
+/** OpenLayers 兜底地图容器 */
+const olEl = ref<HTMLElement | null>(null)
 
 const radius = ref(300)
 const candidates = ref<PlaceCandidate[]>([])
@@ -57,9 +64,16 @@ const keySaving = ref(false)
 const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
 const hasPoint = ref(false)
 
+/** 有 JS API 配置就用高德原生地图 */
+const useAmapMap = computed(() => amapMode.value === 'js')
+
 let olMap: Map | null = null
 let markerFeature: Feature<Point> | null = null
 let circleFeature: Feature<Circle> | null = null
+
+let amapMap: any = null
+let amapMarker: any = null
+let amapCircle: any = null
 
 function open(point?: LocationPoint | null) {
   reset(point)
@@ -88,12 +102,82 @@ function reset(point?: LocationPoint | null) {
 
 /* ==================== 地图 ==================== */
 
-function initMap() {
-  if (!mapEl.value)
+async function initMap() {
+  if (useAmapMap.value)
+    await initAmapMap()
+  else
+    initOlMap()
+}
+
+/* ---------- 高德原生地图 ---------- */
+
+async function initAmapMap() {
+  if (!amapEl.value)
+    return
+
+  const config = getAmapJsConfig()
+  if (!config)
+    return
+
+  try {
+    const AMap = await loadAMapJs(config)
+
+    if (!amapMap) {
+      const dark = document.documentElement.classList.contains('dark')
+
+      amapMap = new AMap.Map(amapEl.value, {
+        zoom: 16,
+        center: [current.value.lng, current.value.lat],
+        viewMode: '2D',
+        mapStyle: dark ? 'amap://styles/darkblue' : 'amap://styles/normal',
+        resizeEnable: true,
+      })
+
+      // 标记可拖拽：对应 ol 里的 Translate 交互
+      amapMarker = new AMap.Marker({
+        position: [current.value.lng, current.value.lat],
+        draggable: true,
+        cursor: 'move',
+        offset: new AMap.Pixel(-10, -10),
+        content: '<span class="amap-dot"></span>',
+        visible: hasPoint.value,
+      })
+      amapMarker.setMap(amapMap)
+
+      amapMarker.on('dragend', (event: any) => {
+        const { lng, lat } = event.lnglat
+        applyPoint(Number(lng.toFixed(6)), Number(lat.toFixed(6)), { moveMarker: false })
+      })
+
+      amapMap.on('click', (event: any) => {
+        const { lng, lat } = event.lnglat
+        applyPoint(Number(lng.toFixed(6)), Number(lat.toFixed(6)))
+      })
+    }
+    else {
+      amapMap.setZoomAndCenter(16, [current.value.lng, current.value.lat])
+    }
+
+    setTimeout(() => amapMap?.resize(), 150)
+
+    if (hasPoint.value)
+      applyPoint(current.value.lng, current.value.lat, { moveMarker: true })
+    else
+      setCircle(current.value.lng, current.value.lat)
+  }
+  catch (error) {
+    toast.error((error as Error).message || '高德地图加载失败')
+  }
+}
+
+/* ---------- OpenLayers 兜底（没有 Key 时） ---------- */
+
+function initOlMap() {
+  if (!olEl.value)
     return
 
   if (olMap) {
-    olMap.setTarget(mapEl.value)
+    olMap.setTarget(olEl.value)
     setTimeout(() => olMap?.updateSize(), 120)
     return
   }
@@ -127,7 +211,7 @@ function initMap() {
   })
 
   olMap = new Map({
-    target: mapEl.value,
+    target: olEl.value,
     layers: [tileLayer, layer],
     controls: defaultControls({ zoom: false, rotate: false, attribution: false }).extend([
       new Zoom({ zoomInTipLabel: '放大', zoomOutTipLabel: '缩小' }),
@@ -145,7 +229,6 @@ function initMap() {
   source.addFeature(circleFeature)
   source.addFeature(markerFeature)
 
-  // 拖拽 marker 微调位置（aio-pc 的 scope 组件也是这么做的）
   const translate = new Translate({ features: new Collection([markerFeature]) })
   translate.on('translateend', () => {
     const geometry = markerFeature?.getGeometry()
@@ -176,10 +259,17 @@ function applyPoint(lng: number, lat: number, options: { moveMarker?: boolean, k
   current.value = { lng, lat }
   hasPoint.value = true
 
-  if (moveMarker && markerFeature) {
-    const coord = fromLonLat([lng, lat])
-    markerFeature.setGeometry(new Point(coord))
-    olMap?.getView().setCenter(coord)
+  if (moveMarker) {
+    if (useAmapMap.value) {
+      amapMarker?.setPosition([lng, lat])
+      amapMarker?.show()
+      amapMap?.setCenter([lng, lat])
+    }
+    else if (markerFeature) {
+      const coord = fromLonLat([lng, lat])
+      markerFeature.setGeometry(new Point(coord))
+      olMap?.getView().setCenter(coord)
+    }
   }
 
   setCircle(lng, lat)
@@ -193,6 +283,29 @@ function applyPoint(lng: number, lat: number, options: { moveMarker?: boolean, k
 }
 
 function setCircle(lng: number, lat: number) {
+  if (useAmapMap.value) {
+    if (amapCircle) {
+      amapCircle.setCenter([lng, lat])
+      amapCircle.setRadius(radius.value)
+      return
+    }
+    const AMap = (window as any).AMap
+    if (!AMap || !amapMap)
+      return
+    amapCircle = new AMap.Circle({
+      center: [lng, lat],
+      radius: radius.value,
+      strokeColor: '#f97316',
+      strokeWeight: 2,
+      strokeOpacity: 0.6,
+      fillColor: '#f97316',
+      fillOpacity: 0.12,
+      bubble: true,
+    })
+    amapCircle.setMap(amapMap)
+    return
+  }
+
   if (!circleFeature)
     return
   circleFeature.setGeometry(new Circle(fromLonLat([lng, lat]), radius.value))
@@ -434,7 +547,8 @@ defineExpose({ open })
 
       <div class="picker__body">
         <div class="picker__map-wrap">
-          <div ref="mapEl" class="picker__map" />
+          <div v-if="useAmapMap" ref="amapEl" class="picker__map" />
+          <div v-else ref="olEl" class="picker__map" />
           <div class="picker__hint">
             点击地图选点，圆点是打卡范围，标记可拖动微调
           </div>
@@ -557,7 +671,7 @@ defineExpose({ open })
   &__hint {
     position: absolute;
     left: 12px;
-    bottom: 12px;
+    top: 12px;
     padding: 5px 10px;
     border-radius: 999px;
     font-size: 12px;
@@ -748,6 +862,28 @@ defineExpose({ open })
       border-color: var(--atlas-brand);
     }
   }
+}
+
+/* 高德 Marker 的自定义内容（插进 SDK 的 DOM，scoped 不生效） */
+.amap-dot {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 28%);
+}
+
+/* 高德 Marker 的自定义内容（插进 SDK 的 DOM，scoped 不生效） */
+.amap-dot {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 28%);
 }
 
 /* 暗色下瓦片压一点亮度 */
