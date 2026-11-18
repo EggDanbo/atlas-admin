@@ -269,7 +269,9 @@ pnpm build:pages   # 构建 GitHub Pages 版本（base = /atlas-admin/）
 地图用 [OpenLayers](https://openlayers.org/) 直接按 XYZ 拉高德瓦片（`webrd` 路网样式），
 **不需要申请 Key、不需要任何环境变量配置**，和 `aio-pc` 的 `tencentTileLayer` 是同一套做法：
 
-- 点地图任意位置落点，marker 跟随，左下角显示「地点名 / 地址」；
+- 点地图任意位置落点，marker 跟随，左下角显示「地点名 / 距离 / 地址 / 一句介绍」；
+  地名走 OSM Nominatim 逆地理编码（免 Key，中文结果，精度到写字楼/路名），
+  取不到时退回本地 22 个北京地标的最近邻匹配并明确标注；
 - `ol` 按需动态引入（单独 chunk），不进主包；
 - 地图库或瓦片异常时自动降级到内置示意地图（SVG 画的河 / 路 / 街区 + 6 个标注），
   不会卡在空白弹窗里；

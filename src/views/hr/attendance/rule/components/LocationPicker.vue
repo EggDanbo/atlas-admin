@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { ModalInst } from '@/components/SpModal'
+import { reverseGeocode } from '@/utils/geocode'
 import { gaodeTileLayer } from '@/utils/map'
 import toast from '@/utils/toast'
-import { formatDistance, nearestLandmark } from './landmarks'
+import { distanceInMeters, formatDistance, nearestLandmark } from './landmarks'
 import 'ol/ol.css'
 
 /** 选中的打卡地点 */
@@ -14,6 +15,8 @@ export interface LocationPoint {
   intro?: string
   /** 距点击点的距离（米），只用于弹窗里展示 */
   distance?: number
+  /** 结果来源：逆地理编码 / 本地地标兜底 */
+  source?: 'geocode' | 'local'
   lng?: number
   lat?: number
   x?: number
@@ -71,8 +74,51 @@ function open(current?: LocationPoint | null) {
     nextTick(() => initOlMap())
 }
 
+/** 请求中的小状态：地图上点一下会先给本地结果，再被真实地址替换 */
+const locating = ref(false)
+let pendingAbort: AbortController | null = null
+
 function pick(point: { lng: number, lat: number }) {
-  picked.value = describe(point.lng, point.lat)
+  if (mode.value === 'ol')
+    setOlMarker(point.lng, point.lat)
+
+  // 先用最近地标给个即时结果，面板不会空着等网络
+  const local = { ...describe(point.lng, point.lat), source: 'local' as const }
+  picked.value = local
+  locating.value = true
+
+  pendingAbort?.abort()
+  const controller = new AbortController()
+  pendingAbort = controller
+
+  reverseGeocode(point.lng, point.lat, { signal: controller.signal })
+    .then((result) => {
+      if (controller.signal.aborted)
+        return
+
+      // 查不到就保留本地地标的结果，不把面板清空
+      if (!result) {
+        locating.value = false
+        return
+      }
+
+      const near = nearestLandmark(result.lng, result.lat)
+      picked.value = {
+        id: `${point.lng},${point.lat}`,
+        name: result.name,
+        address: result.address,
+        // 只有确实贴近某个知名地点时才带介绍，避免张冠李戴
+        intro: near.distance <= 800 ? near.landmark.intro : '',
+        distance: Math.round(distanceInMeters(point.lng, point.lat, result.lng, result.lat)),
+        source: 'geocode',
+        lng: point.lng,
+        lat: point.lat,
+      }
+      locating.value = false
+    })
+    .catch(() => {
+      locating.value = false
+    })
 }
 
 /* ==================== OpenLayers ==================== */
@@ -134,9 +180,7 @@ async function initOlMap() {
     // 点地图任意位置落点，再按就近原则给出地址
     olMap.on('singleclick', (event: any) => {
       const [lng, lat] = toLonLat(event.coordinate) as [number, number]
-      const point = { lng: Number(lng.toFixed(6)), lat: Number(lat.toFixed(6)) }
-      setOlMarker(point.lng, point.lat)
-      picked.value = describe(point.lng, point.lat)
+      pick({ lng: Number(lng.toFixed(6)), lat: Number(lat.toFixed(6)) })
     })
 
     // 弹窗刚展开时容器尺寸还没稳定，稍等再量一次
@@ -278,12 +322,16 @@ defineExpose({ open })
         <template v-if="picked">
           <div class="map__picked-head">
             <b>{{ picked.name }}</b>
-            <em v-if="picked.distance !== undefined">{{ formatDistance(picked.distance) }}</em>
+            <em v-if="picked.distance !== undefined && picked.distance >= 30">{{ formatDistance(picked.distance) }}</em>
+            <span v-if="locating" class="map__picked-loading">定位中…</span>
           </div>
           <span class="map__picked-addr">{{ picked.address }}</span>
           <p v-if="picked.intro" class="map__picked-intro">
             {{ picked.intro }}
           </p>
+          <span v-if="picked.source === 'local'" class="map__picked-note">
+            未取到实时地址，以上为最近的已知地标
+          </span>
         </template>
         <span v-else>点击地图任意位置，这里会显示最近的地名</span>
       </div>
@@ -427,9 +475,9 @@ defineExpose({ open })
     left: 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 320px;
-    padding: 12px 14px;
+    gap: 5px;
+    width: 360px;
+    padding: 14px 16px;
     border-radius: var(--atlas-radius-sm);
     font-size: 12px;
     color: var(--atlas-text-secondary);
@@ -443,7 +491,7 @@ defineExpose({ open })
       gap: 8px;
 
       b {
-        font-size: 15px;
+        font-size: 16px;
         color: var(--atlas-text);
       }
 
@@ -458,7 +506,18 @@ defineExpose({ open })
     }
 
     &-addr {
+      line-height: 1.5;
       color: var(--atlas-text-secondary);
+    }
+
+    &-note {
+      font-size: 11px;
+      color: var(--atlas-text-tertiary);
+    }
+
+    &-loading {
+      font-size: 11px;
+      color: var(--atlas-text-tertiary);
     }
 
     &-intro {
