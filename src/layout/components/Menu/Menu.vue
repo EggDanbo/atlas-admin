@@ -2,6 +2,7 @@
 import type { MenuOption } from 'naive-ui'
 import { useVModel } from '@vueuse/core'
 import { useI18n } from '@/hooks/help/useI18n.ts'
+import { useConfigStore } from '@/store/modules/config'
 import { useThemeStore } from '@/store/modules/theme'
 import { proMenuProps } from './props'
 import { useMenuExpandedKeys } from './useMenuExpandedKeys'
@@ -14,7 +15,9 @@ const props = defineProps(proMenuProps)
 const { t } = useI18n()
 
 const { sidebarTheme, navTheme } = storeToRefs(useThemeStore())
-const { collapsedRef } = inject('n-layout-sider') as any
+const configStore = useConfigStore()
+// 原生 n-layout-sider 不会 provide 这个 key，取不到就退回全局折叠状态
+const collapsedRef = computed(() => configStore.collapsed)
 const expandedKeysRef = useVModel(props, 'expandedKeys')
 const { mergedExpandedKeys, handleExpandedKeysUpdate } = useMenuExpandedKeys(props, expandedKeysRef)
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { MenuOption } from 'naive-ui'
-import type { ProLayoutMode } from 'pro-naive-ui'
+import type { ProLayoutMode } from '@/layout/hooks/useLayoutMenu'
 import type { LayoutMenuReturn } from '@/layout/Injection'
 import type { AppMenuOption } from '@/router/types'
 import CollapsedBtn from '@/layout/components/CollapsedBtn/CollapsedBtn.vue'

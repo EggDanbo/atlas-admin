@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ProLayoutMode } from 'pro-naive-ui'
+import type { ProLayoutMode } from '@/layout/hooks/useLayoutMenu'
 import type { LayoutMenuReturn } from '@/layout/Injection'
 import { NaIconButton } from '@/components/NaIconButton'
 import Breadcrumb from '@/layout/components/Breadcrumb/Breadcrumb.vue'

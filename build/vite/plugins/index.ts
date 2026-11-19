@@ -5,7 +5,6 @@ import { resolve } from 'node:path'
 import { fileViewerRenderers } from '@file-viewer/vite-plugin'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { ProNaiveUIResolver } from 'pro-naive-ui-resolver'
 import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 
@@ -129,7 +128,7 @@ export function createPlugins(_viteEnv: ViteEnv, isBuild: boolean, _configEnv: C
       dts: 'src/typings/auto-imports.d.ts',
     }),
     Components({
-      resolvers: [NaiveUiResolver(), ProNaiveUIResolver()],
+      resolvers: [NaiveUiResolver()],
       dirs: [],
       dts: 'typings/components.d.ts',
     }),

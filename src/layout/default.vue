@@ -2,20 +2,16 @@
 import type { MenuOption } from 'naive-ui'
 import { isNil } from 'lodash-es'
 import { useThemeVars } from 'naive-ui'
-import { ProLayout, useLayoutMenu } from 'pro-naive-ui'
 import { BizDetailHost } from '@/components/BizDetailHost'
 import { useAsyncRouteStore } from '@/store/modules/async-route'
 import { useConfigStore } from '@/store/modules/config'
 import { useThemeStore } from '@/store/modules/theme'
 import { useUserStore } from '@/store/modules/user'
-import { isSafari } from '@/utils/brower'
-import { formatSizeValue } from '@/utils/style'
 import { Logo, MainView, NavCenter, NavLeft, NavRight, Sidebar, SidebarExtra, Tabbar } from './components/index'
 import { useLayout } from './hooks/useLayout'
+import { useLayoutMenu } from './hooks/useLayoutMenu'
 
 const userStore = useUserStore()
-
-const safariPlatform = isSafari()
 
 // 异步组件优化加载
 const Footer = defineAsyncComponent(() => import('./components/Footer/Footer.vue'))
@@ -36,10 +32,7 @@ const {
   showFooter,
   showTabbar,
   footerFixed,
-  footerHeight,
   sidebarWidth,
-  tabbarHeight,
-  borderRadius,
   preferencesLocation,
   tabbarStyle,
 } = storeToRefs(useConfigStore())
@@ -110,7 +103,6 @@ function findAvailableMenuKey() {
 }
 
 const {
-  builtinThemeOverrides,
   getLogoClass,
   finalSidebarCollapsedWidth,
   finalShowSidebar,
@@ -144,86 +136,68 @@ const {
       class="naive-layout-skin"
       :style="`background-image: url(${getSkinImg}); background-size: 100% 100%`"
     />
-    <ProLayout
-      v-model:collapsed="collapsed"
-      v-model:mode="mode"
-      :builtin-theme-overrides="builtinThemeOverrides"
-      :footer-fixed="footerFixed"
-      :footer-height="footerHeight"
-      :is-mobile="mobile"
-      :logo-class="getLogoClass"
-      :nav-fixed="navFixed"
-      :nav-height="navHeight"
+    <n-layout
+      has-sider
+      class="naive-layout-body"
       :style="excerptThemeVars"
-      :show-footer="showFooter"
-      :show-logo="showLogo"
-      :show-nav="showNav"
-      :show-sidebar="finalShowSidebar"
-      :show-sidebar-extra="showSidebarExtra"
-      :show-tabbar="finalShowTabbar"
-      :sidebar-collapsed-width="finalSidebarCollapsedWidth"
-      :sidebar-width="sidebarWidth"
-      :tabbar-height="tabbarHeight"
-      content-class="naive-layout-main"
-      footer-class="naive-layout-footer"
-      header-class="naive-layout-header"
-      :scrollbar-props="{
-        // @ts-ignore
-        class: [safariPlatform && 'naive-layout__scrollbar--safari', mobile && '!mr-0'],
-        themeOverrides: {
-          width: '7px',
-          borderRadius: `${formatSizeValue(borderRadius, 'rem')}`,
-        },
-      }"
-      :tabbar-class="['naive-layout-tabbar', `naive-layout-tabbar-${tabbarStyle}`]"
-      :aside-class="[`${isSidebarPrimary ? 'naive-layout-sidebar sidebar-primary' : 'naive-layout-sidebar'}`]"
-      :nav-class="[`${isNavPrimary && !isDark ? 'naive-layout-nav nav-primary' : 'naive-layout-nav'}`]"
     >
-      <template #logo>
-        <div
-          :class="{
-            'pl-2': mode === 'mobile' || mobile,
-          }"
-          class="h-full flex items-center"
-        >
-          <Logo />
+      <!-- 侧栏模式：logo 在侧栏顶部 -->
+      <n-layout-sider
+        v-if="finalShowSidebar"
+        :collapsed="collapsed"
+        :collapsed-width="finalSidebarCollapsedWidth"
+        :width="sidebarWidth"
+        :native-scrollbar="false"
+        :show-trigger="false"
+        :class="isSidebarPrimary ? 'naive-layout-sidebar sidebar-primary' : 'naive-layout-sidebar'"
+        @update:collapsed="(value: boolean) => (collapsed = value)"
+      >
+        <div class="naive-layout-sidebar-inner">
+          <div v-if="showLogo" :class="getLogoClass" class="naive-layout-logo">
+            <Logo />
+          </div>
+          <Sidebar />
+          <div v-if="showSidebarExtra" class="naive-layout-sidebar-extra">
+            <SidebarExtra />
+          </div>
         </div>
-      </template>
-      <template #nav-left>
-        <NavLeft />
-      </template>
-      <template #nav-center>
-        <NavCenter />
-      </template>
-      <template #nav-right>
-        <NavRight />
-      </template>
-      <template #sidebar>
-        <Sidebar />
-      </template>
-      <template #sidebar-extra>
-        <SidebarExtra />
-      </template>
-      <template #tabbar>
-        <Tabbar />
-      </template>
-      <template #footer>
-        <Footer />
-      </template>
-      <!-- 主内容区域 -->
-      <template #default>
-        <div
-          :class="{
-            'px-2.5': ['mixed-sidebar', 'horizontal', 'full-content', 'sidebar'].includes(mode) || !intervalLayout || mobile,
-            '!pt-0': finalShowTabbar && tabbarStyle === 'card',
-          }"
-          class="box-border size-full pt-2.5"
-          style="height: calc(100vh - 106px);"
+      </n-layout-sider>
+
+      <n-layout class="naive-layout-container" :native-scrollbar="false">
+        <!-- 顶栏 -->
+        <n-layout-header
+          v-if="showNav"
+          :class="[
+            isNavPrimary && !isDark ? 'naive-layout-header nav-primary' : 'naive-layout-header',
+            navFixed && 'is-nav-fixed',
+          ]"
+          :style="{ height: `${navHeight}px` }"
         >
-          <MainView />
+          <NavLeft />
+          <NavCenter />
+          <NavRight />
+        </n-layout-header>
+
+        <Tabbar v-if="finalShowTabbar" />
+
+        <!-- 主内容区 -->
+        <n-layout-content class="naive-layout-main" :native-scrollbar="false">
+          <div
+            :class="{
+              'px-2.5': ['mixed-sidebar', 'horizontal', 'full-content', 'sidebar', 'vertical'].includes(mode) || !intervalLayout || mobile,
+              '!pt-0': finalShowTabbar && tabbarStyle === 'card',
+            }"
+            class="box-border size-full pt-2.5"
+          >
+            <MainView />
+          </div>
+        </n-layout-content>
+
+        <div v-if="showFooter" :class="{ 'footer-fixed': footerFixed }" class="naive-layout-footer">
+          <Footer />
         </div>
-      </template>
-    </ProLayout>
+      </n-layout>
+    </n-layout>
     <!-- 偏好设置 -->
     <PreferencesFloatBtn v-if="mode !== 'full-content' && preferencesLocation === 'fixed'" />
     <!-- 全屏水印 -->

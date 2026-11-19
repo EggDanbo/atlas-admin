@@ -8,7 +8,6 @@ import {
   setupGlobalComponent,
   setupNaiveDiscreteApi,
   setupPreloadData,
-  setupProNaiveui,
   setupVideoPlayer,
   setupVxeTable,
 } from '@/setups'
@@ -42,9 +41,6 @@ async function install() {
 
   // 挂载 naive-ui 脱离上下文的 Api
   setupNaiveDiscreteApi()
-
-  // 按需全局安装 pro-naive-ui 组件
-  setupProNaiveui(app)
 
   // 视频播放器
   setupVideoPlayer(app)

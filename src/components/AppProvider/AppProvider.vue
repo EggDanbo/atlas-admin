@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { ProConfigProviderProps } from 'pro-naive-ui'
+import type { ConfigProviderProps } from 'naive-ui'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
-import { dateEnUS, dateZhCN } from 'naive-ui'
-import { enUS, ProConfigProvider, zhCN } from 'pro-naive-ui'
+import { dateEnUS, dateZhCN, enUS, zhCN } from 'naive-ui'
 import { useLocalesStore } from '@/store/modules/locales-setting'
 import { useThemeStore } from '@/store/modules/theme'
 import 'vue-prism-editor/dist/prismeditor.min.css'
@@ -16,32 +15,10 @@ const { themeProps } = storeToRefs(useThemeStore())
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', json)
 
-const configProviderProps = computed<ProConfigProviderProps>(() => {
+const configProviderProps = computed<ConfigProviderProps>(() => {
   return {
     abstract: true,
     ...themeProps.value,
-    propOverrides: {
-      ProButton: {
-        focusable: false,
-      },
-      ProModalForm: {
-        preset: 'card',
-        labelPlacement: 'left',
-        labelWidth: '100',
-        maskClosable: true,
-        submitButtonProps: {
-          content: '确定',
-        },
-      },
-      ProDrawerForm: {
-        maskClosable: true,
-      },
-      ProDrawerContent: {
-        submitButtonProps: {
-          content: '确定',
-        },
-      },
-    },
     locale: locale.value === 'zh_CN' ? zhCN : enUS,
     dateLocale: locale.value === 'zh_CN' ? dateZhCN : dateEnUS,
   }
@@ -49,7 +26,7 @@ const configProviderProps = computed<ProConfigProviderProps>(() => {
 </script>
 
 <template>
-  <ProConfigProvider v-bind="configProviderProps" :hljs="hljs">
+  <n-config-provider v-bind="configProviderProps">
     <n-loading-bar-provider>
       <n-message-provider :duration="5000">
         <n-notification-provider :max="1">
@@ -61,5 +38,5 @@ const configProviderProps = computed<ProConfigProviderProps>(() => {
         </n-notification-provider>
       </n-message-provider>
     </n-loading-bar-provider>
-  </ProConfigProvider>
+  </n-config-provider>
 </template>

@@ -1,4 +1,4 @@
-import type { ProConfigProviderProps } from 'pro-naive-ui'
+import type { ConfigProviderProps } from 'naive-ui'
 import { generate } from '@ant-design/colors'
 import { useColorMode, usePreferredDark } from '@vueuse/core'
 import { darkTheme } from 'naive-ui'
@@ -47,7 +47,7 @@ export const useThemeStore = defineStore('theme-store', () => {
     return mode
   })
 
-  const themeProps = computed<ProConfigProviderProps>(() => {
+  const themeProps = computed<ConfigProviderProps>(() => {
     const colors = generate(theme.primaryColor, {
       theme: isDark.value ? 'dark' : 'default',
     })
