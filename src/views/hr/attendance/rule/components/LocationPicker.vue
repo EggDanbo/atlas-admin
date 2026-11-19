@@ -15,9 +15,10 @@ import VectorSource from 'ol/source/Vector'
 import XYZ from 'ol/source/XYZ'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
 import View from 'ol/View'
-import { getAmapConfigSource, getAmapJsConfig, loadAMapJs, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
-import { formatDistance, hasAmapKey, searchByKeyword, searchNearby, setAmapKey, verifyAmapKey } from '@/utils/geocode'
+import { getAmapJsConfig, loadAMapJs } from '@/utils/amap-js'
+import { formatDistance, hasAmapKey, searchByKeyword, searchNearby } from '@/utils/geocode'
 import toast from '@/utils/toast'
+import DataSourcePanel from './DataSourcePanel.vue'
 import 'ol/ol.css'
 
 /**
@@ -57,18 +58,8 @@ const loading = ref(false)
 /** 数据源：js = Web端 JS API（Key+安全密钥），rest = Web服务 Key，空 = OSM */
 const amapMode = ref<'js' | 'rest' | ''>(getAmapJsConfig() ? 'js' : (hasAmapKey() ? 'rest' : ''))
 const usingAmap = computed(() => Boolean(amapMode.value))
-const keyInput = ref('')
-const securityInput = ref('')
-const keySaving = ref(false)
-/** 高德配置的来源：环境变量 / 页面里填的 / 没配 —— 排查「为什么还是 OSM」时有用 */
-const configSource = ref(getAmapConfigSource())
-const configSourceLabel = computed(() => {
-  if (configSource.value === 'env')
-    return '环境变量'
-  if (configSource.value === 'local')
-    return '页面内配置'
-  return '未配置'
-})
+/** 弹窗高度（像素）：vxe-modal 不认 CSS min()，只能先算好再给到 CSS 变量 */
+const pickerHeight = ref('90vh')
 
 const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
 const hasPoint = ref(false)
@@ -88,12 +79,15 @@ let candidateMarkers: any[] = []
 
 function open(point?: LocationPoint | null) {
   reset(point)
+  pickerHeight.value = `${Math.min(900, window.innerHeight * 0.94)}px`
+  pickerHeight.value = `${Math.min(900, window.innerHeight * 0.94)}px`
   modalRef.value?.setProps({
     title: '选择打卡地点',
     // 比外层「新增/编辑规则」弹窗更大：上层盖不住下层时，
-    // 右下角会露出下层的关闭按钮，容易误点把编辑中的表单关掉
-    width: 'min(1280px, 96vw)',
-    height: 'min(900px, 94vh)',
+    // 右下角会露出下层的关闭按钮，容易误点把编辑中的表单关掉。
+    // 用 JS 算成像素值，vxe-modal 不认 CSS 的 min() 表达式
+    width: `${Math.min(1280, window.innerWidth * 0.96)}px`,
+    height: `${Math.min(900, window.innerHeight * 0.94)}px`,
     showFooter: false,
   })
   modalRef.value?.open()
@@ -446,58 +440,25 @@ function select(item: PlaceCandidate) {
 
 /* ==================== 数据源 ==================== */
 
-async function saveKey() {
-  const key = keyInput.value.trim()
-  const security = securityInput.value.trim()
-
-  if (!key) {
-    setAmapKey('')
-    setAmapJsConfig(null)
-    amapMode.value = ''
-    configSource.value = ''
-    toast.success('已切回 OpenStreetMap 数据')
-    reloadCandidates()
-    return
-  }
-
-  keySaving.value = true
-  try {
-    // 填了安全密钥说明是「Web 端 (JS API)」类型的 Key，走 SDK
-    if (security) {
-      const result = await verifyAmapJs({ key, securityCode: security })
-      if (!result.ok) {
-        toast.error(result.message)
-        return
-      }
-      setAmapJsConfig({ key, securityCode: security })
-      setAmapKey('')
-      amapMode.value = 'js'
-    }
-    else {
-      const result = await verifyAmapKey(key)
-      if (!result.ok) {
-        toast.error(`${result.message}。如果 Key 是「Web 端 (JS API)」类型，请同时填安全密钥`)
-        return
-      }
-      setAmapKey(key)
-      setAmapJsConfig(null)
-      amapMode.value = 'rest'
-    }
-
-    keyInput.value = ''
-    securityInput.value = ''
-    configSource.value = getAmapConfigSource()
-    toast.success('已切换到高德数据，地名会精确到门牌')
-    reloadCandidates()
-  }
-  finally {
-    keySaving.value = false
-  }
-}
-
+/** 数据源切换后重建地图（OSM 瓦片 ↔ 高德原生）并重新拉候选 */
 function reloadCandidates() {
-  if (hasPoint.value)
-    loadNearby(current.value.lng, current.value.lat)
+  olMap?.setTarget(undefined)
+  olMap = null
+  markerFeature = null
+  circleFeature = null
+
+  amapMap?.destroy?.()
+  amapMap = null
+  amapMarker = null
+  amapCircle = null
+
+  clearCandidateMarkers()
+
+  nextTick(() => {
+    initMap()
+    if (hasPoint.value)
+      loadNearby(current.value.lng, current.value.lat)
+  })
 }
 
 /* ==================== 确定 ==================== */
@@ -532,7 +493,7 @@ defineExpose({ open })
 
 <template>
   <SpModal ref="modalRef" :show-footer="false" :mask-closable="false" @close="controller?.abort()">
-    <div class="picker">
+    <div class="picker" :style="{ '--picker-height': pickerHeight }">
       <!-- 顶部工具条：搜索 / 范围 / 坐标 / 操作 -->
       <div class="picker__bar">
         <n-input-group class="picker__search">
@@ -568,49 +529,7 @@ defineExpose({ open })
           {{ current.lng.toFixed(5) }}, {{ current.lat.toFixed(5) }}
         </span>
 
-        <n-popover trigger="click" placement="bottom-end" :width="340">
-          <template #trigger>
-            <n-button text type="primary" size="small" class="picker__source">
-              <template #icon>
-                <Icon :icon="usingAmap ? 'ant-design:check-circle-filled' : 'ant-design:info-circle-outlined'" />
-              </template>
-              {{ amapMode === 'js' ? '高德 · JS API' : (amapMode === 'rest' ? '高德 · Web服务' : 'OSM 数据') }}
-            </n-button>
-          </template>
-
-          <div class="source">
-            <p class="source__title">
-              地名数据源
-            </p>
-            <p class="source__desc">
-              <template v-if="usingAmap">
-                当前走高德（{{ configSourceLabel }}），门牌级地址 + 周边 POI。
-              </template>
-              <template v-else>
-                当前走 OpenStreetMap 免费服务：国内 POI 覆盖有限，只到街区 / 路名，
-                还会混进拼音名。填高德 Key 可精确到门牌。
-                <br>
-                <b v-if="configSourceLabel === '未配置'" class="source__warn">
-                  配了 .env.local 还看到这句，说明 dev server 没重启 —— 环境变量只在启动时读取。
-                </b>
-              </template>
-            </p>
-            <div class="source__form">
-              <n-input v-model:value="keyInput" placeholder="Key" size="small" />
-              <n-input v-model:value="securityInput" placeholder="安全密钥（Web端 JS API 必填）" size="small" />
-            </div>
-            <div class="source__actions">
-              <n-button size="small" :loading="keySaving" type="primary" ghost @click="saveKey">
-                {{ keyInput.trim() ? '保存并验证' : '清除' }}
-              </n-button>
-              <span class="source__hint">
-                Key 与安全密钥都在
-                <a href="https://console.amap.com/dev/key/app" target="_blank" rel="noreferrer">高德控制台</a>
-                的 Key 详情里
-              </span>
-            </div>
-          </div>
-        </n-popover>
+        <DataSourcePanel v-model:mode="amapMode" @changed="reloadCandidates" />
 
         <div class="picker__actions">
           <n-button @click="close">
@@ -678,8 +597,8 @@ defineExpose({ open })
   display: flex;
   flex-direction: column;
   gap: 12px;
-  // 跟弹窗高度保持一致（弹窗是 min(900px, 94vh)，减去标题栏与内边距）
-  height: calc(min(900px, 94vh) - 96px);
+  // 弹窗高度由 JS 算好后写到 --picker-height，这里减掉标题栏与内边距
+  height: calc(var(--picker-height, 90vh) - 96px);
 
   &__bar {
     display: flex;
@@ -711,11 +630,6 @@ defineExpose({ open })
     font-size: 12px;
     font-variant-numeric: tabular-nums;
     color: var(--atlas-text-tertiary);
-  }
-
-  &__source {
-    font-size: 12px;
-    font-weight: 400;
   }
 
   &__actions {
@@ -803,62 +717,6 @@ defineExpose({ open })
     margin-top: auto;
     padding-top: 10px;
     border-top: 1px solid var(--atlas-border);
-  }
-}
-
-.source {
-  padding: 4px 2px;
-
-  &__title {
-    margin: 0 0 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--atlas-text);
-  }
-
-  &__desc {
-    margin: 0 0 10px;
-    font-size: 12px;
-    line-height: 1.65;
-    color: var(--atlas-text-tertiary);
-  }
-
-  &__warn {
-    display: inline-block;
-    margin-top: 6px;
-    font-weight: 400;
-    color: var(--atlas-brand);
-  }
-
-  &__warn {
-    display: inline-block;
-    margin-top: 6px;
-    font-weight: 400;
-    color: var(--atlas-brand);
-  }
-
-  &__form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  &__hint {
-    font-size: 11px;
-    line-height: 1.5;
-    color: var(--atlas-text-tertiary);
-
-    a {
-      color: var(--atlas-brand);
-      text-decoration: none;
-    }
   }
 }
 
