@@ -27,6 +27,9 @@ export interface PlaceCandidate {
   source: 'amap' | 'photon' | 'nominatim'
 }
 
+/** 判断是否含中文：OSM 里不少 POI 只有拼音/英文名，中文用户基本看不懂 */
+const HAS_CHINESE = /[\u4E00-\u9FA5]/
+
 const PHOTON = 'https://photon.komoot.io'
 const NOMINATIM = 'https://nominatim.openstreetmap.org'
 const AMAP = 'https://restapi.amap.com/v3'
@@ -339,7 +342,12 @@ function mapFeatures(data: any, center: { lng: number, lat: number }): PlaceCand
     })
   }
 
-  return list.sort((a, b) => a.distance - b.distance)
+  // OSM 里有些 POI 只有拼音或英文名（如「Wedeome」），中文用户看不懂，
+  // 优先保留带中文的；一条中文都没有时才退回原列表
+  const chinese = list.filter(item => HAS_CHINESE.test(item.name))
+  const usable = chinese.length ? chinese : list
+
+  return usable.sort((a, b) => a.distance - b.distance)
 }
 
 function buildAddress(props: any, name: string) {

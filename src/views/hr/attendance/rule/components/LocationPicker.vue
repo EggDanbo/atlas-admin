@@ -15,7 +15,7 @@ import VectorSource from 'ol/source/Vector'
 import XYZ from 'ol/source/XYZ'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
 import View from 'ol/View'
-import { getAmapJsConfig, loadAMapJs, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
+import { getAmapConfigSource, getAmapJsConfig, loadAMapJs, setAmapJsConfig, verifyAmapJs } from '@/utils/amap-js'
 import { formatDistance, hasAmapKey, searchByKeyword, searchNearby, setAmapKey, verifyAmapKey } from '@/utils/geocode'
 import toast from '@/utils/toast'
 import 'ol/ol.css'
@@ -60,6 +60,15 @@ const usingAmap = computed(() => Boolean(amapMode.value))
 const keyInput = ref('')
 const securityInput = ref('')
 const keySaving = ref(false)
+/** 高德配置的来源：环境变量 / 页面里填的 / 没配 —— 排查「为什么还是 OSM」时有用 */
+const configSource = ref(getAmapConfigSource())
+const configSourceLabel = computed(() => {
+  if (configSource.value === 'env')
+    return '环境变量'
+  if (configSource.value === 'local')
+    return '页面内配置'
+  return '未配置'
+})
 
 const current = ref<{ lng: number, lat: number }>({ lng: 116.404, lat: 39.915 })
 const hasPoint = ref(false)
@@ -443,6 +452,7 @@ async function saveKey() {
     setAmapKey('')
     setAmapJsConfig(null)
     amapMode.value = ''
+    configSource.value = ''
     toast.success('已切回 OpenStreetMap 数据')
     reloadCandidates()
     return
@@ -474,6 +484,7 @@ async function saveKey() {
 
     keyInput.value = ''
     securityInput.value = ''
+    configSource.value = getAmapConfigSource()
     toast.success('已切换到高德数据，地名会精确到门牌')
     reloadCandidates()
   }
@@ -571,11 +582,15 @@ defineExpose({ open })
             </p>
             <p class="source__desc">
               <template v-if="usingAmap">
-                当前走高德，门牌级地址 + 周边 POI。
+                当前走高德（{{ configSourceLabel }}），门牌级地址 + 周边 POI。
               </template>
               <template v-else>
-                当前走 OpenStreetMap 免费服务，国内 POI 覆盖有限，只能到街区 / 路名。
-                填一个高德「Web 服务」Key 即可精确到门牌，免费额度够日常使用。
+                当前走 OpenStreetMap 免费服务：国内 POI 覆盖有限，只到街区 / 路名，
+                还会混进拼音名。填高德 Key 可精确到门牌。
+                <br>
+                <b v-if="configSourceLabel === '未配置'" class="source__warn">
+                  配了 .env.local 还看到这句，说明 dev server 没重启 —— 环境变量只在启动时读取。
+                </b>
               </template>
             </p>
             <div class="source__form">
@@ -803,6 +818,20 @@ defineExpose({ open })
     font-size: 12px;
     line-height: 1.65;
     color: var(--atlas-text-tertiary);
+  }
+
+  &__warn {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: 400;
+    color: var(--atlas-brand);
+  }
+
+  &__warn {
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: 400;
+    color: var(--atlas-brand);
   }
 
   &__form {

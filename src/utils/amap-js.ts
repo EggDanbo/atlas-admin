@@ -16,6 +16,24 @@ export interface AmapJsConfig {
 
 const JS_STORAGE = 'atlas:amap-js'
 
+/** 配置从哪来：环境变量 / 页面里填的 / 没配 */
+export function getAmapConfigSource(): 'env' | 'local' | '' {
+  const envKey = String(import.meta.env.VITE_MAP_KEY ?? '')
+  const envSecurity = String(import.meta.env.VITE_MAP_SECURITY_CODE ?? '')
+  if (envKey && envSecurity)
+    return 'env'
+
+  try {
+    const raw = localStorage.getItem(JS_STORAGE)
+    if (raw && JSON.parse(raw)?.key)
+      return 'local'
+  }
+  catch {
+    // 忽略
+  }
+  return ''
+}
+
 export function getAmapJsConfig(): AmapJsConfig | null {
   // 部署配置优先：Key + 安全密钥都给了才认为是 JS API 类型
   const envKey = String(import.meta.env.VITE_MAP_KEY ?? '')
