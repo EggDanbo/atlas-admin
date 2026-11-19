@@ -7,6 +7,10 @@ import type { BuildOptions } from 'vite'
 const VENDOR_REGEX = /node_modules[\\/](@vue|vue|vue-router|pinia)[\\/]/
 const NAIVE_UI_REGEX = /node_modules[\\/](naive-ui|vueuc|vooks|vdirs|seemly|evtd|css-render|@css-render|treeshaking|async-validator)[\\/]/
 const ECHARTS_REGEX = /node_modules[\\/]echarts[\\/]/
+// 表格库体积大且很少改动，单独切出去让浏览器长期缓存
+const VXE_REGEX = /node_modules[\\/](vxe-table|vxe-pc-ui|xe-utils|@vxe-ui)[\\/]/
+// 代码高亮只在「接口文档 / 报错详情」里用到
+const HIGHLIGHT_REGEX = /node_modules[\\/](highlight\.js|vue-prism-editor)[\\/]/
 // lodash-es 不再单独分组（见下方 groups 内注释），正则一并停用
 // const LODASH_ES_REGEX = /node_modules[\\/]lodash-es[\\/]/
 const VUEUSE_REGEX = /node_modules[\\/]@vueuse[\\/]/
@@ -58,6 +62,30 @@ export function createBuild(_viteEnv?: ViteEnv): BuildOptions {
               name: 'echarts',
               test: ECHARTS_REGEX,
               priority: 15,
+            },
+            // 表格库
+            {
+              name: 'vxe',
+              test: VXE_REGEX,
+              priority: 15,
+            },
+            // 代码高亮
+            {
+              name: 'highlight',
+              test: HIGHLIGHT_REGEX,
+              priority: 12,
+            },
+            // 表格库
+            {
+              name: 'vxe',
+              test: VXE_REGEX,
+              priority: 15,
+            },
+            // 代码高亮
+            {
+              name: 'highlight',
+              test: HIGHLIGHT_REGEX,
+              priority: 12,
             },
             // 工具库
             // lodash-es 不单独分组：rolldown 1.2.4 会把 lodash 拆进 naive-ui chunk，

@@ -90,8 +90,10 @@ function open(point?: LocationPoint | null) {
   reset(point)
   modalRef.value?.setProps({
     title: '选择打卡地点',
-    width: '90vw',
-    height: '90vh',
+    // 比外层「新增/编辑规则」弹窗更大：上层盖不住下层时，
+    // 右下角会露出下层的关闭按钮，容易误点把编辑中的表单关掉
+    width: 'min(1280px, 96vw)',
+    height: 'min(900px, 94vh)',
     showFooter: false,
   })
   modalRef.value?.open()
@@ -676,7 +678,8 @@ defineExpose({ open })
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: calc(90vh - 96px);
+  // 跟弹窗高度保持一致（弹窗是 min(900px, 94vh)，减去标题栏与内边距）
+  height: calc(min(900px, 94vh) - 96px);
 
   &__bar {
     display: flex;
