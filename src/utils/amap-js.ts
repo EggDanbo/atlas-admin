@@ -107,15 +107,8 @@ export async function amapJsNearby(
       const township = String(comp.township ?? '')
       const district = String(comp.district ?? '')
 
-      const list: PlaceCandidate[] = [{
-        id: `addr-${lng},${lat}`,
-        name: township || district || '此处地址',
-        address: formatted || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
-        lng,
-        lat,
-        distance: 0,
-        source: 'amap',
-      }]
+      // 具体 POI 优先，「此处坐标」放到最后兜底
+      const list: PlaceCandidate[] = []
 
       for (const poi of (regeocode.pois ?? []).slice(0, limit)) {
         const [poiLng, poiLat] = String(poi.location ?? '').split(',').map(Number)
@@ -133,6 +126,16 @@ export async function amapJsNearby(
           source: 'amap',
         })
       }
+
+      list.push({
+        id: `addr-${lng},${lat}`,
+        name: township || district || '此处坐标',
+        address: formatted || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+        lng,
+        lat,
+        distance: 0,
+        source: 'amap',
+      })
 
       resolve(list.slice(0, limit + 1))
     })

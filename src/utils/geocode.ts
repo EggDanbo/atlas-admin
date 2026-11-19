@@ -197,21 +197,10 @@ async function amapNearby(
   const comp = (regeo.addressComponent ?? {}) as Recordable
 
   const list: PlaceCandidate[] = []
-
-  // 先放「此处地址」：POI 里可能没有用户点的那栋楼，这条兜住
   const district = String(comp.district ?? '')
   const township = String(comp.township ?? '')
-  list.push({
-    id: `addr-${lng},${lat}`,
-    name: township || district || '此处地址',
-    address: fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
-    lng,
-    lat,
-    distance: 0,
-    source: 'amap',
-  })
 
-  // 再放周边 POI：高德已经把最近的排在前面
+  // 周边 POI：高德已经把最近的排在前面
   for (const poi of (regeo.pois ?? []).slice(0, limit)) {
     const [poiLng, poiLat] = String(poi.location ?? '').split(',').map(Number)
     const name = String(poi.name ?? '').trim()
@@ -228,6 +217,17 @@ async function amapNearby(
       source: 'amap',
     })
   }
+
+  // 「此处坐标」放最后，POI 里没有那栋楼时用它兜底
+  list.push({
+    id: `addr-${lng},${lat}`,
+    name: township || district || '此处坐标',
+    address: fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+    lng,
+    lat,
+    distance: 0,
+    source: 'amap',
+  })
 
   return list.slice(0, limit + 1)
 }

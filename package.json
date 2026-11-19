@@ -34,7 +34,7 @@
     "mock:schema": "node scripts/mock/extract-schema.mjs",
     "test": "vitest",
     "test:run": "vitest run",
-    "e2e:build": "cross-env NODE_ENV=production vite build --outDir dist-e2e --emptyOutDir false",
+    "e2e:build": "cross-env NODE_ENV=production vite build --outDir dist-e2e --emptyOutDir",
     "e2e:serve": "pnpm run e2e:build && vite preview --outDir dist-e2e --port 5199 --strictPort",
     "e2e": "playwright test",
     "e2e:report": "playwright show-report",

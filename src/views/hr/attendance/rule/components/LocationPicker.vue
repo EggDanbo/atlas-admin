@@ -74,6 +74,8 @@ let circleFeature: Feature<Circle> | null = null
 let amapMap: any = null
 let amapMarker: any = null
 let amapCircle: any = null
+/** 候选地点在地图上的编号标记，便于判断「列表里的地点到底在哪」 */
+let candidateMarkers: any[] = []
 
 function open(point?: LocationPoint | null) {
   reset(point)
@@ -138,7 +140,7 @@ async function initAmapMap() {
         position: [current.value.lng, current.value.lat],
         draggable: true,
         cursor: 'move',
-        offset: new AMap.Pixel(-10, -10),
+        offset: new AMap.Pixel(-7, -7),
         content: '<span class="amap-dot"></span>',
         visible: hasPoint.value,
       })
@@ -153,6 +155,10 @@ async function initAmapMap() {
         const { lng, lat } = event.lnglat
         applyPoint(Number(lng.toFixed(6)), Number(lat.toFixed(6)))
       })
+
+      // 比例尺：让人有尺度感，能判断「这个点到底离建筑多远」
+      if (AMap.Scale)
+        amapMap.addControl(new AMap.Scale({ position: 'RB' }))
     }
     else {
       amapMap.setZoomAndCenter(16, [current.value.lng, current.value.lat])
@@ -317,6 +323,49 @@ function updateCircle(value: number | null) {
     setCircle(current.value.lng, current.value.lat)
 }
 
+/* ==================== 候选标注 ==================== */
+
+function clearCandidateMarkers() {
+  candidateMarkers.forEach(marker => marker?.setMap?.(null))
+  candidateMarkers = []
+}
+
+function renderCandidateMarkers(list: PlaceCandidate[]) {
+  clearCandidateMarkers()
+  if (!useAmapMap.value || !amapMap)
+    return
+
+  const AMap = (window as any).AMap
+  if (!AMap)
+    return
+
+  list.forEach((item, index) => {
+    // 最后那条「此处坐标」就是点击位置本身，不单独画标记
+    if (item.id.startsWith('addr-'))
+      return
+
+    const active = item.id === selectedId.value
+    const marker = new AMap.Marker({
+      position: [item.lng, item.lat],
+      offset: new AMap.Pixel(-11, -11),
+      zIndex: 90 - index,
+      title: item.name,
+      content: `<span class="amap-cand${active ? ' is-active' : ''}">${index + 1}</span>`,
+    })
+    marker.setMap(amapMap)
+    marker.on('click', () => select(item))
+    candidateMarkers.push(marker)
+  })
+}
+
+/** 列表选中项变了，只刷新标记样式，不重建 */
+function highlightCandidateMarkers() {
+  candidates.value.forEach((item, index) => {
+    const active = item.id === selectedId.value
+    candidateMarkers[index]?.setContent?.(`<span class="amap-cand${active ? ' is-active' : ''}">${index + 1}</span>`)
+  })
+}
+
 /* ==================== 候选 ==================== */
 
 let controller: AbortController | null = null
@@ -327,6 +376,7 @@ async function loadNearby(lng: number, lat: number) {
   controller = currentController
 
   loading.value = true
+  clearCandidateMarkers()
   try {
     const list = await searchNearby(lng, lat, { signal: currentController.signal, limit: 8 })
     if (currentController.signal.aborted)
@@ -337,6 +387,7 @@ async function loadNearby(lng: number, lat: number) {
       selectedId.value = list[0]!.id
       manualName.value = list[0]!.name
     }
+    renderCandidateMarkers(list)
   }
   finally {
     if (controller === currentController)
@@ -359,7 +410,11 @@ async function doSearch() {
     }
     selectedId.value = list[0]!.id
     manualName.value = list[0]!.name
-    olMap?.getView().setCenter(fromLonLat([list[0]!.lng, list[0]!.lat]))
+    renderCandidateMarkers(list)
+    if (useAmapMap.value)
+      amapMap?.setZoomAndCenter(17, [list[0]!.lng, list[0]!.lat])
+    else
+      olMap?.getView().setCenter(fromLonLat([list[0]!.lng, list[0]!.lat]))
   }
   finally {
     loading.value = false
@@ -371,6 +426,11 @@ function select(item: PlaceCandidate) {
   manualName.value = item.name
   // 选中候选后把点挪到它的真实位置，半径圈跟着走
   applyPoint(item.lng, item.lat, { keepSelection: true })
+
+  // 放大到 18 级，能看清是哪栋楼；同时高亮它的编号
+  if (useAmapMap.value)
+    amapMap?.setZoomAndCenter(18, [item.lng, item.lat])
+  highlightCandidateMarkers()
 }
 
 /* ==================== 数据源 ==================== */
@@ -864,26 +924,126 @@ defineExpose({ open })
   }
 }
 
-/* 高德 Marker 的自定义内容（插进 SDK 的 DOM，scoped 不生效） */
-.amap-dot {
-  display: block;
-  width: 20px;
-  height: 20px;
+/* 候选点的编号标记（插进 SDK 的 DOM，scoped 不生效） */
+.amap-cand {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #f97316;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 28%);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #f97316;
+  background: #fff;
+  border: 2px solid #f97316;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  &.is-active {
+    color: #fff;
+    background: #f97316;
+    transform: scale(1.15);
+  }
+}
+
+/* 候选点的编号标记（插进 SDK 的 DOM，scoped 不生效） */
+.amap-cand {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #f97316;
+  background: #fff;
+  border: 2px solid #f97316;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  &.is-active {
+    color: #fff;
+    background: #f97316;
+    transform: scale(1.15);
+  }
 }
 
 /* 高德 Marker 的自定义内容（插进 SDK 的 DOM，scoped 不生效） */
 .amap-dot {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: #f97316;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 28%);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
+}
+
+/* 候选点的编号标记（插进 SDK 的 DOM，scoped 不生效） */
+.amap-cand {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #f97316;
+  background: #fff;
+  border: 2px solid #f97316;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  &.is-active {
+    color: #fff;
+    background: #f97316;
+    transform: scale(1.15);
+  }
+}
+
+/* 候选点的编号标记（插进 SDK 的 DOM，scoped 不生效） */
+.amap-cand {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: #f97316;
+  background: #fff;
+  border: 2px solid #f97316;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 22%);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+
+  &.is-active {
+    color: #fff;
+    background: #f97316;
+    transform: scale(1.15);
+  }
+}
+
+/* 高德 Marker 的自定义内容（插进 SDK 的 DOM，scoped 不生效） */
+.amap-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f97316;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
 }
 
 /* 暗色下瓦片压一点亮度 */
