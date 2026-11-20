@@ -153,7 +153,12 @@ const {
         @update:collapsed="(value: boolean) => (collapsed = value)"
       >
         <div class="naive-layout-sidebar-inner">
-          <div v-if="showLogo" :class="getLogoClass" class="naive-layout-logo">
+          <div
+            v-if="showLogo"
+            :class="getLogoClass"
+            class="naive-layout-logo"
+            :style="{ height: `${navHeight}px` }"
+          >
             <Logo />
           </div>
           <Sidebar />

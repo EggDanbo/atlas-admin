@@ -18,17 +18,25 @@
     background: #f0f2f5;
   }
 
-  .naive-layout-body--vertical {
-    // Logo
-    :deep(.naive-layout-logo-large) {
-      height: calc(var(--layout-nav-height) + 60px);
-      .logo-item a {
-        flex-direction: column;
-        img {
-          width: 45px;
-          height: 45px;
-          border-radius: 50%;
-        }
+  // Logo：高度与顶栏一致，下面的菜单才能跟右侧标签栏对齐
+  :deep(.naive-layout-logo) {
+    display: flex;
+    flex: none;
+    align-items: center;
+    height: var(--layout-nav-height, 56px);
+    overflow: hidden;
+  }
+
+  :deep(.naive-layout-logo-large) {
+    height: calc(var(--layout-nav-height, 56px) + 60px);
+
+    .logo-item a {
+      flex-direction: column;
+
+      img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
       }
     }
   }
