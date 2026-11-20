@@ -10,6 +10,11 @@ import { collectLeafRoutes } from './support/routes'
  *
  * 按模块分组，失败时能立刻看出是哪个业务域炸了。
  */
+/** 全屏页面不走 .page-container 容器，单独断言它们的根节点 */
+const FULLSCREEN_ROUTES: Record<string, string> = {
+  '/dashboard/screen': '.screen',
+}
+
 const routes = collectLeafRoutes()
 const byModule = new Map<string, typeof routes>()
 for (const route of routes) {
@@ -36,7 +41,8 @@ for (const [module, moduleRoutes] of byModule) {
 
         await page.goto(route.path)
 
-        await expect(page.locator('.page-container').first()).toBeVisible()
+        const rootSelector = FULLSCREEN_ROUTES[route.path] ?? '.page-container'
+        await expect(page.locator(rootSelector).first()).toBeVisible()
         const body = await page.locator('body').innerText()
         expect(body, '页面疑似落到 404').not.toMatch(/页面不存在|404 Not Found/i)
         expect(body.trim().length, '页面一片空白').toBeGreaterThan(20)

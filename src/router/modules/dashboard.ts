@@ -22,6 +22,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/dashboard/overview/index.vue'),
       },
       {
+        path: 'screen',
+        name: 'DashboardScreen',
+        meta: {
+          title: '数据大屏',
+          keepAlive: false,
+        },
+        component: () => import('@/views/dashboard/screen/index.vue'),
+      },
+      {
         path: 'monitor',
         name: 'DashboardMonitor',
         meta: {
