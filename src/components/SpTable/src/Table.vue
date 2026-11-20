@@ -31,6 +31,7 @@ import AdvInput from './components/search/AdvInput.vue'
 import AdvInputModal from './components/search/AdvInputModal.vue'
 import AdSearch from './components/search/Search.vue'
 import Settings from './components/settings/Settings.vue'
+import TableSkeleton from './components/TableSkeleton.vue'
 import { useAdvSearch } from './hooks/useAdvSearch'
 import { useColumns } from './hooks/useColumns'
 import { useDataSource } from './hooks/useDataSource'
@@ -118,6 +119,14 @@ const getProps = computed(() => {
 const { primaryColor } = storeToRefs(useThemeStore())
 
 const { getLoading, setLoading } = useLoading(getProps)
+
+// 首次加载时用骨架屏占位：vxe 的 loading 遮罩下面是空表，观感上会「闪一下」
+const firstLoaded = ref(false)
+watch(getLoading, (loading) => {
+  if (!loading)
+    firstLoaded.value = true
+}, { immediate: true })
+const showSkeleton = computed(() => !firstLoaded.value && getLoading.value)
 
 const advSearch = useAdvSearch()
 
@@ -861,7 +870,9 @@ defineExpose({
     </div>
     <div v-if="isShowTable">
       <AdvInputModal ref="advInputModal" />
+      <TableSkeleton v-if="showSkeleton" :rows="8" :columns="6" />
       <vxe-grid
+        v-else
         ref="tableElRef"
         v-bind="getTableBindValues"
         :size="tableSize"
@@ -884,6 +895,17 @@ defineExpose({
         @scroll="onScroll"
         @data-change="onDataChange"
       >
+        <template #empty>
+          <div class="table-empty">
+            <Icon icon="ant-design:inbox-outlined" class="table-empty__icon" />
+            <p class="table-empty__title">
+              暂无数据
+            </p>
+            <p class="table-empty__desc">
+              换个筛选条件试试，或先新增一条记录
+            </p>
+          </div>
+        </template>
         <template #pager>
           <div v-if="getPaginationBindValues" ref="paginationRef" class="pagination">
             <n-pagination
@@ -1097,6 +1119,31 @@ html[data-vxe-ui-theme='dark'] {
 .table-toolbar-right-icon {
   display: flex;
   align-items: center;
+}
+
+.table-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 48px 0;
+
+  &__icon {
+    font-size: 40px;
+    color: var(--atlas-text-quaternary, #c8c8c8);
+  }
+
+  &__title {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--atlas-text-secondary);
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 12px;
+    color: var(--atlas-text-tertiary);
+  }
 }
 
 .vxe-table {
