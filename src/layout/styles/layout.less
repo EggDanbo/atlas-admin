@@ -42,7 +42,20 @@
   }
   // 顶栏
   :deep(.naive-layout-header) {
+    // 顶栏内是三个区块（左：折叠+面包屑，中：搜索，右：通知/设置/用户），
+    // 不加 flex 会垂直堆叠并从 56px 高度里溢出去，右侧那组会掉到内容区上
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px 0 8px;
     z-index: 1;
+
+    // 中间区块吃掉剩余宽度，右侧区块自然贴边
+    > *:nth-child(2) {
+      flex: 1;
+      min-width: 0;
+    }
+
     // 顶栏 主题色
     .nav-primary {
       background-color: var(--primary-color);
@@ -347,6 +360,8 @@
 .naive-layout {
   --layout-nav-height: 56px;
   --layout-border-color: rgba(0, 0, 0, 0.09);
+  // 原来由 pro-naive-ui 注入，现在自己兜底（Footer 等处会用到）
+  --pro-layout-content-color: transparent;
 }
 
 .dark-layout .naive-layout {

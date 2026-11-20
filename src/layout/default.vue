@@ -32,6 +32,7 @@ const {
   showFooter,
   showTabbar,
   footerFixed,
+  tabbarHeight,
   sidebarWidth,
   preferencesLocation,
   tabbarStyle,
@@ -139,7 +140,11 @@ const {
     <n-layout
       has-sider
       class="naive-layout-body"
-      :style="excerptThemeVars"
+      :style="{
+        ...excerptThemeVars,
+        // Tabbar.vue 内部用这个变量算高度，pro-naive-ui 移除后需要自己给
+        '--pro-layout-tabbar-height': `${tabbarHeight}px`,
+      }"
     >
       <!-- 侧栏模式：logo 在侧栏顶部 -->
       <n-layout-sider
