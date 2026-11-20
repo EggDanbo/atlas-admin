@@ -17,6 +17,7 @@ const userStore = useUserStore()
 const Footer = defineAsyncComponent(() => import('./components/Footer/Footer.vue'))
 const PreferencesFloatBtn = defineAsyncComponent(() => import('./components/Preferences/components/FloatBtn.vue'))
 const RollbackMode = defineAsyncComponent(() => import('./components/RollbackMode/RollbackMode.vue'))
+const DemoSwitch = defineAsyncComponent(() => import('./components/DemoSwitch/DemoSwitch.vue'))
 
 const { isDark, themeType, themeSkin, headerLucency, sidebarLucency, containerLucency } = storeToRefs(useThemeStore())
 const {
@@ -43,6 +44,11 @@ const asyncRouteStore = useAsyncRouteStore()
 const menusList = computed<MenuOption[]>(() => asyncRouteStore.getMenus as MenuOption[])
 
 const isThemeSkin = computed(() => themeType.value === 'skin' && themeSkin.value)
+
+// 只有跑在 mock 数据上时才显示演示开关，接真实后端时自动隐藏
+const showDemoSwitch = computed(() => String(import.meta.env.VITE_USE_MOCK ?? 'true') !== 'false')
+
+// 只有跑在 mock 数据上时才显示演示开关，接真实后端时自动隐藏
 
 // 平板/手机不显示多标签栏，但平板保持桌面布局形态
 const finalShowTabbar = computed(() => showTabbar.value && !tablet.value && !mobile.value)
@@ -229,6 +235,10 @@ const {
     <RollbackMode v-if="mode === 'full-content'" />
     <!-- 业务详情弹窗宿主 -->
     <BizDetailHost />
+    <!-- 演示模式切换：正常 / 空数据 / 接口异常 -->
+    <DemoSwitch v-if="showDemoSwitch" />
+    <!-- 演示模式切换：正常 / 空数据 / 接口异常 -->
+    <DemoSwitch v-if="showDemoSwitch" />
   </div>
 </template>
 

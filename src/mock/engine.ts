@@ -29,6 +29,7 @@ import { applyMutation, withMutation } from './data/mutation'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { resolvePurchaseMock } from './data/purchase'
 import { createRng, dateOffset, floatBetween, intBetween, pick, toDateString, toDateTimeString } from './data/random'
+import { emptyLike, getDemoMode } from './demo-mode'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
 import { FIELD_TITLE_DICT } from './schema/schema.generated'
 
@@ -1065,7 +1066,16 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   const { action, module: rawModule } = splitPath(path)
   const params = collectParams(input, query)
   const module = pickModule(rawModule, params)
-  const ok = (data: any = null): MockPayload => ({ code: 0, message: 'success', data })
+  const isAuth = /authorize\/|identity\/profile\/get|identity\/permit/.test(path)
+  const ok = (data: any = null): MockPayload => {
+    const demo = getDemoMode()
+    if (demo === 'normal' || isAuth)
+      return { code: 0, message: 'success', data }
+    if (demo === 'empty')
+      return { code: 0, message: 'success', data: emptyLike(data) }
+    // error：模拟接口异常，前端会走错误提示分支
+    return { code: 500, message: '演示模式：服务端异常', data: null }
+  }
 
   // ---------- 授权 ----------
   if (/(^|\/)authorize\/(token|tokensafety|sms|refreshtoken)$/.test(path))
