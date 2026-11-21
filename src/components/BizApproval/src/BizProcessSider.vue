@@ -30,6 +30,40 @@ function stepStatus(item: Recordable) {
   return item.status ? 'process' : 'wait'
 }
 
+/** 第一个还没处理状态的节点，就是「当前停在谁那儿」 */
+const currentIndex = computed(() => {
+  const list = props.model.processes
+  if (!Array.isArray(list))
+    return -1
+  return list.findIndex((item: Recordable) => !item.status)
+})
+
+/** 两个节点之间的间隔，用来看「卡了多久」 */
+function waitDuration(index: number): string {
+  const list = props.model.processes
+  if (!Array.isArray(list) || index <= 0)
+    return ''
+
+  const prev = list[index - 1]?.audit_time
+  const cur = list[index]?.audit_time
+  if (!prev || !cur)
+    return ''
+
+  const diff = new Date(String(cur).replace(' ', 'T')).getTime() - new Date(String(prev).replace(' ', 'T')).getTime()
+  if (!Number.isFinite(diff) || diff <= 0)
+    return ''
+
+  const minutes = Math.round(diff / 60000)
+  if (minutes < 60)
+    return `${minutes} 分钟`
+  const hours = Math.floor(minutes / 60)
+  const rest = minutes % 60
+  if (hours < 24)
+    return rest ? `${hours} 小时 ${rest} 分` : `${hours} 小时`
+  const days = Math.floor(hours / 24)
+  return `${days} 天 ${hours % 24} 小时`
+}
+
 function openLogs() {
   logRef.value?.open({ id: props.model.id })
 }
@@ -70,7 +104,12 @@ function openLogs() {
         :status="stepStatus(item)"
       >
         <template #title>
-          <span>{{ item.step_name }}</span>
+          <span class="biz-process__step-title">
+            {{ item.step_name }}
+            <n-tag v-if="index === currentIndex" size="tiny" type="info" :bordered="false">
+              处理中
+            </n-tag>
+          </span>
         </template>
         <template #default>
           <p class="biz-process__audit">
@@ -81,6 +120,9 @@ function openLogs() {
           </p>
           <p class="biz-process__time">
             {{ item.audit_time }}
+            <span v-if="waitDuration(index)" class="biz-process__duration">
+              · 间隔 {{ waitDuration(index) }}
+            </span>
           </p>
         </template>
       </n-step>
@@ -112,6 +154,26 @@ function openLogs() {
     letter-spacing: 0.2px;
     word-break: break-all;
     text-align: center;
+  }
+
+  &__step-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__duration {
+    color: var(--atlas-text-quaternary, #c2c2c2);
+  }
+
+  &__step-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__duration {
+    color: var(--atlas-text-quaternary, #c2c2c2);
   }
 
   &__steps {
