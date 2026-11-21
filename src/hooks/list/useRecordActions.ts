@@ -45,6 +45,7 @@ interface UseRecordActionsOptions {
  * 返回的 operateColumn 直接拼进 columns，RecordFormHost 放到模板任意位置即可。
  */
 export function useRecordActions(options: UseRecordActionsOptions) {
+  const message = useMessage()
   const recordRef = ref<RecordFormInst | null>(null)
 
   // 与 useListPage 同一套口径：当前 tab 的权限码 + _ADD/_EDIT/_DELE 后缀。
@@ -78,20 +79,40 @@ export function useRecordActions(options: UseRecordActionsOptions) {
     return String(row.id ?? '')
   }
 
+  /**
+   * 删除后给「撤销」，不再弹二次确认
+   *
+   * 确认框的摩擦在批量整理数据时很烦人；改成删完 5 秒内可撤销，
+   * 真删错了也能拉回来，比「先问一遍」更顺手。
+   */
   async function handleRemove(row: Recordable) {
-    toast.infoModal(`确定删除「${rowLabel(row)}」吗？`, {
-      positiveText: '确定',
-      negativeText: '取消',
-      onPositiveClick: async () => {
-        const { isSuccess } = await request.Post<Service.Response>(`${modulePath}/delete`, { id: row.id })
-        if (!isSuccess) {
-          toast.error('删除失败')
-          return
-        }
-        toast.success('已删除')
-        options.refresh()
-      },
-    })
+    const { isSuccess } = await request.Post<Service.Response>(`${modulePath}/delete`, { id: row.id })
+    if (!isSuccess) {
+      toast.error('删除失败')
+      return
+    }
+
+    options.refresh()
+
+    // message 的 content 支持渲染函数，直接把「撤销」按钮放进提示里
+    message.success(() => h('span', { class: 'undo-toast' }, [
+      h('span', `已删除「${rowLabel(row)}」`),
+      h(NButton, {
+        text: true,
+        type: 'primary',
+        size: 'small',
+        style: 'margin-left: 10px; vertical-align: baseline;',
+        onClick: async () => {
+          const { isSuccess: restored } = await request.Post<Service.Response>(`${modulePath}/restore`, { id: row.id })
+          if (!restored) {
+            toast.error('撤销失败')
+            return
+          }
+          options.refresh()
+          message.success('已撤销')
+        },
+      }, () => '撤销'),
+    ]), { duration: 5000 })
   }
 
   const viewOnly = options.mode === 'view'

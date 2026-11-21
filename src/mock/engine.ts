@@ -29,6 +29,7 @@ import { applyMutation, withMutation } from './data/mutation'
 import { buildPermissionTree, MOCK_PERMISSION_CODES } from './data/permissions'
 import { resolvePurchaseMock } from './data/purchase'
 import { createRng, dateOffset, floatBetween, intBetween, pick, toDateString, toDateTimeString } from './data/random'
+import { filterDeleted, markDeleted, unmarkDeleted } from './deleted-store'
 import { emptyLike, getDemoMode } from './demo-mode'
 import { buildColumns, resolveAllFields, resolveModuleDir } from './schema/columns'
 import { FIELD_TITLE_DICT } from './schema/schema.generated'
@@ -1070,11 +1071,23 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
   const ok = (data: any = null): MockPayload => {
     const demo = getDemoMode()
     if (demo === 'normal' || isAuth)
-      return { code: 0, message: 'success', data }
+      return { code: 0, message: 'success', data: filterDeleted(module, data) }
     if (demo === 'empty')
       return { code: 0, message: 'success', data: emptyLike(data) }
     // error：模拟接口异常，前端会走错误提示分支
     return { code: 500, message: '演示模式：服务端异常', data: null }
+  }
+
+  // ---------- 删除 / 撤销 ----------
+  // 记住被删的 id，列表就真的少一行；撤销时放回去，前端 toast 上有「撤销」按钮
+  const rowId = params.id ?? (input as any).body?.id
+  if (/\/(delete|remove)$/.test(path) && rowId !== undefined) {
+    markDeleted(module, rowId)
+    return ok(true)
+  }
+  if (/\/restore$/.test(path) && rowId !== undefined) {
+    unmarkDeleted(module, rowId)
+    return ok(true)
   }
 
   // ---------- 授权 ----------
