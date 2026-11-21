@@ -862,6 +862,50 @@ function buildWorkflowNo(bizKey: string, index: number) {
 }
 
 /**
+ * 按日期区间过滤（前端下钻会带 date=[开始时间戳, 结束时间戳]）
+ * 没带或者格式不对就原样返回
+ */
+function filterByRange<T extends { ctime: string }>(list: T[], begin: unknown, end: unknown): T[] {
+  const start = toTime(begin)
+  const stop = toTime(end)
+  // 没带区间就不过滤
+  if (start === null && stop === null)
+    return list
+
+  return list.filter((item) => {
+    const time = new Date(item.ctime.replace(' ', 'T')).getTime()
+    if (!Number.isFinite(time))
+      return false
+    if (start !== null && time < start)
+      return false
+    if (stop !== null && time > stop)
+      return false
+    return true
+  })
+}
+
+/** 时间参数可能是毫秒时间戳、秒级时间戳或日期字符串，统一成毫秒 */
+function toTime(value: unknown): number | null {
+  if (value === undefined || value === null || value === '')
+    return null
+
+  if (typeof value === 'number')
+    return value < 1e11 ? value * 1000 : value
+
+  const text = String(value).trim()
+  if (!text)
+    return null
+
+  if (/^\d+$/.test(text)) {
+    const num = Number(text)
+    return num < 1e11 ? num * 1000 : num
+  }
+
+  const parsed = new Date(text.replace(' ', 'T')).getTime()
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+/**
  * 构建工作台待办条目
  *
  * 等待时长按序号递增而不是随机：列表按时间倒序展示才符合直觉，
@@ -875,8 +919,9 @@ function buildWorkflowItems(kind: string, count = 9) {
     const row = buildRow(biz.module, index)
     const no = buildWorkflowNo(biz.key, index)
     const amount = floatBetween(ctx.rng, 200, 26000, 2)
-    // 审批待办的跨度拉长到 30 小时以上，才会出现「已超期」；自己提的单子还在等结果
-    const waitHours = kind === 'approve' ? 2 + index * 4 : 1 + index * 2
+    // 等待时长跨到一周：工作台图表是「近 7 天」，按天下的钻得能筛出东西；
+    // 超期阈值相应提到 96 小时，否则 9 条里有 8 条标红，看着像系统出问题
+    const waitHours = kind === 'approve' ? 2 + index * 22 : 1 + index * 18
     return {
       id: `${kind === 'apply' ? 'A' : 'P'}${index + 1}`,
       biz_name: biz.label,
@@ -888,7 +933,7 @@ function buildWorkflowItems(kind: string, count = 9) {
       content: `单号 ${no} · 金额 ${amount} 元`,
       amount,
       wait_hours: waitHours,
-      overdue: waitHours > 24,
+      overdue: waitHours > 96,
       ctime: toDateTimeString(new Date(Date.now() - waitHours * 3600 * 1000)),
       // 状态值需落在 BillStatus 枚举内（2 待审核 / 4 已审批），否则页面无法映射中文
       status: kind === 'apply' ? '2' : '4',
@@ -1178,12 +1223,13 @@ export function handleMockRequest(input: MockRequestInput): MockPayload {
 
   // ---------- 工作台 ----------
   if (/workflow\/apply\/search$/.test(path)) {
-    const list = buildWorkflowItems('apply')
-    return ok({ list, totalcount: list.length, page: 1, pageindex: 0, pagesize: list.length, totalpages: 1, isempty: false })
+    const list = filterByRange(buildWorkflowItems('apply'), params.time_begin, params.time_end)
+    return ok({ list, totalcount: list.length, page: 1, pageindex: 0, pagesize: list.length || 10, totalpages: 1, isempty: list.length === 0 })
   }
   if (/workflow\/approve\/search$/.test(path)) {
-    const list = buildWorkflowItems('approve')
-    return ok({ list, totalcount: list.length, page: 1, pageindex: 0, pagesize: list.length, totalpages: 1, isempty: false })
+    // 前端把 date 区间在 beforeFetch 里转成了 time_begin / time_end
+    const list = filterByRange(buildWorkflowItems('approve'), params.time_begin, params.time_end)
+    return ok({ list, totalcount: list.length, page: 1, pageindex: 0, pagesize: list.length || 10, totalpages: 1, isempty: list.length === 0 })
   }
   if (/dashboard\/overview\/getalter$/.test(path))
     return ok(buildWorkplaceDynamic())
