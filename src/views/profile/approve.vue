@@ -37,12 +37,23 @@ const querySchemas = computed(() => ({
   ],
 }))
 
+/** 工作台下钻带过来的日期（YYYY-MM-DD），转成当天 0 点到 23:59:59 的时间戳 */
+function drillRange(): [number, number] | null {
+  const day = typeof route.query.date === 'string' ? route.query.date : ''
+  if (!day || !/^\d{4}-\d{2}-\d{2}$/.test(day))
+    return null
+
+  const start = new Date(`${day}T00:00:00`).getTime()
+  const end = new Date(`${day}T23:59:59`).getTime()
+  return [start, end]
+}
+
 function createQueryModel() {
   return {
     format: 'workflow',
     filter: null as string | null,
     team_id: new Array<string>(),
-    date: defDate({ start: -1, ymd: 'm' }),
+    date: drillRange() ?? defDate({ start: -1, ymd: 'm' }),
     status: 'wait',
   }
 }
@@ -203,7 +214,15 @@ async function loadTeamTree() {
     teamTreeOptions.value = data
 }
 
-onMounted(() => loadTeamTree())
+onMounted(async () => {
+  await loadTeamTree()
+
+  // 从图表下钻进来时，首屏可能已经按默认条件查过一次，这里再按当天重查
+  if (drillRange()) {
+    queryModel.date = drillRange()!
+    await tableRef.value?.refresh?.()
+  }
+})
 
 onMounted(() => {
   if (history.state.id) {

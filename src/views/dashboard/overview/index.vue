@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import type { Ref } from 'vue'
+import * as echarts from 'echarts'
 import { VueDraggable } from 'vue-draggable-plus'
 import { useECharts } from '@/hooks/chart/useECharts'
 import { usePermission } from '@/hooks/permission/usePermission'
@@ -338,6 +339,37 @@ function goPage(name: 'ProfileApprove' | 'ProfileApply') {
   router.push({ name })
 }
 
+/**
+ * 图表下钻：点某一天 → 打开审批列表并按该日期筛选
+ *
+ * 不在这里做复杂的明细弹窗，直接把人带到明细页 —— 下钻的意义是「从宏观到明细」，
+ * 而不是在图表旁边再塞一个列表。
+ */
+const year = new Date().getFullYear()
+
+function drillToDay(day: string) {
+  if (!day)
+    return
+  // 图表 x 轴可能是 11-21 也可能是 11/21，统一成 2026-11-21
+  const normalized = day.replace(/\//g, '-')
+  const date = normalized.length <= 5 ? `${year}-${normalized}` : normalized
+  router.push({ name: 'ProfileApprove', query: { date } })
+}
+
+/** 图表实例建好后绑点击；实例重建时会重新绑 */
+function bindDrill() {
+  const el = weekRef.value
+  if (!el)
+    return
+  const chart = echarts.getInstanceByDom(el) as any
+  if (!chart || chart.__drillBound)
+    return
+  chart.__drillBound = true
+  chart.on('click', (params: any) => drillToDay(String(params?.name ?? '')))
+}
+
+watch(weekRef, () => setTimeout(bindDrill, 300))
+
 async function load() {
   loading.value = true
   try {
@@ -410,6 +442,8 @@ async function renderWeek() {
     ],
   }
   await setWeekChart(option)
+  // 实例这时才一定存在，watch(weekRef) 有时会早于 init 触发
+  requestAnimationFrame(bindDrill)
 }
 
 onMounted(load)
@@ -578,7 +612,31 @@ onMounted(load)
               <span class="panel__hint">{{ updatedText }}</span>
             </div>
           </template>
-          <div ref="weekRef" style="height: 168px" />
+          <div ref="weekRef" class="drillable" style="height: 168px" />
+          <div v-if="summary.days.length" class="drill-days">
+            <span class="drill-days__label">按天看单据：</span>
+            <button
+              v-for="day in summary.days"
+              :key="day"
+              type="button"
+              class="drill-days__item"
+              @click="drillToDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
+          <div v-if="summary.days.length" class="drill-days">
+            <span class="drill-days__label">按天看单据：</span>
+            <button
+              v-for="day in summary.days"
+              :key="day"
+              type="button"
+              class="drill-days__item"
+              @click="drillToDay(day)"
+            >
+              {{ day }}
+            </button>
+          </div>
         </n-card>
       </div>
     </div>
@@ -1008,6 +1066,134 @@ onMounted(load)
 
   .activity {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* 图表可点击下钻 */
+.drillable {
+  cursor: pointer;
+}
+
+/* 图表下方的日期快捷入口：直接点柱子容易点空，这排更稳 */
+.drill-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+
+  &__label {
+    font-size: 11px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__item {
+    padding: 1px 6px;
+    border: 1px solid var(--atlas-border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--atlas-text-secondary);
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--atlas-brand);
+      border-color: var(--atlas-brand);
+      background: var(--atlas-surface-soft);
+    }
+  }
+}
+
+/* 图表下方的日期快捷入口：直接点柱子容易点空，这排更稳 */
+.drill-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+
+  &__label {
+    font-size: 11px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__item {
+    padding: 1px 6px;
+    border: 1px solid var(--atlas-border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--atlas-text-secondary);
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--atlas-brand);
+      border-color: var(--atlas-brand);
+      background: var(--atlas-surface-soft);
+    }
+  }
+}
+/* 图表可点击下钻 */
+.drillable {
+  cursor: pointer;
+}
+
+/* 图表下方的日期快捷入口：直接点柱子容易点空，这排更稳 */
+.drill-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+
+  &__label {
+    font-size: 11px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__item {
+    padding: 1px 6px;
+    border: 1px solid var(--atlas-border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--atlas-text-secondary);
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--atlas-brand);
+      border-color: var(--atlas-brand);
+      background: var(--atlas-surface-soft);
+    }
+  }
+}
+
+/* 图表下方的日期快捷入口：直接点柱子容易点空，这排更稳 */
+.drill-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  margin-top: 4px;
+
+  &__label {
+    font-size: 11px;
+    color: var(--atlas-text-tertiary);
+  }
+
+  &__item {
+    padding: 1px 6px;
+    border: 1px solid var(--atlas-border);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--atlas-text-secondary);
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--atlas-brand);
+      border-color: var(--atlas-brand);
+      background: var(--atlas-surface-soft);
+    }
   }
 }
 </style>
