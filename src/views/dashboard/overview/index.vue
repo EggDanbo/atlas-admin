@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EChartsOption } from 'echarts'
 import type { Ref } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import { useECharts } from '@/hooks/chart/useECharts'
 import { usePermission } from '@/hooks/permission/usePermission'
 import { overview as api } from '@/service/api/dashboard'
@@ -205,7 +206,51 @@ const cards = computed<StatCard[]>(() => [
   },
 ])
 
-const quickEntries = computed(() => QUICK_ENTRIES.filter(item => hasPermission([item.permission])))
+/**
+ * 快捷入口支持拖拽排序
+ *
+ * 顺序存在 localStorage 里，每个人习惯不同，没必要统一。
+ * 没拖过的入口排在后面，保持原来的默认顺序。
+ */
+const QUICK_ORDER_KEY = 'atlas:quick-order'
+
+function readQuickOrder(): string[] {
+  try {
+    const raw = localStorage.getItem(QUICK_ORDER_KEY)
+    return raw ? JSON.parse(raw) : []
+  }
+  catch {
+    return []
+  }
+}
+
+const quickOrder = ref<string[]>(readQuickOrder())
+
+function sortQuickEntries() {
+  const list = QUICK_ENTRIES.filter(item => hasPermission([item.permission]))
+  if (!quickOrder.value.length)
+    return [...list]
+
+  return [...list].sort((a, b) => {
+    const ia = quickOrder.value.indexOf(a.path)
+    const ib = quickOrder.value.indexOf(b.path)
+    return (ia < 0 ? Number.MAX_SAFE_INTEGER : ia) - (ib < 0 ? Number.MAX_SAFE_INTEGER : ib)
+  })
+}
+
+// 用 ref 而不是 computed：拖拽组件要能直接改这个数组
+const quickEntries = ref(sortQuickEntries())
+
+/** 拖拽结束：把当前顺序记下来 */
+function saveQuickOrder() {
+  quickOrder.value = quickEntries.value.map(item => item.path)
+  try {
+    localStorage.setItem(QUICK_ORDER_KEY, JSON.stringify(quickOrder.value))
+  }
+  catch {
+    // 隐私模式下忽略
+  }
+}
 
 /** 待办分组：标签直接带上条数，切不切换一眼就知道下面有多少 */
 const tabs = computed(() => [
@@ -504,7 +549,13 @@ onMounted(load)
 
       <div class="workbench__side">
         <n-card :bordered="false" size="small" title="快捷入口" class="panel">
-          <div class="quick">
+          <VueDraggable
+            v-model="quickEntries"
+            item-key="path"
+            :animation="160"
+            class="quick"
+            @end="saveQuickOrder"
+          >
             <button
               v-for="item in quickEntries"
               :key="item.path"
@@ -517,7 +568,7 @@ onMounted(load)
               </n-icon>
               <span>{{ item.title }}</span>
             </button>
-          </div>
+          </VueDraggable>
         </n-card>
 
         <n-card :bordered="false" size="small" class="panel workbench__chart">
@@ -845,6 +896,14 @@ onMounted(load)
 }
 
 /* ---------- 快捷入口 ---------- */
+.quick button {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
 .quick {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
